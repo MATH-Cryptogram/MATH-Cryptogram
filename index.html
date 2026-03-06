@@ -159,6 +159,7 @@ input {
             <span id="lvl-indicator" style="color: var(--primary); font-weight: bold;">LEVEL 1</span>
             <span id="timer">03:00</span>
         </div>
+        
         <div class="phrase-display" id="cipher-output">_ _ _ _</div>
         <div id="clue-text" class="clue-box"></div>
         <div id="problems-container"></div>
@@ -459,7 +460,6 @@ window.nextLevel = function() {
             "You have mastered the Rational Cryptogram!\n\n" +
             "🏆 Final Score: " + totalScore + " points\n" +
             "⏱️ Total Time: " + timeString
-        );
 
         navigate("page-lobby");
         return;
