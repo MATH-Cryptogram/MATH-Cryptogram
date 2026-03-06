@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>The Rational Algebraic Cryptogram</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
+    <style>
+        :root { --primary: #00d2ff; --bg: #0b0e14; --accent: #f1c40f; --success: #00ff88; --card-bg: rgba(23, 32, 42, 0.95); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-image: radial-gradient(#1e293b 1px, transparent 1px); background-size: 30px 30px; }
+        .page { position: absolute; width: 90%; max-width: 600px; padding: 30px; background: var(--card-bg); border: 2px solid var(--primary); border-radius: 20px; box-shadow: 0 0 50px rgba(0, 210, 255, 0.15); transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0; transform: translateY(30px) scale(0.95); pointer-events: none; text-align: center; display: none; }
+        .page.active { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; display: block; }
+        .frac { display: inline-flex; flex-direction: column; vertical-align: middle; margin: 0 10px; }
+        .frac .numb { border-bottom: 2px solid white; padding: 0 5px; }
+        .eq-card { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; margin: 15px 0; display: flex; align-items: center; justify-content: space-between; }
+        .clue-box { background: #fdf6e3; color: #5d4037; padding: 12px; border-radius: 8px; margin: 15px 0; font-style: italic; border-left: 5px solid var(--accent); text-align: left; }
+        input { width: 80px; padding: 12px; border: 2px solid var(--primary); border-radius: 8px; background: #111; color: white; text-align: center; font-size: 1.2rem; margin: 5px; }
+        button { background: var(--primary); color: #000; border: none; padding: 15px 30px; border-radius: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.3s; margin-top: 15px; width: 100%; }
+        button:hover { background: var(--accent); box-shadow: 0 0 20px var(--accent); }
+        .join-section { margin-top: 20px; border-top: 1px solid #334155; padding-top: 20px; }
+        .phrase-display { font-size: 2.2rem; letter-spacing: 10px; color: var(--accent); margin: 20px 0; font-family: monospace; font-weight: bold; }
+        #qr-code { background: white; padding: 10px; display: inline-block; border-radius: 10px; margin: 15px 0; }
+        .solution-box { background: #f8fafc; color: #1e293b; padding: 15px; border-radius: 8px; margin: 15px 0; text-align: left; font-size: 0.9rem; border-top: 4px solid var(--success); }
+        #scoreboard-container div {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.05);
+    margin-bottom: 5px;
+    border-radius: 5px;
+    padding: 12px !important;
+}
+/* Animation for page switching */
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(20px); filter: blur(5px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); box-shadow: 0 0 30px var(--success); }
+    100% { transform: scale(1); }
+}
+
+.page.active {
+    display: block;
+    animation: slideUpFade 0.6s ease-out forwards;
+}
+
+/* Visual feedback for the phrase when completed */
+.phrase-complete {
+    animation: successPulse 0.8s ease-in-out;
+    color: var(--success) !important;
+}
+
+/* Fix for the main container to prevent overflow and force fit */
+body {
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    touch-action: manipulation; /* Improves mobile responsiveness */
+}
+
+.page {
+    width: 95%; /* Use more of the screen width */
+    max-width: 500px;
+    max-height: 90vh; /* Ensure it doesn't go off-screen vertically */
+    overflow-y: auto; /* Allow scrolling inside the card if content is long */
+    padding: 20px;
+    box-sizing: border-box; /* Includes padding in width calculation */
+}
+
+/* Make equations and inputs smaller on mobile so they stay on one line */
+@media (max-width: 480px) {
+    .phrase-display { font-size: 1.5rem; letter-spacing: 5px; }
+    .eq-card { padding: 10px; font-size: 0.9rem; }
+    input { width: 60px; padding: 8px; font-size: 1rem; }
+    .frac .numb { padding: 0 2px; }
+}
+
+/* Prevent system-level zooming and scrolling issues */
+html, body {
+    position: fixed; /* Prevents "rubber-banding" on iOS */
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    -webkit-text-size-adjust: 100%; /* Prevents iOS from changing font sizes */
+    touch-action: none; /* Disables double-tap to zoom */
+}
+
+.page {
+    /* Safe Area Insets for iPhone notches */
+    padding-top: calc(20px + env(safe-area-inset-top));
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+    
+    width: 92%;
+    max-width: 450px;
+    max-height: 85vh;
+    overflow-y: auto; /* Allows scrolling only inside the game card */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+}
+
+/* Fix for Android/iOS Input Boxes */
+input {
+    font-size: 16px !important; /* Minimum 16px prevents iOS auto-zoom on focus */
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+}
+
+/* Responsive adjustment for small phones */
+@media (max-width: 380px) {
+    .phrase-display { font-size: 1.2rem !important; letter-spacing: 3px !important; }
+    .eq-card { padding: 8px; font-size: 0.85rem; }
+    .frac .numb { padding: 0 1px; }
+    button { padding: 12px; font-size: 0.9rem; }
+}
+
+/* Prevent the background from bouncing on iOS */
+html, body {
+    position: fixed; 
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Force inputs to be at least 16px to stop the auto-zoom */
+input {
+    font-size: 16px !important; 
+    appearance: none;
+    -webkit-appearance: none; /* Removes default iOS inner shadows */
+}
+
+/* Adjust for the iPhone Notch */
+.page {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+    </style>
+</head>
+<body>
+    <div id="page-lobby" class="page active">
+        <h1 style="color: var(--primary);">THE RATIONAL CRYPTOGRAM</h1>
+        <div class="join-section">
+            <input type="text" id="player-name" placeholder="ENTER YOUR NAME" style="width: 200px;">
+        </div>
+        <div class="join-section">
+            <p>ENTER SESSION CODE</p>
+            <input type="text" id="join-code" placeholder="XXXXXX" maxlength="6" style="width: 150px; text-transform: uppercase;">
+            <button onclick="joinRoom()">ENTER THE GAME</button>
+            <button onclick="startAsHost()" style="background: var(--accent); margin-top:10px;">ENTER AS HOST</button>
+        </div>
+    </div>
+
+    <div id="page-game" class="page">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+         <button onclick="toggleFullScreen()" style="width: auto; padding: 5px 15px; font-size: 0.8rem; margin-bottom: 10px; background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--primary);"> ⛶ FULL SCREEN</button>
+            <span id="lvl-indicator" style="color: var(--primary); font-weight: bold;">LEVEL 1</span>
+            <span id="timer">30:00</span>
+        </div>
+        <div class="phrase-display" id="cipher-output">_ _ _ _</div>
+        <div id="clue-text" class="clue-box"></div>
+        <div id="problems-container"></div>
+        <button onclick="checkAnswers()">DECODE CRYPTOGRAM</button>
+    </div>
+
+    <div id="page-trivia" class="page">
+        <h1 style="color: var(--success);">SUCCESS!</h1>
+        <p id="trivia-content" style="font-size: 1.1rem; line-height: 1.6;"></p>
+        <p id="trivia-author" style="font-style: italic; color: var(--accent);"></p>
+        <div id="step-by-step" class="solution-box"></div>
+        <button onclick="nextLevel()" id="next-btn">CONTINUE TO NEXT LEVEL ➔</button>
+    </div>
+     
+    <div id="page-scoreboard" class="page">
+        <h1 style="color: var(--primary);">LIVE RANKING BOARD</h1>
+        <h2 id="host-room-code" style="color:var(--accent);"></h2>
+        <div id="qr-code" style="background: white; padding: 10px; display: inline-block; border-radius: 10px; margin: 10px 0;"></div>
+        <p style="font-size: 0.8rem; color: #888;">Players can scan to join or enter code manually</p>
+        <div id="scoreboard-container"></div>
+        <button onclick="hostStartGame()" style="margin-top: 20px;">START GAME</button>
+    </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, update, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// Ensure buttons feel 'snappy' on mobile
+document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('touchstart', function() {
+        this.style.opacity = "0.7";
+    });
+    btn.addEventListener('touchend', function() {
+        this.style.opacity = "1";
+    });
+});
+
+// Fullscreen helper for Android (iOS Safari does not support Element.requestFullscreen)
+window.toggleFullScreen = function() {
+    if (!document.fullscreenElement) {
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen) { /* iOS/Safari */
+            document.documentElement.webkitRequestFullscreen();
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
+};
+
+// Function to sync player score to Firebase
+function updatePlayerScore(newScore) {
+    if (roomCode && playerName) {
+        const playerRef = ref(db, `rooms/${roomCode}/players/${playerName}`);
+        update(playerRef, { score: newScore });
+    }
+}
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCkoqlW8Fb1yhmvrAv7bBM50CyeCUjZKyA",
+  authDomain: "rational-cryptogram-game.firebaseapp.com",
+  projectId: "rational-cryptogram-game",
+  storageBucket: "rational-cryptogram-game.firebasestorage.app",
+  messagingSenderId: "654271677921",
+  appId: "1:654271677921:web:ac7245dfd3b376a55e3ea0"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const gameData = [
+
+{
+    lvl: 1,
+    phrase: "GAUSS",
+    clue: "Use cross multiplication.",
+    eqs: [
+        { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> = 2`, a: 8 },
+        { h: `<div class="frac"><span class="numb">48</span><span>3x</span></div> = 4`, a: 4 },
+        { h: `<div class="frac"><span class="numb">8x</span><span>64</span></div> = 1`, a: 8 },
+        { h: `<div class="frac"><span class="numb">2x</span><span>3</span></div> = 6`, a: 9 },
+        { h: `<div class="frac"><span class="numb">5x</span><span>4</span></div> = 5`, a: 4 }
+    ],
+    trivia: "Gauss was called the 'Prince of Mathematicians'.",
+    author: "Carl Friedrich Gauss (1777–1855)",
+    steps: "Clear denominators."
+},
+
+{
+    lvl: 2,
+    phrase: "INDIA",
+    clue: "Clear the denominator first.",
+    eqs: [
+        { h: `<div class="frac"><span class="numb">(x+4)</span><span>2</span></div> = 10`, a: 16 },
+        { h: `<div class="frac"><span class="numb">(x+17)</span><span>3</span></div> = 9`, a: 10 },
+        { h: `<div class="frac"><span class="numb">(x+1)</span><span>3</span></div> = 5`, a: 14 },
+        { h: `<div class="frac"><span class="numb">8</span><span>(x-2)</span></div> = 4`, a: 4 },
+        { h: `<div class="frac"><span class="numb">4</span><span>(x-1)</span></div> = 2`, a: 3 }
+    ],
+    trivia: "Zero as a number was first formally described in India.",
+    author: "Brahmagupta (598–668 CE)",
+    steps: "Multiply both sides by the denominator."
+},
+
+{
+    lvl: 3,
+    phrase: "EULER",
+    clue: "Apply all your algebra skills.",
+    eqs: [
+        { h: `<div class="frac"><span class="numb">x</span><span>5</span></div> + 2 = 7`, a: 25 },
+        { h: `<div class="frac"><span class="numb">30</span><span>x</span></div> - 1 = 2`, a: 10 },
+        { h: `<div class="frac"><span class="numb">x</span><span>3</span></div> + 4 = 14`, a: 30 },
+        { h: `<div class="frac"><span class="numb">45</span><span>x</span></div> - 3 = 2`, a: 9 },
+        { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> + 1 = 6`, a: 20 }
+    ],
+    trivia: "Euler introduced symbols like f(x) and e.",
+    author: "Leonhard Euler (1707–1783)",
+    steps: "Combine all algebra steps."
+},
+
+{
+    lvl: 4,
+    phrase: "EUCLID",
+    clue: "Move constants before multiplying.",
+    eqs: [
+        { h: `<div class="frac"><span class="numb">x</span><span>64</span></div> = <div class="frac"><span class="numb">1</span><span>2</span></div>`, a: 32 },
+        { h: `<div class="frac"><span class="numb">3x</span><span>36</span></div> = <div class="frac"><span class="numb">4</span><span>3</span></div>`, a: 16 },
+        { h: `<div class="frac"><span class="numb">4x</span><span>10</span></div> = <div class="frac"><span class="numb">6</span><span>5</span></div>`, a: 3 },
+        { h: `<div class="frac"><span class="numb">2</span><span>x</span></div> = <div class="frac"><span class="numb">3</span><span>(x+1)</span></div>`, a: 1 },
+        { h: `<div class="frac"><span class="numb">4</span><span>(x-1)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: -1 },
+        { h: `<div class="frac"><span class="numb">3</span><span>(x+2)</span></div> = <div class="frac"><span class="numb">5</span><span>(x-2)</span></div>`, a: -8 }
+    ],
+    trivia: "Euclid wrote Elements.",
+    author: "Euclid (300 BCE)",
+    steps: "Isolate the fraction, then multiply."
+},
+
+{
+    lvl: 5,
+    phrase: "GREECE",
+    clue: "Multiply denominators to isolate x.",
+    eqs: [
+        { h: `<div class="frac"><span class="numb">6</span><span>(x+4)</span></div> = <div class="frac"><span class="numb">3</span><span>(x+1)</span></div>`, a: 2 },
+        { h: `<div class="frac"><span class="numb">4</span><span>(x-2)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: -2 },
+        { h: `<div class="frac"><span class="numb">3</span><span>(x+2)</span></div> = <div class="frac"><span class="numb">2</span><span>(x-2)</span></div>`, a: 10 },
+        { h: `<div class="frac"><span class="numb">3</span><span>x</span></div> = <div class="frac"><span class="numb">2</span><span>(x-4)</span></div>`, a: -2 },
+        { h: `<div class="frac"><span class="numb">4</span><span>(x-2)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: 7 },
+        { h: `<div class="frac"><span class="numb">6</span><span>(x-3)</span></div> = <div class="frac"><span class="numb">3</span><span>x</span></div>`, a: -3 }
+    ],
+    trivia: "Ancient Greece shaped formal mathematics.",
+    author: "Aristotle (384–322 BCE)",
+    steps: "Multiply both sides."
+},
+
+{
+    lvl: 6,
+    phrase: "NEWTON",
+    clue: "Isolate the fraction first.",
+    eqs: [
+        { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> + 1 = 6`, a: 20 },
+        { h: `<div class="frac"><span class="numb">x</span><span>5</span></div> - 2 = 3`, a: 25 },
+        { h: `<div class="frac"><span class="numb">30</span><span>x</span></div> + 1 = 4`, a: 10 },
+        { h: `<div class="frac"><span class="numb">x</span><span>3</span></div> + 3 = 7`, a: 12 },
+        { h: `<div class="frac"><span class="numb">40</span><span>x</span></div> - 1 = 4`, a: 8 },
+        { h: `<div class="frac"><span class="numb">x</span><span>2</span></div> = 15`, a: 30 }
+    ],
+    trivia: "Newton developed calculus.",
+    author: "Isaac Newton (1643–1727)",
+    steps: "Move constants, then multiply."
+},
+
+{
+    lvl: 7,
+    phrase: "ALGEBRA",
+    clue: "Multiply both sides to remove fractions.",
+    eqs: [
+        { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> = 3`, a: 12 },
+        { h: `<div class="frac"><span class="numb">20</span><span>x</span></div> = 5`, a: 4 },
+        { h: `<div class="frac"><span class="numb">x</span><span>6</span></div> = 2`, a: 12 },
+        { h: `<div class="frac"><span class="numb">18</span><span>x</span></div> = 3`, a: 6 },
+        { h: `<div class="frac"><span class="numb">x</span><span>8</span></div> = 4`, a: 32 },
+        { h: `<div class="frac"><span class="numb">x</span><span>3</span></div> = 9`, a: 27 },
+        { h: `<div class="frac"><span class="numb">21</span><span>x</span></div> = 7`, a: 3 }
+    ],
+    trivia: "Al-Khwarizmi influenced algebra.",
+    author: "Al-Khwarizmi (780–850 CE)",
+    steps: "Clear denominators."
+},
+
+{
+    lvl: 8,
+    phrase: "DESCARTES",
+    clue: "Multiply to isolate x.",
+    eqs: [
+        { h: `<div class="frac"><span class="numb">x</span><span>5</span></div> = 6`, a: 30 },
+        { h: `<div class="frac"><span class="numb">42</span><span>x</span></div> = 7`, a: 6 },
+        { h: `<div class="frac"><span class="numb">x</span><span>8</span></div> = 4`, a: 32 },
+        { h: `<div class="frac"><span class="numb">36</span><span>x</span></div> = 9`, a: 4 },
+        { h: `<div class="frac"><span class="numb">x</span><span>6</span></div> = 3`, a: 18 },
+        { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> = 9`, a: 36 },
+        { h: `<div class="frac"><span class="numb">48</span><span>x</span></div> = 6`, a: 8 },
+        { h: `<div class="frac"><span class="numb">x</span><span>7</span></div> = 5`, a: 35 }
+    ],
+    trivia: "Descartes created the coordinate plane.",
+    author: "René Descartes (1596–1650)",
+    steps: "Clear denominators."
+},
+
+{
+    lvl: 9,
+    phrase: "ARISTOTLE",
+    clue: "Multiply both sides.",
+    eqs: [
+        { h: `<div class="frac"><span class="numb">x</span><span>2</span></div> = 8`, a: 16 },
+        { h: `<div class="frac"><span class="numb">40</span><span>x</span></div> = 5`, a: 8 },
+        { h: `<div class="frac"><span class="numb">x</span><span>10</span></div> = 3`, a: 30 },
+        { h: `<div class="frac"><span class="numb">50</span><span>x</span></div> = 5`, a: 10 },
+        { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> = 11`, a: 44 },
+        { h: `<div class="frac"><span class="numb">63</span><span>x</span></div> = 9`, a: 7 },
+        { h: `<div class="frac"><span class="numb">x</span><span>3</span></div> = 12`, a: 36 }
+    ],
+    trivia: "Aristotle founded formal logic.",
+    author: "Aristotle (384–322 BCE)",
+    steps: "Clear denominators."
+},
+
+{
+    lvl: 10,
+    phrase: "DIOPHANTUS",
+    clue: "Clear the denominator.",
+    eqs: [
+        { h: `<div class="frac"><span class="numb">x</span><span>2</span></div> = 9`, a: 18 },
+        { h: `<div class="frac"><span class="numb">30</span><span>x</span></div> = 3`, a: 10 },
+        { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> = 5`, a: 20 },
+        { h: `<div class="frac"><span class="numb">24</span><span>x</span></div> = 6`, a: 4 },
+        { h: `<div class="frac"><span class="numb">x</span><span>3</span></div> = 7`, a: 21 },
+        { h: `<div class="frac"><span class="numb">45</span><span>x</span></div> = 9`, a: 5 },
+        { h: `<div class="frac"><span class="numb">x</span><span>6</span></div> = 8`, a: 48 },
+        { h: `<div class="frac"><span class="numb">54</span><span>x</span></div> = 6`, a: 9 },
+        { h: `<div class="frac"><span class="numb">x</span><span>5</span></div> = 13`, a: 65 },
+        { h: `<div class="frac"><span class="numb">70</span><span>x</span></div> = 10`, a: 7 }
+    ],
+    trivia: "Diophantus is called the father of algebra.",
+    author: "Diophantus (200–284 CE)",
+    steps: "Multiply both sides."
+}
+
+];
+
+let roomCode = "", playerName = "", isHost = false, score = 0, currentLevelIndex = 0, timerInterval;
+
+window.navigate = function(pageId){ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active")); document.getElementById(pageId).classList.add("active"); }
+
+window.startAsHost = function() {
+    playerName = document.getElementById("player-name").value.trim();
+    if(!playerName) { alert("Enter name!"); return; }
+    
+    isHost = true;
+    roomCode = Math.random().toString(36).substring(2,8).toUpperCase();
+    
+    // Set Room in Firebase
+    set(ref(db, "rooms/" + roomCode), { gameStarted: false });
+    document.getElementById("host-room-code").innerText = "Room Code: " + roomCode;
+
+    // GENERATE QR CODE WITH AUTO-JOIN URL
+    const qrContainer = document.getElementById("qr-code");
+    qrContainer.innerHTML = ""; // Clear old QR
+    const joinURL = window.location.origin + window.location.pathname + "?room=" + roomCode;
+    new QRCode(qrContainer, {
+        text: joinURL,
+        width: 128,
+        height: 128
+    });
+
+    navigate("page-scoreboard");
+
+    // Listen for players
+    onValue(ref(db, "rooms/" + roomCode + "/players"), (snapshot) => {
+        let sb = document.getElementById("scoreboard-container");
+        sb.innerHTML = "";
+        const data = snapshot.val();
+        if(data) {
+            Object.entries(data).forEach(([name, info]) => {
+                let div = document.createElement("div");
+                div.className = "score-row"; // Using the style from previous step
+                div.innerHTML = `<span>${name}</span><span>${info.score} pts</span>`;
+                sb.appendChild(div);
+            });
+        }
+    });
+};
+
+window.joinRoom = function() { playerName = document.getElementById("player-name").value.trim(); roomCode = document.getElementById("join-code").value.trim().toUpperCase(); if(!playerName || !roomCode) { alert("Enter name and code!"); return; } const playerRef = ref(db, "rooms/" + roomCode + "/players/" + playerName); set(playerRef, { score: 0 }); onDisconnect(playerRef).remove(); onValue(ref(db, "rooms/" + roomCode + "/gameStarted"), (snapshot) => { if(snapshot.val() === true) { currentLevelIndex = 0; renderProblem(); navigate("page-game"); startGame(); } }); }
+
+window.hostStartGame = function(){ update(ref(db, "rooms/" + roomCode), { gameStarted: true }); }
+
+function startGame(){ score = 0; let timeLeft = 1800; document.getElementById("timer").innerText = Math.floor(timeLeft/60) + ":" + (timeLeft%60).toString().padStart(2,'0'); timerInterval = setInterval(() => { timeLeft--; document.getElementById("timer").innerText = Math.floor(timeLeft/60) + ":" + (timeLeft%60).toString().padStart(2,'0'); if(timeLeft <= 0) { clearInterval(timerInterval); navigate("page-scoreboard"); } }, 1000); }
+
+window.renderProblem = function() {
+    if (currentLevelIndex >= gameData.length) {
+        alert("Game Complete!");
+        navigate("page-lobby");
+        return;
+    }
+    
+    let currentLevel = gameData[currentLevelIndex];
+    let container = document.getElementById("problems-container");
+    container.innerHTML = "";
+    document.getElementById("lvl-indicator").innerText = `LEVEL ${currentLevel.lvl}`;
+    document.getElementById("clue-text").innerText = currentLevel.clue;
+    
+    // Initialize the phrase display with underscores
+    const cipherDisplay = document.getElementById("cipher-output");
+    let displayArr = Array(currentLevel.phrase.length).fill("_");
+    cipherDisplay.innerText = displayArr.join(" ");
+
+    currentLevel.eqs.forEach((eq, idx) => {
+        let div = document.createElement("div");
+        div.className = "eq-card";
+        div.innerHTML = `<div>${eq.h}</div><input type="number" id="answer-${idx}" placeholder="x=?">`;
+        container.appendChild(div);
+
+        // Add auto-reveal logic
+        let inputField = div.querySelector('input');
+        inputField.oninput = (e) => {
+            if (parseInt(e.target.value) === eq.a) {
+                // Reveal the letter at this index
+                displayArr[idx] = currentLevel.phrase[idx] || "?";
+                cipherDisplay.innerText = displayArr.join(" ");
+                inputField.style.borderColor = "var(--success)"; // Visual feedback
+            } else {
+                // Optional: Hide letter if they change the answer to wrong
+                displayArr[idx] = "_";
+                cipherDisplay.innerText = displayArr.join(" ");
+                inputField.style.borderColor = "var(--primary)";
+            }
+        };
+    });
+}
+
+window.checkAnswers = function() {
+    let currentLevel = gameData[currentLevelIndex];
+    let allCorrect = true;
+
+    currentLevel.eqs.forEach((eq, idx) => {
+        let val = parseInt(document.getElementById(`answer-${idx}`).value);
+        if (val !== eq.a) allCorrect = false;
+    });
+
+    if (allCorrect) {
+        // Apply success transition to the phrase display
+        const display = document.getElementById("cipher-output");
+        display.classList.add("phrase-complete");
+
+        // Update Score
+        score += 100;
+        if (typeof updatePlayerScore === "function") updatePlayerScore(score);
+
+        // Wait 800ms for the animation before navigating to Trivia
+        setTimeout(() => {
+            document.getElementById("trivia-content").innerText = currentLevel.trivia;
+            document.getElementById("trivia-author").innerText = currentLevel.author;
+            document.getElementById("step-by-step").innerText = currentLevel.steps;
+            
+            display.classList.remove("phrase-complete"); // Reset for next level
+            navigate("page-trivia");
+        }, 800);
+    } else {
+        alert("The cryptogram is not yet fully decoded!");
+    }
+};
+
+window.nextLevel = function() {
+    currentLevelIndex++;
+    
+    if(currentLevelIndex >= gameData.length) {
+        alert("🎉 CONGRATULATIONS! You have mastered the Rational Cryptogram!");
+        navigate("page-lobby");
+        return;
+    }
+
+    // Smooth exit transition
+    const triviaPage = document.getElementById("page-trivia");
+    triviaPage.style.opacity = "0";
+    triviaPage.style.transform = "scale(0.9)";
+
+    setTimeout(() => {
+        renderProblem();
+        navigate("page-game");
+        triviaPage.style.opacity = ""; // Reset style for next use
+        triviaPage.style.transform = "";
+    }, 400);
+};
+
+window.navigate = function(pageId) {
+    // Scroll to top of the page smoothly when switching levels
+    window.scrollTo(0, 0); 
+    
+    document.querySelectorAll(".page").forEach(p => {
+        p.classList.remove("active");
+        p.style.display = "none";
+    });
+
+    const activePage = document.getElementById(pageId);
+    activePage.style.display = "block";
+    
+    // Trigger the CSS animation
+    setTimeout(() => {
+        activePage.classList.add("active");
+    }, 10);
+};
+
+window.revealLetter = function(index, correctValue, letter) {
+    let input = document.getElementById(`answer-${index}`);
+    let letterSpan = document.getElementById(`char-${index}`);
+    
+    // Normalize input for mobile (remove decimals/special chars)
+    let val = parseInt(input.value);
+    
+    if (val === correctValue) {
+        letterSpan.style.color = "var(--accent)";
+        letterSpan.style.opacity = "1";
+        letterSpan.style.transform = "scale(1.1)";
+        input.style.borderColor = "var(--success)";
+        input.blur(); // Hides mobile keyboard once correct
+        input.readOnly = true;
+    }
+};
+
+window.toggleFullScreen = function() {
+    let elem = document.documentElement;
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) { /* iOS Safari Fix */
+            elem.webkitRequestFullscreen();
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) { /* iOS Safari Fix */
+            document.webkitExitFullscreen();
+        }
+    }
+};
+
+window.addEventListener('load', function() {
+    // Check for room code in URL (from QR Scan)
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlRoom = urlParams.get('room');
+    if (urlRoom) {
+        document.getElementById("join-code").value = urlRoom.toUpperCase();
+        // Optional: Alert the player they joined via QR
+        console.log("Joined via QR Code: " + urlRoom);
+    }
+});
+
+</script>
+</body>
+</html>
