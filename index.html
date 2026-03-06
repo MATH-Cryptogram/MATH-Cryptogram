@@ -157,7 +157,7 @@ input {
         <div style="display: flex; justify-content: space-between; align-items: center;">
          <button onclick="toggleFullScreen()" style="width: auto; padding: 5px 15px; font-size: 0.8rem; margin-bottom: 10px; background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--primary);"> ⛶ FULL SCREEN</button>
             <span id="lvl-indicator" style="color: var(--primary); font-weight: bold;">LEVEL 1</span>
-            <span id="timer">30:00</span>
+            <span id="timer">3:00</span>
         </div>
         <div class="phrase-display" id="cipher-output">_ _ _ _</div>
         <div id="clue-text" class="clue-box"></div>
@@ -314,99 +314,6 @@ const gameData = [
     author: "Aristotle (384–322 BCE)",
     steps: "Multiply both sides."
 },
-
-{
-    lvl: 6,
-    phrase: "NEWTON",
-    clue: "Isolate the fraction first.",
-    eqs: [
-        { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> + 1 = 6`, a: 20 },
-        { h: `<div class="frac"><span class="numb">x</span><span>5</span></div> - 2 = 3`, a: 25 },
-        { h: `<div class="frac"><span class="numb">30</span><span>x</span></div> + 1 = 4`, a: 10 },
-        { h: `<div class="frac"><span class="numb">x</span><span>3</span></div> + 3 = 7`, a: 12 },
-        { h: `<div class="frac"><span class="numb">40</span><span>x</span></div> - 1 = 4`, a: 8 },
-        { h: `<div class="frac"><span class="numb">x</span><span>2</span></div> = 15`, a: 30 }
-    ],
-    trivia: "Newton developed calculus.",
-    author: "Isaac Newton (1643–1727)",
-    steps: "Move constants, then multiply."
-},
-
-{
-    lvl: 7,
-    phrase: "ALGEBRA",
-    clue: "Multiply both sides to remove fractions.",
-    eqs: [
-        { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> = 3`, a: 12 },
-        { h: `<div class="frac"><span class="numb">20</span><span>x</span></div> = 5`, a: 4 },
-        { h: `<div class="frac"><span class="numb">x</span><span>6</span></div> = 2`, a: 12 },
-        { h: `<div class="frac"><span class="numb">18</span><span>x</span></div> = 3`, a: 6 },
-        { h: `<div class="frac"><span class="numb">x</span><span>8</span></div> = 4`, a: 32 },
-        { h: `<div class="frac"><span class="numb">x</span><span>3</span></div> = 9`, a: 27 },
-        { h: `<div class="frac"><span class="numb">21</span><span>x</span></div> = 7`, a: 3 }
-    ],
-    trivia: "Al-Khwarizmi influenced algebra.",
-    author: "Al-Khwarizmi (780–850 CE)",
-    steps: "Clear denominators."
-},
-
-{
-    lvl: 8,
-    phrase: "DESCARTES",
-    clue: "Multiply to isolate x.",
-    eqs: [
-        { h: `<div class="frac"><span class="numb">x</span><span>5</span></div> = 6`, a: 30 },
-        { h: `<div class="frac"><span class="numb">42</span><span>x</span></div> = 7`, a: 6 },
-        { h: `<div class="frac"><span class="numb">x</span><span>8</span></div> = 4`, a: 32 },
-        { h: `<div class="frac"><span class="numb">36</span><span>x</span></div> = 9`, a: 4 },
-        { h: `<div class="frac"><span class="numb">x</span><span>6</span></div> = 3`, a: 18 },
-        { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> = 9`, a: 36 },
-        { h: `<div class="frac"><span class="numb">48</span><span>x</span></div> = 6`, a: 8 },
-        { h: `<div class="frac"><span class="numb">x</span><span>7</span></div> = 5`, a: 35 }
-    ],
-    trivia: "Descartes created the coordinate plane.",
-    author: "René Descartes (1596–1650)",
-    steps: "Clear denominators."
-},
-
-{
-    lvl: 9,
-    phrase: "ARISTOTLE",
-    clue: "Multiply both sides.",
-    eqs: [
-        { h: `<div class="frac"><span class="numb">x</span><span>2</span></div> = 8`, a: 16 },
-        { h: `<div class="frac"><span class="numb">40</span><span>x</span></div> = 5`, a: 8 },
-        { h: `<div class="frac"><span class="numb">x</span><span>10</span></div> = 3`, a: 30 },
-        { h: `<div class="frac"><span class="numb">50</span><span>x</span></div> = 5`, a: 10 },
-        { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> = 11`, a: 44 },
-        { h: `<div class="frac"><span class="numb">63</span><span>x</span></div> = 9`, a: 7 },
-        { h: `<div class="frac"><span class="numb">x</span><span>3</span></div> = 12`, a: 36 }
-    ],
-    trivia: "Aristotle founded formal logic.",
-    author: "Aristotle (384–322 BCE)",
-    steps: "Clear denominators."
-},
-
-{
-    lvl: 10,
-    phrase: "DIOPHANTUS",
-    clue: "Clear the denominator.",
-    eqs: [
-        { h: `<div class="frac"><span class="numb">x</span><span>2</span></div> = 9`, a: 18 },
-        { h: `<div class="frac"><span class="numb">30</span><span>x</span></div> = 3`, a: 10 },
-        { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> = 5`, a: 20 },
-        { h: `<div class="frac"><span class="numb">24</span><span>x</span></div> = 6`, a: 4 },
-        { h: `<div class="frac"><span class="numb">x</span><span>3</span></div> = 7`, a: 21 },
-        { h: `<div class="frac"><span class="numb">45</span><span>x</span></div> = 9`, a: 5 },
-        { h: `<div class="frac"><span class="numb">x</span><span>6</span></div> = 8`, a: 48 },
-        { h: `<div class="frac"><span class="numb">54</span><span>x</span></div> = 6`, a: 9 },
-        { h: `<div class="frac"><span class="numb">x</span><span>5</span></div> = 13`, a: 65 },
-        { h: `<div class="frac"><span class="numb">70</span><span>x</span></div> = 10`, a: 7 }
-    ],
-    trivia: "Diophantus is called the father of algebra.",
-    author: "Diophantus (200–284 CE)",
-    steps: "Multiply both sides."
-}
 
 ];
 
