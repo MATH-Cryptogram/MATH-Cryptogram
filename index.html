@@ -148,8 +148,8 @@ input {
         <div class="join-section">
             <p>ENTER SESSION CODE</p>
             <input type="text" id="join-code" placeholder="XXXXXX" maxlength="6" style="width: 150px; text-transform: uppercase;">
-            <button onclick="playClick(); joinRoom()">ENTER THE GAME</button>
-            <button onclick="playClick(); startAsHost()" style="background: var(--accent); margin-top:10px;">ENTER AS HOST</button>
+            <button onclick="joinRoom()">ENTER THE GAME</button>
+            <button onclick="startAsHost()" style="background: var(--accent); margin-top:10px;">ENTER AS HOST</button>
         </div>
     </div>
 
@@ -180,14 +180,8 @@ input {
         <div id="qr-code" style="background: white; padding: 10px; display: inline-block; border-radius: 10px; margin: 10px 0;"></div>
         <p style="font-size: 0.8rem; color: #888;">Players can scan to join or enter code manually</p>
         <div id="scoreboard-container"></div>
-        <button onclick="hostStartGame()">style="margin-top: 20px;">START GAME</button>
+        <button onclick="hostStartGame()" style="margin-top: 20px;">START GAME</button>
     </div>
-
-    <!-- SOUND EFFECTS -->
-<audio id="correctSound" src="correct.mp3"></audio>
-<audio id="wrongSound" src="wrong.mp3"></audio>
-<audio id="successSound" src="success.mp3"></audio>
-<audio id="clickSound" src="click.mp3"></audio>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -237,22 +231,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-    
-function playCorrect(){
-    document.getElementById("correctSound").play();
-}
-
-function playWrong(){
-    document.getElementById("wrongSound").play();
-}
-
-function playSuccess(){
-    document.getElementById("successSound").play();
-}
-
-function playClick(){
-    document.getElementById("clickSound").play();
-}
 
 const gameData = [
 
@@ -417,13 +395,11 @@ window.renderProblem = function() {
         let inputField = div.querySelector('input');
         inputField.oninput = (e) => {
             if (parseInt(e.target.value) === eq.a) {
-                playCorrect();
                 // Reveal the letter at this index
                 displayArr[idx] = currentLevel.phrase[idx] || "?";
                 cipherDisplay.innerText = displayArr.join(" ");
                 inputField.style.borderColor = "var(--success)"; // Visual feedback
             } else {
-                playWrong();
                 // Optional: Hide letter if they change the answer to wrong
                 displayArr[idx] = "_";
                 cipherDisplay.innerText = displayArr.join(" ");
@@ -443,7 +419,6 @@ window.checkAnswers = function() {
     });
 
     if (allCorrect) {
-    playSuccess();
         // Apply success transition to the phrase display
         const display = document.getElementById("cipher-output");
         display.classList.add("phrase-complete");
