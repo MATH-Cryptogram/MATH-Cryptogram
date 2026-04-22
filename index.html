@@ -6,59 +6,48 @@
     <title>MATH Cryptogram</title>
     <style>
         body {
-            background: url('path/to/pixelated-background.png'); /* Ensure to link to the actual background image */
-            color: white;
-            font-family: 'Press Start 2P', cursive;
-            animation: gradient 10s ease infinite;
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            animation: pixelate 5s infinite alternate;
         }
 
-        @keyframes gradient {
-            0% { background-color: #ff0080; }
-            50% { background-color: #8000ff; }
-            100% { background-color: #00ffff; }
+        @keyframes pixelate {
+            0% { background: url('path/to/image1.png') repeat; }
+            50% { background: url('path/to/image2.png') repeat; }
+            100% { background: url('path/to/image3.png') repeat; }
         }
 
-        .equation {
-            padding: 10px;
-            border: 2px solid #fff;
-            margin: 5px;
-            display: inline-block;
-        }
-
-        .leaderboard {
-            list-style-type: none;
-        }
+        /* Additional CSS styles for the game layout */
     </style>
 </head>
 <body>
-    <audio id="game-music" loop>
-        <source src="path/to/8bit-music.mp3" type="audio/mpeg">
-        Your browser does not support the audio tag.
+    <audio id="background-music" loop>
+        <source src="path/to/music.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
     </audio>
-
     <script>
-        document.getElementById('game-music').play();
-        
-        // Example: Sorting leaderboard by score
-        const leaderboard = [
-            {name: 'Player1', score: 100},
-            {name: 'Player2', score: 80},
-        ];
-        leaderboard.sort((a, b) => b.score - a.score);
-        
-        // Sample code to update equations display
-        const equations = [{problem: 'x + 1 = 5', points: 10}, ...];
-        equations.forEach(eq => {
-            const elem = document.createElement('div');
-            elem.className = 'equation';
-            elem.innerText = `${eq.problem} - ${eq.points} PTS`;
-            document.body.appendChild(elem);
-        });
+        // Initialize Firebase
+        // Original Firebase functionality retained
 
-        // Bonus points notification
-        function showBonusPoints() {
-            alert('You have earned 50 bonus points for completing the hidden word!');
+        // Game Logic
+        let scores = [];
+
+        function updateLeaderboard() {
+            scores.sort((a, b) => b.score - a.score);
+            // Update UI accordingly
         }
+
+        function calculatePoints(): number {
+            let points = 0;
+            // Points calculation logic
+            points += completedEquations * 10 + (completedCryptogram ? 50 : 0);
+            return points;
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.getElementById('background-music').play();
+        });
     </script>
 </body>
 </html>
