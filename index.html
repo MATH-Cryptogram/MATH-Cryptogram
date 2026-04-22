@@ -3,51 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MATH Cryptogram</title>
+    <title>MATH Cryptogram Game</title>
     <style>
         body {
             margin: 0;
-            overflow: hidden;
-            background-color: #000;
-            animation: pixelate 5s infinite alternate;
+            padding: 0;
+            background: url('animated-background.gif') no-repeat center center fixed; /* Replace with your animated background */
+            background-size: cover;
         }
-
-        @keyframes pixelate {
-            0% { background: url('path/to/image1.png') repeat; }
-            50% { background: url('path/to/image2.png') repeat; }
-            100% { background: url('path/to/image3.png') repeat; }
+        .leaderboard {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 5px;
         }
-
-        /* Additional CSS styles for the game layout */
+        /* Additional styling */
     </style>
 </head>
 <body>
-    <audio id="background-music" loop>
-        <source src="path/to/music.mp3" type="audio/mpeg">
+    <audio controls autoplay loop>
+        <source src="background-music.mp3" type="audio/mpeg"> <!-- Replace with your music file -->
         Your browser does not support the audio element.
     </audio>
+    <div class="leaderboard">
+        <h2>Leaderboard</h2>
+        <ul id="score-list">
+            <!-- Scores will be dynamically added here -->
+        </ul>
+    </div>
     <script>
-        // Initialize Firebase
-        // Original Firebase functionality retained
-
-        // Game Logic
-        let scores = [];
-
+        let scores = []; // Initialize scores array
         function updateLeaderboard() {
-            scores.sort((a, b) => b.score - a.score);
-            // Update UI accordingly
+            scores.sort((a, b) => b.score - a.score); // Sort scores by highest
+            const scoreList = document.getElementById('score-list');
+            scoreList.innerHTML = '';
+            scores.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.innerText = `${item.player}: ${item.score} pts`;
+                scoreList.appendChild(listItem);
+            });
         }
-
-        function calculatePoints(): number {
-            let points = 0;
-            // Points calculation logic
-            points += completedEquations * 10 + (completedCryptogram ? 50 : 0);
-            return points;
+        function addScore(player, points) {
+            scores.push({ player, score: points });
+            updateLeaderboard();
         }
-
-        document.addEventListener('DOMContentLoaded', (event) => {
-            document.getElementById('background-music').play();
-        });
+        function completeCryptogram(equationsSolved) {
+            let points = equationsSolved * 10 + 50; // 10 PTS per equation + 50 bonus
+            addScore('PlayerName', points); // Replace with player's name.
+        }
+        // Additional game logic would go here
     </script>
 </body>
 </html>
