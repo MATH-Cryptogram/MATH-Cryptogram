@@ -3,62 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MATH Cryptogram</title>
+    <title>MATH Cryptogram Game</title>
     <style>
         body {
-            background: url('path/to/pixelated-background.png'); /* Ensure to link to the actual background image */
-            color: white;
-            font-family: 'Press Start 2P', cursive;
-            animation: gradient 10s ease infinite;
+            margin: 0;
+            padding: 0;
+            background: url('animated-background.gif') no-repeat center center fixed; /* Replace with your animated background */
+            background-size: cover;
         }
-
-        @keyframes gradient {
-            0% { background-color: #ff0080; }
-            50% { background-color: #8000ff; }
-            100% { background-color: #00ffff; }
-        }
-
-        .equation {
-            padding: 10px;
-            border: 2px solid #fff;
-            margin: 5px;
-            display: inline-block;
-        }
-
         .leaderboard {
-            list-style-type: none;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 5px;
         }
+        /* Additional styling */
     </style>
 </head>
 <body>
-    <audio id="game-music" loop>
-        <source src="path/to/8bit-music.mp3" type="audio/mpeg">
-        Your browser does not support the audio tag.
+    <audio controls autoplay loop>
+        <source src="background-music.mp3" type="audio/mpeg"> <!-- Replace with your music file -->
+        Your browser does not support the audio element.
     </audio>
-
+    <div class="leaderboard">
+        <h2>Leaderboard</h2>
+        <ul id="score-list">
+            <!-- Scores will be dynamically added here -->
+        </ul>
+    </div>
     <script>
-        document.getElementById('game-music').play();
-        
-        // Example: Sorting leaderboard by score
-        const leaderboard = [
-            {name: 'Player1', score: 100},
-            {name: 'Player2', score: 80},
-        ];
-        leaderboard.sort((a, b) => b.score - a.score);
-        
-        // Sample code to update equations display
-        const equations = [{problem: 'x + 1 = 5', points: 10}, ...];
-        equations.forEach(eq => {
-            const elem = document.createElement('div');
-            elem.className = 'equation';
-            elem.innerText = `${eq.problem} - ${eq.points} PTS`;
-            document.body.appendChild(elem);
-        });
-
-        // Bonus points notification
-        function showBonusPoints() {
-            alert('You have earned 50 bonus points for completing the hidden word!');
+        let scores = []; // Initialize scores array
+        function updateLeaderboard() {
+            scores.sort((a, b) => b.score - a.score); // Sort scores by highest
+            const scoreList = document.getElementById('score-list');
+            scoreList.innerHTML = '';
+            scores.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.innerText = `${item.player}: ${item.score} pts`;
+                scoreList.appendChild(listItem);
+            });
         }
+        function addScore(player, points) {
+            scores.push({ player, score: points });
+            updateLeaderboard();
+        }
+        function completeCryptogram(equationsSolved) {
+            let points = equationsSolved * 10 + 50; // 10 PTS per equation + 50 bonus
+            addScore('PlayerName', points); // Replace with player's name.
+        }
+        // Additional game logic would go here
     </script>
 </body>
 </html>
