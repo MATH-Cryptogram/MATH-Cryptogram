@@ -8,334 +8,710 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
     <style>
-        :root { --primary: #00d2ff; --bg: #0b0e14; --accent: #f1c40f; --success: #00ff88; --card-bg: rgba(23, 32, 42, 0.95); }
-         body { 
-            font-family: 'Segoe UI', sans-serif; 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root { 
+            --primary: #00d2ff; 
+            --bg: #0b0e14; 
+            --accent: #f1c40f; 
+            --success: #00ff88;
+            --card-bg: rgba(23, 32, 42, 0.95);
+            --danger: #ff6b6b;
+            --secondary: #a78bfa;
+        }
+
+        html, body {
+            position: fixed;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            -webkit-text-size-adjust: 100%;
+            touch-action: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        body { 
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
             color: white; 
-            margin: 0; 
-            overflow: hidden; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            min-height: 100vh;
-            background-color: #5c5c5c;
-            /* 8-Bit Brick Pattern */
-            background-image: 
-                linear-gradient(30deg, #474747 12%, transparent 12.5%, transparent 87%, #474747 87.5%, #474747),
-                linear-gradient(150deg, #474747 12%, transparent 12.5%, transparent 87%, #474747 87.5%, #474747),
-                linear-gradient(30deg, #474747 12%, transparent 12.5%, transparent 87%, #474747 87.5%, #474747),
-                linear-gradient(150deg, #474747 12%, transparent 12.5%, transparent 87%, #474747 87.5%, #474747),
-                linear-gradient(60deg, #7a7a7a 25%, transparent 25.5%, transparent 75%, #7a7a7a 75.5%, #7a7a7a),
-                linear-gradient(60deg, #7a7a7a 25%, transparent 25.5%, transparent 75%, #7a7a7a 75.5%, #7a7a7a);
-            /* Controls the brick size */
-            background-size: 40px 70px;
-            background-position: 0 0, 0 0, 20px 35px, 20px 35px, 0 0, 20px 35px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background-attachment: fixed;
         }
-/* Animation for page switching */
-@keyframes slideUpFade {
-    from { opacity: 0; transform: translateY(20px); filter: blur(5px); }
-    to { opacity: 1; transform: translateY(0); filter: blur(0); }
-}
 
-@keyframes successPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); box-shadow: 0 0 30px var(--success); }
-    100% { transform: scale(1); }
-}
+        .page {
+            width: 92%;
+            max-width: 500px;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)) 20px;
+            background: rgba(15, 20, 35, 0.92);
+            border-radius: 20px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.3), inset 0 0 20px rgba(167, 139, 250, 0.1);
+            display: none;
+            animation: slideUpFade 0.6s ease-out forwards;
+        }
 
-.page.active {
-    display: block;
-    animation: slideUpFade 0.6s ease-out forwards;
-}
+        .page.active { display: block; }
 
-/* Visual feedback for the phrase when completed */
-.phrase-complete {
-    animation: successPulse 0.8s ease-in-out;
-    color: var(--success) !important;
-}
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(30px); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
 
-/* Fix for the main container to prevent overflow and force fit */
-body {
-    overflow-x: hidden; /* Prevent horizontal scrolling */
-    touch-action: manipulation; /* Improves mobile responsiveness */
-}
+        @keyframes successPulse {
+            0%, 100% { transform: scale(1); color: var(--success); }
+            50% { transform: scale(1.08); color: #fff; text-shadow: 0 0 20px var(--success); }
+        }
 
-.page {
-    width: 95%; /* Use more of the screen width */
-    max-width: 500px;
-    max-height: 90vh; /* Ensure it doesn't go off-screen vertically */
-    overflow-y: auto; /* Allow scrolling inside the card if content is long */
-    padding: 20px;
-    box-sizing: border-box; /* Includes padding in width calculation */
-}
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
 
-/* Make equations and inputs smaller on mobile so they stay on one line */
-@media (max-width: 480px) {
-    .phrase-display { font-size: 1.5rem; letter-spacing: 5px; }
-    .eq-card { padding: 10px; font-size: 0.9rem; }
-    input { width: 60px; padding: 8px; font-size: 1rem; }
-    .frac .numb { padding: 0 2px; }
-}
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(0, 210, 255, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(0, 210, 255, 0.7); }
+        }
 
-/* Prevent system-level zooming and scrolling issues */
-html, body {
-    position: fixed; /* Prevents "rubber-banding" on iOS */
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-    -webkit-text-size-adjust: 100%; /* Prevents iOS from changing font sizes */
-    touch-action: none; /* Disables double-tap to zoom */
-}
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: float 3s ease-in-out infinite;
+        }
 
-.page {
-    /* Safe Area Insets for iPhone notches */
-    padding-top: calc(20px + env(safe-area-inset-top));
-    padding-bottom: calc(20px + env(safe-area-inset-bottom));
-    
-    width: 92%;
-    max-width: 450px;
-    max-height: 85vh;
-    overflow-y: auto; /* Allows scrolling only inside the game card */
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
-}
+        h2 {
+            font-size: 1.3rem;
+            margin: 20px 0;
+            color: var(--accent);
+        }
 
-/* Fix for Android/iOS Input Boxes */
-input {
-    font-size: 16px !important; /* Minimum 16px prevents iOS auto-zoom on focus */
-    appearance: none;
-    -webkit-appearance: none;
-    outline: none;
-}
+        /* Input Styling */
+        input[type="text"],
+        input[type="number"],
+        input[type="file"] {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 10px 0;
+            font-size: 16px !important;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            outline: none;
+            transition: all 0.3s ease;
+            appearance: none;
+            -webkit-appearance: none;
+        }
 
-/* Responsive adjustment for small phones */
-@media (max-width: 380px) {
-    .phrase-display { font-size: 1.2rem !important; letter-spacing: 3px !important; }
-    .eq-card { padding: 8px; font-size: 0.85rem; }
-    .frac .numb { padding: 0 1px; }
-    button { padding: 12px; font-size: 0.9rem; }
-}
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="file"]:focus {
+            border-color: var(--success);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+            background: rgba(0, 255, 136, 0.05);
+        }
 
-/* Prevent the background from bouncing on iOS */
-html, body {
-    position: fixed; 
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-    -webkit-overflow-scrolling: touch;
-}
+        /* Button Styling */
+        button {
+            width: 100%;
+            padding: 14px;
+            margin: 12px 0;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(0, 210, 255, 0.3);
+        }
 
-/* Force inputs to be at least 16px to stop the auto-zoom */
-input {
-    font-size: 16px !important; 
-    appearance: none;
-    -webkit-appearance: none; /* Removes default iOS inner shadows */
-}
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 210, 255, 0.5);
+        }
 
-/* Adjust for the iPhone Notch */
-.page {
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-}
+        button:active {
+            transform: translateY(-1px);
+        }
 
+        button.danger {
+            background: linear-gradient(135deg, var(--danger), #ff4757);
+        }
+
+        button.accent {
+            background: linear-gradient(135deg, var(--accent), #ffd700);
+        }
+
+        .join-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .join-section p {
+            font-size: 0.9rem;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Game Display */
+        .phrase-display {
+            font-size: 2.2rem;
+            font-weight: bold;
+            letter-spacing: 15px;
+            text-align: center;
+            margin: 25px 0;
+            padding: 20px;
+            background: rgba(0, 210, 255, 0.1);
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        .phrase-complete {
+            animation: successPulse 0.8s ease-in-out;
+            color: var(--success) !important;
+        }
+
+        /* Clue Box */
+        .clue-box {
+            background: rgba(167, 139, 250, 0.15);
+            padding: 15px;
+            border-left: 4px solid var(--secondary);
+            border-radius: 8px;
+            margin: 15px 0;
+            font-style: italic;
+            color: #ddd;
+        }
+
+        /* Equation Card */
+        .eq-card {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .eq-card:hover {
+            background: rgba(0, 210, 255, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+        }
+
+        .eq-card div {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .eq-card input {
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Fraction Styling */
+        .frac {
+            display: inline-block;
+            position: relative;
+            vertical-align: middle;
+            margin: 0 2px;
+        }
+
+        .frac .numb, .frac span:last-child {
+            display: block;
+            padding: 4px 6px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .frac .numb { border-bottom: 1px solid currentColor; }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(0, 210, 255, 0.3);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .top-bar span {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+        }
+
+        #timer {
+            color: var(--accent);
+            font-size: 1.3rem;
+            animation: glow 1s ease-in-out infinite;
+        }
+
+        #timer.warning {
+            color: var(--danger);
+            animation: none;
+        }
+
+        .small-btn {
+            width: auto !important;
+            padding: 8px 12px !important;
+            font-size: 0.8rem !important;
+            background: rgba(0, 210, 255, 0.2) !important;
+            color: var(--primary) !important;
+            border: 1px solid var(--primary) !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+        }
+
+        /* Scoreboard */
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: rgba(0, 210, 255, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            animation: slideUpFade 0.5s ease-out forwards;
+        }
+
+        .score-row span:first-child {
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .score-row span:last-child {
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        /* Solution Box */
+        .solution-box {
+            background: rgba(0, 255, 136, 0.08);
+            padding: 15px;
+            border-left: 4px solid var(--success);
+            border-radius: 8px;
+            margin: 15px 0;
+            color: #ddd;
+            line-height: 1.6;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: rgba(167, 139, 250, 0.1);
+            padding: 20px;
+            border: 2px dashed var(--secondary);
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .upload-section p {
+            color: var(--secondary);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        #solution-upload {
+            padding: 10px !important;
+            margin: 0 !important;
+        }
+
+        .upload-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .upload-success {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .upload-error {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+
+        @media (max-width: 480px) {
+            .phrase-display { 
+                font-size: 1.8rem; 
+                letter-spacing: 10px; 
+            }
+            .eq-card { padding: 12px; font-size: 0.9rem; }
+            input[type="number"] { font-size: 1rem !important; }
+            h1 { font-size: 1.5rem; }
+        }
+
+        /* Success animation */
+        .success-stars {
+            position: fixed;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            animation: starBurst 1s ease-out forwards;
+        }
+
+        @keyframes starBurst {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0);
+            }
+        }
+
+        /* Loading indicator */
+        .loading {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
+    <!-- Lobby Page -->
     <div id="page-lobby" class="page active">
-        <h1 style="color: var(--primary);">THE RATIONAL CRYPTOGRAM</h1>
+        <h1>🎮 MATH CIPHER QUEST</h1>
+        <p style="text-align: center; color: var(--secondary); margin-bottom: 25px;">Solve equations to decode secret mathematician names!</p>
+        
         <div class="join-section">
-            <input type="text" id="player-name" placeholder="ENTER YOUR NAME" style="width: 200px;">
+            <p>👤 Enter Your Name</p>
+            <input type="text" id="player-name" placeholder="Your awesome name" maxlength="20">
         </div>
+        
         <div class="join-section">
-            <p>ENTER SESSION CODE</p>
-            <input type="text" id="join-code" placeholder="XXXXXX" maxlength="6" style="width: 150px; text-transform: uppercase;">
-            <button onclick="joinRoom()">ENTER THE GAME</button>
-            <button onclick="startAsHost()" style="background: var(--accent); margin-top:10px;">ENTER AS HOST</button>
+            <p>🎯 Join a Game</p>
+            <input type="text" id="join-code" placeholder="XXXXXX" maxlength="6" style="text-transform: uppercase;">
+            <button onclick="joinRoom()">⚡ ENTER THE GAME</button>
         </div>
+
+        <div style="text-align: center; margin: 20px 0; color: var(--accent);">— OR —</div>
+
+        <button class="accent" onclick="startAsHost()">👑 START AS HOST</button>
     </div>
 
+    <!-- Game Page -->
     <div id="page-game" class="page">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-         <button onclick="toggleFullScreen()" style="width: auto; padding: 5px 15px; font-size: 0.8rem; margin-bottom: 10px; background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--primary);"> ⛶ FULL SCREEN</button>
-            <span id="lvl-indicator" style="color: var(--primary); font-weight: bold;">LEVEL 1</span>
+        <div class="top-bar">
+            <button class="small-btn" onclick="toggleFullScreen()">⛶ FULLSCREEN</button>
+            <span id="lvl-indicator">LEVEL 1</span>
             <span id="timer">03:00</span>
         </div>
         
         <div class="phrase-display" id="cipher-output">_ _ _ _</div>
         <div id="clue-text" class="clue-box"></div>
         <div id="problems-container"></div>
-        <button onclick="checkAnswers()">DECODE CRYPTOGRAM</button>
+        <button onclick="checkAnswers()">🔓 DECODE CRYPTOGRAM</button>
     </div>
 
+    <!-- Success/Trivia Page -->
     <div id="page-trivia" class="page">
-        <h1 style="color: var(--success);">SUCCESS!</h1>
-        <p id="trivia-content" style="font-size: 1.1rem; line-height: 1.6;"></p>
-        <p id="trivia-author" style="font-style: italic; color: var(--accent);"></p>
-        <div id="step-by-step" class="solution-box"></div>
-        <button onclick="nextLevel()" id="next-btn">CONTINUE TO NEXT LEVEL ➔</button>
+        <h1 style="color: var(--success); font-size: 2.5rem;">🎉 SUCCESS!</h1>
+        <p id="trivia-content" style="font-size: 1.1rem; line-height: 1.8; margin: 20px 0; color: #ddd;"></p>
+        <p id="trivia-author" style="font-style: italic; color: var(--accent); font-size: 0.9rem;"></p>
+        
+        <div class="solution-box">
+            <strong style="color: var(--success);">📝 Solution Steps:</strong>
+            <p id="step-by-step" style="margin-top: 10px;"></p>
+        </div>
+
+        <button onclick="nextLevel()">⏭️ CONTINUE TO NEXT LEVEL</button>
     </div>
-     
+
+    <!-- Scoreboard Page -->
     <div id="page-scoreboard" class="page">
-        <h1 style="color: var(--primary);">LIVE RANKING BOARD</h1>
-        <h2 id="host-room-code" style="color:var(--accent);"></h2>
-        <div id="qr-code" style="background: white; padding: 10px; display: inline-block; border-radius: 10px; margin: 10px 0;"></div>
-        <p style="font-size: 0.8rem; color: #888;">Players can scan to join or enter code manually</p>
-        <div id="scoreboard-container"></div>
-        <button onclick="hostStartGame()" style="margin-top: 20px;">START GAME</button>
+        <h1>🏆 LIVE RANKING BOARD</h1>
+        <h2 id="host-room-code" style="color: var(--accent); text-align: center;"></h2>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <p style="font-size: 0.85rem; color: #aaa; margin-bottom: 10px;">📱 Scan or Enter Code to Join</p>
+            <div id="qr-code" style="background: white; padding: 15px; display: inline-block; border-radius: 12px;"></div>
+        </div>
+        
+        <div id="scoreboard-container" style="margin: 20px 0;"></div>
+        <button class="accent" onclick="hostStartGame()" style="margin-top: 20px;">🚀 START GAME</button>
+    </div>
+
+    <!-- End Game - Solution Upload Page -->
+    <div id="page-end-game" class="page">
+        <h1 style="color: var(--success);">🏆 GAME COMPLETE!</h1>
+        
+        <div style="background: rgba(0, 210, 255, 0.1); padding: 15px; border-radius: 12px; margin: 20px 0; border-left: 4px solid var(--primary);">
+            <p style="margin: 5px 0;"><strong>Final Score:</strong> <span id="final-score" style="color: var(--accent); font-size: 1.3rem;">0</span></p>
+            <p style="margin: 5px 0;"><strong>Time Taken:</strong> <span id="final-time" style="color: var(--secondary);">0m 0s</span></p>
+        </div>
+
+        <div class="upload-section">
+            <p>📸 <strong>Show Your Work!</strong></p>
+            <p style="font-size: 0.8rem; color: #aaa;">Upload a photo of your solution steps (optional)</p>
+            <input type="file" id="solution-upload" accept="image/*" onchange="handleSolutionUpload()">
+            <div id="upload-status"></div>
+        </div>
+
+        <button class="accent" onclick="backToLobby()">🏠 BACK TO LOBBY</button>
     </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, update, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-// Ensure buttons feel 'snappy' on mobile
-document.querySelectorAll('button').forEach(btn => {
-    btn.addEventListener('touchstart', function() {
-        this.style.opacity = "0.7";
-    });
-    btn.addEventListener('touchend', function() {
-        this.style.opacity = "1";
-    });
-});
+// ===== AUDIO SETUP =====
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-// Fullscreen helper for Android (iOS Safari does not support Element.requestFullscreen)
-window.toggleFullScreen = function() {
-    if (!document.fullscreenElement) {
-        if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
-        } else if (document.documentElement.webkitRequestFullscreen) { /* iOS/Safari */
-            document.documentElement.webkitRequestFullscreen();
-        }
-    } else {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        }
-    }
-};
-
-// Function to sync player score to Firebase
-function updatePlayerScore(newScore) {
-    if (roomCode && playerName) {
-        const playerRef = ref(db, `rooms/${roomCode}/players/${playerName}`);
-        update(playerRef, { score: newScore });
+function playSound(frequency, duration, type = 'sine') {
+    try {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = frequency;
+        oscillator.type = type;
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration);
+    } catch(e) {
+        console.log("Audio not available");
     }
 }
 
+// Success sound: uplifting beeps
+function playSuccessSound() {
+    playSound(523.25, 0.15); // C5
+    setTimeout(() => playSound(659.25, 0.15), 100); // E5
+    setTimeout(() => playSound(783.99, 0.3), 200); // G5
+}
+
+// Correct answer beep
+function playCorrectBeep() {
+    playSound(784, 0.1); // G5
+}
+
+// Error beep
+function playErrorBeep() {
+    playSound(200, 0.15);
+    setTimeout(() => playSound(150, 0.15), 100);
+}
+
+// Level complete sound
+function playLevelComplete() {
+    playSound(784, 0.2);
+    setTimeout(() => playSound(784, 0.2), 150);
+    setTimeout(() => playSound(1047, 0.4), 300);
+}
+
+// ===== PARTICLE EFFECT =====
+function createStarBurst(x, y) {
+    const stars = ['✨', '⭐', '🌟'];
+    for (let i = 0; i < 8; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.textContent = stars[Math.floor(Math.random() * stars.length)];
+        star.style.left = x + 'px';
+        star.style.top = y + 'px';
+        star.style.fontSize = '20px';
+        
+        const angle = (i / 8) * Math.PI * 2;
+        const distance = 100;
+        star.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+        star.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+        
+        document.body.appendChild(star);
+        setTimeout(() => star.remove(), 1000);
+    }
+}
+
+// ===== BUTTON INTERACTIVITY =====
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('touchstart', function() {
+            this.style.opacity = "0.7";
+        });
+        btn.addEventListener('touchend', function() {
+            this.style.opacity = "1";
+        });
+    });
+});
+
+// ===== FIREBASE CONFIG =====
 const firebaseConfig = {
-  apiKey: "AIzaSyCkoqlW8Fb1yhmvrAv7bBM50CyeCUjZKyA",
-  authDomain: "rational-cryptogram-game.firebaseapp.com",
-  projectId: "rational-cryptogram-game",
-  storageBucket: "rational-cryptogram-game.firebasestorage.app",
-  messagingSenderId: "654271677921",
-  appId: "1:654271677921:web:ac7245dfd3b376a55e3ea0"
+    apiKey: "AIzaSyCkoqlW8Fb1yhmvrAv7bBM50CyeCUjZKyA",
+    authDomain: "rational-cryptogram-game.firebaseapp.com",
+    projectId: "rational-cryptogram-game",
+    storageBucket: "rational-cryptogram-game.firebasestorage.app",
+    messagingSenderId: "654271677921",
+    appId: "1:654271677921:web:ac7245dfd3b376a55e3ea0"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// ===== GAME DATA =====
 const gameData = [
-
-{
-    lvl: 1,
-    phrase: "GAUSS",
-    clue: "Use cross multiplication.",
-    eqs: [
-        { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> = 2`, a: 8 },
-        { h: `<div class="frac"><span class="numb">48</span><span>3x</span></div> = 4`, a: 4 },
-        { h: `<div class="frac"><span class="numb">8x</span><span>64</span></div> = 1`, a: 8 },
-        { h: `<div class="frac"><span class="numb">2x</span><span>3</span></div> = 6`, a: 9 },
-        { h: `<div class="frac"><span class="numb">5x</span><span>4</span></div> = 5`, a: 4 }
-    ],
-    trivia: "Gauss was called the 'Prince of Mathematicians'.",
-    author: "Carl Friedrich Gauss (1777–1855)",
-    steps: "Clear denominators."
-},
-
-{
-    lvl: 2,
-    phrase: "INDIA",
-    clue: "Clear the denominator first.",
-    eqs: [
-        { h: `<div class="frac"><span class="numb">(x+4)</span><span>2</span></div> = 10`, a: 16 },
-        { h: `<div class="frac"><span class="numb">(x+17)</span><span>3</span></div> = 9`, a: 10 },
-        { h: `<div class="frac"><span class="numb">(x+1)</span><span>3</span></div> = 5`, a: 14 },
-        { h: `<div class="frac"><span class="numb">8</span><span>(x-2)</span></div> = 4`, a: 4 },
-        { h: `<div class="frac"><span class="numb">4</span><span>(x-1)</span></div> = 2`, a: 3 }
-    ],
-    trivia: "Zero as a number was first formally described in India.",
-    author: "Brahmagupta (598–668 CE)",
-    steps: "Multiply both sides by the denominator."
-},
-
-{
-    lvl: 3,
-    phrase: "EULER",
-    clue: "Apply all your algebra skills.",
-    eqs: [
-        { h: `<div class="frac"><span class="numb">x</span><span>5</span></div> + 2 = 7`, a: 25 },
-        { h: `<div class="frac"><span class="numb">30</span><span>x</span></div> - 1 = 2`, a: 10 },
-        { h: `<div class="frac"><span class="numb">x</span><span>3</span></div> + 4 = 14`, a: 30 },
-        { h: `<div class="frac"><span class="numb">45</span><span>x</span></div> - 3 = 2`, a: 9 },
-        { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> + 1 = 6`, a: 20 }
-    ],
-    trivia: "Euler introduced symbols like f(x) and e.",
-    author: "Leonhard Euler (1707–1783)",
-    steps: "Combine all algebra steps."
-},
-
-{
-    lvl: 4,
-    phrase: "EUCLID",
-    clue: "Move constants before multiplying.",
-    eqs: [
-        { h: `<div class="frac"><span class="numb">x</span><span>64</span></div> = <div class="frac"><span class="numb">1</span><span>2</span></div>`, a: 32 },
-        { h: `<div class="frac"><span class="numb">3x</span><span>36</span></div> = <div class="frac"><span class="numb">4</span><span>3</span></div>`, a: 16 },
-        { h: `<div class="frac"><span class="numb">4x</span><span>10</span></div> = <div class="frac"><span class="numb">6</span><span>5</span></div>`, a: 3 },
-        { h: `<div class="frac"><span class="numb">2</span><span>x</span></div> = <div class="frac"><span class="numb">3</span><span>(x+1)</span></div>`, a: 1 },
-        { h: `<div class="frac"><span class="numb">4</span><span>(x-1)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: -1 },
-        { h: `<div class="frac"><span class="numb">3</span><span>(x+2)</span></div> = <div class="frac"><span class="numb">5</span><span>(x-2)</span></div>`, a: -8 }
-    ],
-    trivia: "Euclid wrote Elements.",
-    author: "Euclid (300 BCE)",
-    steps: "Isolate the fraction, then multiply."
-},
-
-{
-    lvl: 5,
-    phrase: "GREECE",
-    clue: "Multiply denominators to isolate x.",
-    eqs: [
-        { h: `<div class="frac"><span class="numb">6</span><span>(x+4)</span></div> = <div class="frac"><span class="numb">3</span><span>(x+1)</span></div>`, a: 2 },
-        { h: `<div class="frac"><span class="numb">4</span><span>(x-2)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: -2 },
-        { h: `<div class="frac"><span class="numb">3</span><span>(x+2)</span></div> = <div class="frac"><span class="numb">2</span><span>(x-2)</span></div>`, a: 10 },
-        { h: `<div class="frac"><span class="numb">3</span><span>x</span></div> = <div class="frac"><span class="numb">2</span><span>(x-4)</span></div>`, a: -2 },
-        { h: `<div class="frac"><span class="numb">4</span><span>(x-2)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: 7 },
-        { h: `<div class="frac"><span class="numb">6</span><span>(x-3)</span></div> = <div class="frac"><span class="numb">3</span><span>x</span></div>`, a: -3 }
-    ],
-    trivia: "Ancient Greece shaped formal mathematics.",
-    author: "Aristotle (384–322 BCE)",
-    steps: "Multiply both sides."
-},
-
+    {
+        lvl: 1,
+        phrase: "GAUSS",
+        clue: "💡 Use cross multiplication.",
+        eqs: [
+            { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> = 2`, a: 8 },
+            { h: `<div class="frac"><span class="numb">48</span><span>3x</span></div> = 4`, a: 4 },
+            { h: `<div class="frac"><span class="numb">8x</span><span>64</span></div> = 1`, a: 8 },
+            { h: `<div class="frac"><span class="numb">2x</span><span>3</span></div> = 6`, a: 9 },
+            { h: `<div class="frac"><span class="numb">5x</span><span>4</span></div> = 5`, a: 4 }
+        ],
+        trivia: "Carl Friedrich Gauss, the 'Prince of Mathematicians,' made groundbreaking contributions to statistics, algebra, and number theory. He famously summed numbers 1-100 as a child!",
+        author: "Carl Friedrich Gauss (1777–1855)",
+        steps: "1. Clear denominators by cross-multiplying\n2. Isolate x\n3. Solve for the variable"
+    },
+    {
+        lvl: 2,
+        phrase: "INDIA",
+        clue: "🎯 Clear the denominator first.",
+        eqs: [
+            { h: `<div class="frac"><span class="numb">(x+4)</span><span>2</span></div> = 10`, a: 16 },
+            { h: `<div class="frac"><span class="numb">(x+17)</span><span>3</span></div> = 9`, a: 10 },
+            { h: `<div class="frac"><span class="numb">(x+1)</span><span>3</span></div> = 5`, a: 14 },
+            { h: `<div class="frac"><span class="numb">8</span><span>(x-2)</span></div> = 4`, a: 4 },
+            { h: `<div class="frac"><span class="numb">4</span><span>(x-1)</span></div> = 2`, a: 3 }
+        ],
+        trivia: "Ancient India developed the concept of zero as a number, not just a placeholder. This was revolutionary for mathematics worldwide!",
+        author: "Brahmagupta (598–668 CE)",
+        steps: "1. Multiply both sides by the denominator\n2. Expand binomials if needed\n3. Collect like terms\n4. Solve for x"
+    },
+    {
+        lvl: 3,
+        phrase: "EULER",
+        clue: "🚀 Apply all your algebra skills.",
+        eqs: [
+            { h: `<div class="frac"><span class="numb">x</span><span>5</span></div> + 2 = 7`, a: 25 },
+            { h: `<div class="frac"><span class="numb">30</span><span>x</span></div> - 1 = 2`, a: 10 },
+            { h: `<div class="frac"><span class="numb">x</span><span>3</span></div> + 4 = 14`, a: 30 },
+            { h: `<div class="frac"><span class="numb">45</span><span>x</span></div> - 3 = 2`, a: 9 },
+            { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> + 1 = 6`, a: 20 }
+        ],
+        trivia: "Leonhard Euler invented many mathematical notations we use today, including f(x) and the number e. He remained productive even after losing his eyesight!",
+        author: "Leonhard Euler (1707–1783)",
+        steps: "1. Isolate the fraction\n2. Clear the denominator\n3. Solve the resulting equation"
+    },
+    {
+        lvl: 4,
+        phrase: "EUCLID",
+        clue: "⚙️ Move constants before multiplying.",
+        eqs: [
+            { h: `<div class="frac"><span class="numb">x</span><span>64</span></div> = <div class="frac"><span class="numb">1</span><span>2</span></div>`, a: 32 },
+            { h: `<div class="frac"><span class="numb">3x</span><span>36</span></div> = <div class="frac"><span class="numb">4</span><span>3</span></div>`, a: 16 },
+            { h: `<div class="frac"><span class="numb">4x</span><span>10</span></div> = <div class="frac"><span class="numb">6</span><span>5</span></div>`, a: 3 },
+            { h: `<div class="frac"><span class="numb">2</span><span>x</span></div> = <div class="frac"><span class="numb">3</span><span>(x+1)</span></div>`, a: 1 },
+            { h: `<div class="frac"><span class="numb">4</span><span>(x-1)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: -1 },
+            { h: `<div class="frac"><span class="numb">3</span><span>(x+2)</span></div> = <div class="frac"><span class="numb">5</span><span>(x-2)</span></div>`, a: -8 }
+        ],
+        trivia: "Euclid's 'Elements' is one of the most influential mathematical texts ever written, used for over 2000 years. He founded geometry as a logical system!",
+        author: "Euclid (300 BCE)",
+        steps: "1. Cross-multiply both sides\n2. Expand binomials\n3. Collect all x terms on one side\n4. Solve for x"
+    },
+    {
+        lvl: 5,
+        phrase: "GREECE",
+        clue: "🧮 Multiply denominators to isolate x.",
+        eqs: [
+            { h: `<div class="frac"><span class="numb">6</span><span>(x+4)</span></div> = <div class="frac"><span class="numb">3</span><span>(x+1)</span></div>`, a: 2 },
+            { h: `<div class="frac"><span class="numb">4</span><span>(x-2)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: -2 },
+            { h: `<div class="frac"><span class="numb">3</span><span>(x+2)</span></div> = <div class="frac"><span class="numb">2</span><span>(x-2)</span></div>`, a: 10 },
+            { h: `<div class="frac"><span class="numb">3</span><span>x</span></div> = <div class="frac"><span class="numb">2</span><span>(x-4)</span></div>`, a: -2 },
+            { h: `<div class="frac"><span class="numb">4</span><span>(x-2)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: 7 },
+            { h: `<div class="frac"><span class="numb">6</span><span>(x-3)</span></div> = <div class="frac"><span class="numb">3</span><span>x</span></div>`, a: -3 }
+        ],
+        trivia: "Ancient Greece revolutionized mathematics with logic and proof. Philosophers like Aristotle explored mathematical reasoning as a path to truth!",
+        author: "Aristotle (384–322 BCE)",
+        steps: "1. Cross-multiply\n2. Expand all expressions\n3. Collect like terms\n4. Simplify and solve"
+    }
 ];
 
-let roomCode = "", playerName = "", isHost = false, score = 0, currentLevelIndex = 0, timerInterval;
+let roomCode = "", playerName = "", isHost = false, score = 0, currentLevelIndex = 0, timerInterval, startTime;
 
-window.navigate = function(pageId){ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active")); document.getElementById(pageId).classList.add("active"); }
+// ===== NAVIGATION =====
+window.navigate = function(pageId) {
+    document.querySelectorAll(".page").forEach(p => {
+        p.classList.remove("active");
+    });
+    document.getElementById(pageId).classList.add("active");
+};
 
+// ===== FULLSCREEN =====
+window.toggleFullScreen = function() {
+    let elem = document.documentElement;
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        }
+    }
+};
+
+// ===== HOST MODE =====
 window.startAsHost = function() {
     playerName = document.getElementById("player-name").value.trim();
-    if(!playerName) { alert("Enter name!"); return; }
+    if (!playerName) { 
+        playErrorBeep();
+        alert("Please enter your name!"); 
+        return; 
+    }
     
     isHost = true;
-    roomCode = Math.random().toString(36).substring(2,8).toUpperCase();
+    roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
     
-    // Set Room in Firebase
     set(ref(db, "rooms/" + roomCode), { gameStarted: false });
-    document.getElementById("host-room-code").innerText = "Room Code: " + roomCode;
+    document.getElementById("host-room-code").innerText = "🎮 Room Code: " + roomCode;
 
-    // GENERATE QR CODE WITH AUTO-JOIN URL
     const qrContainer = document.getElementById("qr-code");
-    qrContainer.innerHTML = ""; // Clear old QR
+    qrContainer.innerHTML = "";
     const joinURL = window.location.origin + window.location.pathname + "?room=" + roomCode;
     new QRCode(qrContainer, {
         text: joinURL,
@@ -345,42 +721,101 @@ window.startAsHost = function() {
 
     navigate("page-scoreboard");
 
-    // Listen for players
     onValue(ref(db, "rooms/" + roomCode + "/players"), (snapshot) => {
         let sb = document.getElementById("scoreboard-container");
         sb.innerHTML = "";
         const data = snapshot.val();
-        if(data) {
-            Object.entries(data).forEach(([name, info]) => {
+        if (data) {
+            const sorted = Object.entries(data).sort((a, b) => (b[1].score || 0) - (a[1].score || 0));
+            sorted.forEach(([name, info], idx) => {
                 let div = document.createElement("div");
-                div.className = "score-row"; // Using the style from previous step
-                div.innerHTML = `<span>${name}</span><span>${info.score} pts</span>`;
+                div.className = "score-row";
+                const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '👤';
+                div.innerHTML = `<span>${medal} ${name}</span><span>${info.score || 0} pts</span>`;
                 sb.appendChild(div);
             });
         }
     });
 };
 
-window.joinRoom = function() { playerName = document.getElementById("player-name").value.trim(); roomCode = document.getElementById("join-code").value.trim().toUpperCase(); if(!playerName || !roomCode) { alert("Enter name and code!"); return; } const playerRef = ref(db, "rooms/" + roomCode + "/players/" + playerName); set(playerRef, { score: 0 }); onDisconnect(playerRef).remove(); onValue(ref(db, "rooms/" + roomCode + "/gameStarted"), (snapshot) => { if(snapshot.val() === true) { currentLevelIndex = 0; renderProblem(); navigate("page-game"); startGame(); } }); }
+// ===== JOIN ROOM =====
+window.joinRoom = function() {
+    playerName = document.getElementById("player-name").value.trim();
+    roomCode = document.getElementById("join-code").value.trim().toUpperCase();
+    
+    if (!playerName || !roomCode) {
+        playErrorBeep();
+        alert("Please enter name and code!");
+        return;
+    }
 
-window.hostStartGame = function(){ update(ref(db, "rooms/" + roomCode), { gameStarted: true }); }
+    set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0 });
 
-function startGame(){ score = 0; let timeLeft = 180; document.getElementById("timer").innerText = Math.floor(timeLeft/60) + ":" + (timeLeft%60).toString().padStart(2,'0'); timerInterval = setInterval(() => { timeLeft--; document.getElementById("timer").innerText = Math.floor(timeLeft/60) + ":" + (timeLeft%60).toString().padStart(2,'0'); if(timeLeft <= 0) { clearInterval(timerInterval); navigate("page-scoreboard"); } }, 1000); }
+    onValue(ref(db, `rooms/${roomCode}/gameStarted`), (snapshot) => {
+        if (snapshot.val() === true) {
+            startGame();
+        }
+    });
 
+    navigate("page-scoreboard");
+};
+
+// ===== START GAME =====
+window.hostStartGame = function() {
+    update(ref(db, "rooms/" + roomCode), { gameStarted: true });
+    startGame();
+};
+
+function startGame() {
+    score = 0;
+    currentLevelIndex = 0;
+    startTime = new Date();
+    let timeLeft = 180;
+
+    const timerDisplay = document.getElementById("timer");
+    function updateTimer() {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        timerDisplay.innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
+        
+        if (timeLeft <= 30) {
+            timerDisplay.classList.add("warning");
+        }
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            endGame();
+        }
+        timeLeft--;
+    }
+
+    updateTimer();
+    timerInterval = setInterval(updateTimer, 1000);
+    
+    renderProblem();
+    navigate("page-game");
+}
+
+function updatePlayerScore(newScore) {
+    if (roomCode && playerName) {
+        const playerRef = ref(db, `rooms/${roomCode}/players/${playerName}`);
+        update(playerRef, { score: newScore });
+    }
+}
+
+// ===== RENDER PROBLEM =====
 window.renderProblem = function() {
     if (currentLevelIndex >= gameData.length) {
-        alert("Game Complete!");
-        navigate("page-lobby");
+        endGame();
         return;
     }
     
     let currentLevel = gameData[currentLevelIndex];
     let container = document.getElementById("problems-container");
     container.innerHTML = "";
-    document.getElementById("lvl-indicator").innerText = `LEVEL ${currentLevel.lvl}`;
+    document.getElementById("lvl-indicator").innerText = `⭐ LEVEL ${currentLevel.lvl}`;
     document.getElementById("clue-text").innerText = currentLevel.clue;
     
-    // Initialize the phrase display with underscores
     const cipherDisplay = document.getElementById("cipher-output");
     let displayArr = Array(currentLevel.phrase.length).fill("_");
     cipherDisplay.innerText = displayArr.join(" ");
@@ -388,27 +823,26 @@ window.renderProblem = function() {
     currentLevel.eqs.forEach((eq, idx) => {
         let div = document.createElement("div");
         div.className = "eq-card";
-        div.innerHTML = `<div>${eq.h}</div><input type="number" id="answer-${idx}" placeholder="x=?">`;
+        div.innerHTML = `<div>${eq.h}</div><input type="number" id="answer-${idx}" placeholder="x = ?">`;
         container.appendChild(div);
 
-        // Add auto-reveal logic
         let inputField = div.querySelector('input');
         inputField.oninput = (e) => {
             if (parseInt(e.target.value) === eq.a) {
-                // Reveal the letter at this index
                 displayArr[idx] = currentLevel.phrase[idx] || "?";
                 cipherDisplay.innerText = displayArr.join(" ");
-                inputField.style.borderColor = "var(--success)"; // Visual feedback
+                inputField.style.borderColor = "var(--success)";
+                playCorrectBeep();
             } else {
-                // Optional: Hide letter if they change the answer to wrong
                 displayArr[idx] = "_";
                 cipherDisplay.innerText = displayArr.join(" ");
                 inputField.style.borderColor = "var(--primary)";
             }
         };
     });
-}
+};
 
+// ===== CHECK ANSWERS =====
 window.checkAnswers = function() {
     let currentLevel = gameData[currentLevelIndex];
     let allCorrect = true;
@@ -419,99 +853,94 @@ window.checkAnswers = function() {
     });
 
     if (allCorrect) {
-        // Apply success transition to the phrase display
+        playSuccessSound();
+        playLevelComplete();
+        
         const display = document.getElementById("cipher-output");
         display.classList.add("phrase-complete");
+        createStarBurst(window.innerWidth / 2, window.innerHeight / 2);
 
-        // Update Score
         score += 100;
-        if (typeof updatePlayerScore === "function") updatePlayerScore(score);
+        updatePlayerScore(score);
 
-        // Wait 800ms for the animation before navigating to Trivia
         setTimeout(() => {
             document.getElementById("trivia-content").innerText = currentLevel.trivia;
-            document.getElementById("trivia-author").innerText = currentLevel.author;
+            document.getElementById("trivia-author").innerText = "— " + currentLevel.author;
             document.getElementById("step-by-step").innerText = currentLevel.steps;
             
-            display.classList.remove("phrase-complete"); // Reset for next level
+            display.classList.remove("phrase-complete");
             navigate("page-trivia");
-        }, 800);
+        }, 1000);
     } else {
-        alert("The cryptogram is not yet fully decoded!");
+        playErrorBeep();
+        alert("❌ Not quite! Keep trying. Check your work!");
     }
 };
-    
+
+// ===== NEXT LEVEL =====
 window.nextLevel = function() {
     currentLevelIndex++;
-    if(currentLevelIndex >= gameData.length) {
-        const totalSeconds = Math.floor((new Date() - startTime) / 1000);
-        alert(`🏆 Game Over!\nScore: ${score}\nTime: ${Math.floor(totalSeconds/60)}m ${totalSeconds%60}s`);
-        location.reload(); 
+    if (currentLevelIndex >= gameData.length) {
+        endGame();
         return;
     }
-    window.renderProblem();
-    window.navigate("page-game");
+    renderProblem();
+    navigate("page-game");
 };
 
-window.navigate = function(pageId) {
-    // Scroll to top of the page smoothly when switching levels
-    window.scrollTo(0, 0); 
-    
-    document.querySelectorAll(".page").forEach(p => {
-        p.classList.remove("active");
-        p.style.display = "none";
-    });
+// ===== END GAME =====
+function endGame() {
+    clearInterval(timerInterval);
+    const totalSeconds = Math.floor((new Date() - startTime) / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
 
-    const activePage = document.getElementById(pageId);
-    activePage.style.display = "block";
+    document.getElementById("final-score").innerText = score;
+    document.getElementById("final-time").innerText = `${minutes}m ${seconds}s`;
     
-    // Trigger the CSS animation
+    navigate("page-end-game");
+    playSuccessSound();
+}
+
+// ===== SOLUTION UPLOAD =====
+window.handleSolutionUpload = function() {
+    const file = document.getElementById("solution-upload").files[0];
+    const statusDiv = document.getElementById("upload-status");
+    
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+        statusDiv.className = "upload-status upload-error";
+        statusDiv.innerText = "❌ Please upload an image file";
+        return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+        statusDiv.className = "upload-status upload-error";
+        statusDiv.innerText = "❌ File size must be less than 5MB";
+        return;
+    }
+
+    statusDiv.className = "upload-status upload-success";
+    statusDiv.innerHTML = '✅ Photo uploaded! <span class="loading"></span>';
+    
+    // Simulate upload delay
     setTimeout(() => {
-        activePage.classList.add("active");
-    }, 10);
+        statusDiv.innerHTML = '✅ Great work! Your solution has been saved.';
+    }, 1500);
 };
 
-window.revealLetter = function(index, correctValue, letter) {
-    let input = document.getElementById(`answer-${index}`);
-    let letterSpan = document.getElementById(`char-${index}`);
-    
-    // Normalize input for mobile (remove decimals/special chars)
-    let val = parseInt(input.value);
-    
-    if (val === correctValue) {
-        letterSpan.style.color = "var(--accent)";
-        letterSpan.style.opacity = "1";
-        letterSpan.style.transform = "scale(1.1)";
-        input.style.borderColor = "var(--success)";
-        input.blur(); // Hides mobile keyboard once correct
-        input.readOnly = true;
-    }
+// ===== BACK TO LOBBY =====
+window.backToLobby = function() {
+    location.reload();
 };
 
-window.toggleFullScreen = function() {
-    let elem = document.documentElement;
-    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-        } else if (elem.webkitRequestFullscreen) { /* iOS Safari Fix */
-            elem.webkitRequestFullscreen();
-        }
-    } else {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) { /* iOS Safari Fix */
-            document.webkitExitFullscreen();
-        }
-    }
-};
-
+// ===== URL HANDLING FOR QR SCAN =====
 window.addEventListener('load', function() {
-    // Check for room code in URL (from QR Scan)
     const urlParams = new URLSearchParams(window.location.search);
     const urlRoom = urlParams.get('room');
     if (urlRoom) {
         document.getElementById("join-code").value = urlRoom.toUpperCase();
-        // Optional: Alert the player they joined via QR
         console.log("Joined via QR Code: " + urlRoom);
     }
 });
