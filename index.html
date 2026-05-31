@@ -11,11 +11,11 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root { 
-            --primary: #00d2ff; 
-            --accent: #f1c40f; 
-            --success: #00ff88;
-            --danger: #ff6b6b;
-            --secondary: #a78bfa;
+            --primary: #F2E74B;
+            --secondary: #F2BE22;
+            --accent: #BF5B04;
+            --light: #F2BEA0;
+            --dark: #592519;
         }
 
         html, body {
@@ -33,7 +33,7 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(135deg, #592519 0%, #BF5B04 50%, #F2BE22 100%);
             margin: 0;
         }
 
@@ -44,10 +44,10 @@
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)) 20px;
-            background: rgba(15, 20, 35, 0.92);
+            background: rgba(89, 37, 25, 0.95);
             border-radius: 20px;
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 30px rgba(0, 210, 255, 0.3);
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 30px rgba(242, 231, 75, 0.4);
             display: none;
         }
 
@@ -69,12 +69,18 @@
             text-align: center;
             letter-spacing: 2px;
             text-transform: uppercase;
+            color: var(--primary);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         h2 {
             font-size: 1.3rem;
             margin: 20px 0;
-            color: var(--accent);
+            color: var(--secondary);
+        }
+
+        p {
+            color: #ddd;
         }
 
         input[type="text"],
@@ -86,7 +92,7 @@
             font-size: 16px !important;
             border: 2px solid var(--primary);
             border-radius: 10px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(242, 231, 75, 0.1);
             color: white;
             outline: none;
             appearance: none;
@@ -96,8 +102,9 @@
         input[type="text"]:focus,
         input[type="number"]:focus,
         input[type="file"]:focus {
-            border-color: var(--success);
-            background: rgba(0, 255, 136, 0.05);
+            border-color: var(--secondary);
+            background: rgba(242, 190, 34, 0.15);
+            box-shadow: 0 0 10px rgba(242, 190, 34, 0.3);
         }
 
         button {
@@ -108,20 +115,21 @@
             font-weight: bold;
             border: none;
             border-radius: 10px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: #000;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            color: white;
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 1px;
-            box-shadow: 0 5px 15px rgba(0, 210, 255, 0.3);
+            box-shadow: 0 5px 15px rgba(191, 91, 4, 0.4);
         }
 
         button:active {
             transform: scale(0.98);
         }
 
-        button.accent {
-            background: linear-gradient(135deg, var(--accent), #ffd700);
+        button.primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #000;
         }
 
         .join-section {
@@ -129,13 +137,19 @@
             flex-direction: column;
             gap: 15px;
             margin: 20px 0;
+            align-items: center;
         }
 
         .join-section p {
             font-size: 0.9rem;
-            color: var(--secondary);
+            color: var(--primary);
             text-transform: uppercase;
             letter-spacing: 1px;
+            align-self: center;
+        }
+
+        .join-section input {
+            max-width: 280px;
         }
 
         .phrase-display {
@@ -145,7 +159,7 @@
             text-align: center;
             margin: 25px 0;
             padding: 20px;
-            background: rgba(0, 210, 255, 0.1);
+            background: rgba(191, 91, 4, 0.2);
             border: 2px solid var(--primary);
             border-radius: 15px;
             color: var(--primary);
@@ -154,11 +168,11 @@
 
         .phrase-complete {
             animation: successPulse 0.8s ease-in-out;
-            color: var(--success) !important;
+            color: #90EE90 !important;
         }
 
         .clue-box {
-            background: rgba(167, 139, 250, 0.15);
+            background: rgba(242, 190, 34, 0.15);
             padding: 15px;
             border-left: 4px solid var(--secondary);
             border-radius: 8px;
@@ -168,23 +182,26 @@
         }
 
         .eq-card {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(242, 231, 75, 0.08);
             padding: 15px;
             margin: 10px 0;
             border-radius: 12px;
-            border: 1px solid rgba(0, 210, 255, 0.3);
+            border: 1px solid rgba(242, 190, 34, 0.3);
         }
 
         .eq-card div {
             font-size: 1.1rem;
             margin-bottom: 10px;
-            color: var(--accent);
+            color: var(--primary);
         }
 
         .eq-card input {
-            width: 100%;
+            width: 100px;
+            padding: 10px;
             text-align: center;
             font-weight: bold;
+            margin: 10px auto;
+            display: block;
         }
 
         .frac {
@@ -209,7 +226,7 @@
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 2px solid rgba(0, 210, 255, 0.3);
+            border-bottom: 2px solid rgba(242, 190, 34, 0.3);
             gap: 10px;
         }
 
@@ -220,19 +237,25 @@
         }
 
         #timer {
-            color: var(--accent);
+            color: var(--secondary);
             font-size: 1.3rem;
         }
 
         #timer.warning {
-            color: var(--danger);
+            color: #FF6B6B;
+            animation: pulse-warning 1s infinite;
+        }
+
+        @keyframes pulse-warning {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
         }
 
         .small-btn {
             width: auto !important;
             padding: 8px 12px !important;
             font-size: 0.8rem !important;
-            background: rgba(0, 210, 255, 0.2) !important;
+            background: rgba(242, 190, 34, 0.3) !important;
             color: var(--primary) !important;
             border: 1px solid var(--primary) !important;
             box-shadow: none !important;
@@ -242,27 +265,29 @@
         .score-row {
             display: flex;
             justify-content: space-between;
-            padding: 12px 15px;
+            align-items: center;
+            padding: 14px 15px;
             margin: 8px 0;
-            background: rgba(0, 210, 255, 0.1);
+            background: rgba(242, 190, 34, 0.15);
             border-radius: 8px;
-            border-left: 4px solid var(--primary);
+            border-left: 4px solid var(--secondary);
+            font-weight: bold;
         }
 
         .score-row span:first-child {
-            font-weight: bold;
-            color: var(--secondary);
+            color: var(--primary);
+            font-size: 1.1rem;
         }
 
         .score-row span:last-child {
-            color: var(--success);
-            font-weight: bold;
+            color: var(--secondary);
+            font-size: 1.2rem;
         }
 
         .solution-box {
-            background: rgba(0, 255, 136, 0.08);
+            background: rgba(144, 238, 144, 0.1);
             padding: 15px;
-            border-left: 4px solid var(--success);
+            border-left: 4px solid #90EE90;
             border-radius: 8px;
             margin: 15px 0;
             color: #ddd;
@@ -270,7 +295,7 @@
         }
 
         .upload-section {
-            background: rgba(167, 139, 250, 0.1);
+            background: rgba(242, 190, 34, 0.1);
             padding: 20px;
             border: 2px dashed var(--secondary);
             border-radius: 12px;
@@ -279,7 +304,7 @@
         }
 
         .upload-section p {
-            color: var(--secondary);
+            color: var(--primary);
             margin-bottom: 10px;
             font-size: 0.9rem;
         }
@@ -297,15 +322,61 @@
         }
 
         .upload-success {
-            background: rgba(0, 255, 136, 0.2);
-            border: 1px solid var(--success);
-            color: var(--success);
+            background: rgba(144, 238, 144, 0.2);
+            border: 1px solid #90EE90;
+            color: #90EE90;
         }
 
         .upload-error {
             background: rgba(255, 107, 107, 0.2);
-            border: 1px solid var(--danger);
-            color: var(--danger);
+            border: 1px solid #FF6B6B;
+            color: #FF6B6B;
+        }
+
+        .gallery-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .gallery-item {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--primary);
+            background: rgba(242, 231, 75, 0.1);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-item-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(89, 37, 25, 0.9);
+            color: var(--primary);
+            padding: 8px;
+            font-size: 0.75rem;
+            text-align: center;
+        }
+
+        .no-uploads {
+            text-align: center;
+            padding: 30px;
+            color: var(--light);
+            font-size: 0.9rem;
+        }
+
+        .no-uploads p {
+            margin: 10px 0;
         }
 
         @media (max-width: 480px) {
@@ -315,17 +386,7 @@
             }
             .eq-card { padding: 12px; }
             h1 { font-size: 1.5rem; }
-        }
-
-        .star {
-            position: fixed;
-            pointer-events: none;
-            font-size: 24px;
-        }
-
-        @keyframes starBurst {
-            0% { opacity: 1; transform: translate(0, 0) scale(1); }
-            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+            .gallery-container { grid-template-columns: 1fr; }
         }
 
         .loading {
@@ -344,9 +405,10 @@
     </style>
 </head>
 <body>
+    <!-- Lobby Page -->
     <div id="page-lobby" class="page active">
-        <h1>🎮 MATH CIPHER QUEST</h1>
-        <p style="text-align: center; color: var(--secondary); margin-bottom: 25px;">Solve equations to decode mathematician names!</p>
+        <h1>🎮 THE RATIONAL CRYPTOGRAM</h1>
+        <p style="text-align: center; color: var(--light); margin-bottom: 25px;">Solve equations to decode mathematician names!</p>
         
         <div class="join-section">
             <p>👤 Enter Your Name</p>
@@ -356,14 +418,15 @@
         <div class="join-section">
             <p>🎯 Join a Game</p>
             <input type="text" id="join-code" placeholder="XXXXXX" maxlength="6" style="text-transform: uppercase;">
-            <button onclick="joinRoom()">⚡ ENTER THE GAME</button>
+            <button onclick="joinRoom()">⚡ Enter The Game</button>
         </div>
 
-        <div style="text-align: center; margin: 20px 0; color: var(--accent);">— OR —</div>
+        <div style="text-align: center; margin: 20px 0; color: var(--secondary);">— OR —</div>
 
-        <button class="accent" onclick="startAsHost()">👑 START AS HOST</button>
+        <button class="primary" onclick="startAsHost()">👑 Start As Host</button>
     </div>
 
+    <!-- Game Page -->
     <div id="page-game" class="page">
         <div class="top-bar">
             <button class="small-btn" onclick="toggleFullScreen()">⛶ FULLSCREEN</button>
@@ -374,51 +437,83 @@
         <div class="phrase-display" id="cipher-output">_ _ _ _</div>
         <div id="clue-text" class="clue-box"></div>
         <div id="problems-container"></div>
-        <button onclick="checkAnswers()">🔓 DECODE CRYPTOGRAM</button>
+        <button onclick="checkAnswers()">🔓 Decode Cryptogram</button>
     </div>
 
+    <!-- Success/Trivia Page -->
     <div id="page-trivia" class="page">
-        <h1 style="color: var(--success); font-size: 2.5rem;">🎉 SUCCESS!</h1>
+        <h1 style="color: #90EE90; font-size: 2.5rem;">🎉 Success!</h1>
         <p id="trivia-content" style="font-size: 1.1rem; line-height: 1.8; margin: 20px 0;"></p>
-        <p id="trivia-author" style="font-style: italic; color: var(--accent); font-size: 0.9rem;"></p>
+        <p id="trivia-author" style="font-style: italic; color: var(--secondary); font-size: 0.9rem;"></p>
         
         <div class="solution-box">
-            <strong style="color: var(--success);">📝 Solution Steps:</strong>
+            <strong style="color: #90EE90;">📝 Solution Steps:</strong>
             <p id="step-by-step" style="margin-top: 10px;"></p>
         </div>
 
-        <button onclick="nextLevel()">⏭️ NEXT LEVEL</button>
+        <button onclick="nextLevel()">⏭️ Next Level</button>
     </div>
 
+    <!-- Scoreboard Page (Host) -->
     <div id="page-scoreboard" class="page">
-        <h1>🏆 RANKING BOARD</h1>
-        <h2 id="host-room-code" style="color: var(--accent); text-align: center;"></h2>
+        <h1>🏆 Live Ranking Board</h1>
+        <h2 id="host-room-code" style="color: var(--secondary); text-align: center;"></h2>
         
         <div style="text-align: center; margin: 20px 0;">
-            <p style="font-size: 0.85rem; color: #aaa; margin-bottom: 10px;">📱 Scan or Enter Code</p>
+            <p style="font-size: 0.85rem; color: var(--light); margin-bottom: 10px;">📱 Scan or Enter Code</p>
             <div id="qr-code" style="background: white; padding: 15px; display: inline-block; border-radius: 12px;"></div>
         </div>
         
         <div id="scoreboard-container" style="margin: 20px 0;"></div>
-        <button class="accent" onclick="hostStartGame()" style="margin-top: 20px;">🚀 START GAME</button>
+        <button class="primary" onclick="hostStartGame()" style="margin-top: 20px;">🚀 Start Game</button>
     </div>
 
-    <div id="page-end-game" class="page">
-        <h1 style="color: var(--success);">🏆 GAME COMPLETE!</h1>
+    <!-- Host Live Game Page -->
+    <div id="page-host-game" class="page">
+        <h1>🎮 Game In Progress</h1>
+        <h2 id="host-game-level" style="color: var(--secondary); text-align: center;">LEVEL 1</h2>
+        <p style="text-align: center; color: var(--light); margin: 15px 0;">
+            Time Left: <span id="host-timer" style="color: var(--primary); font-weight: bold;">03:00</span>
+        </p>
         
-        <div style="background: rgba(0, 210, 255, 0.1); padding: 15px; border-radius: 12px; margin: 20px 0; border-left: 4px solid var(--primary);">
-            <p style="margin: 5px 0;"><strong>Final Score:</strong> <span id="final-score" style="color: var(--accent); font-size: 1.3rem;">0</span></p>
-            <p style="margin: 5px 0;"><strong>Time:</strong> <span id="final-time" style="color: var(--secondary);">0m 0s</span></p>
+        <div id="host-scoreboard-container" style="margin: 20px 0;"></div>
+        
+        <p style="text-align: center; color: var(--light); font-size: 0.85rem; margin-top: 20px;">
+            Players are solving... 
+        </p>
+    </div>
+
+    <!-- End Game - Solution Upload Page -->
+    <div id="page-end-game" class="page">
+        <h1 style="color: #90EE90;">🏆 Game Complete!</h1>
+        
+        <div style="background: rgba(242, 231, 75, 0.1); padding: 15px; border-radius: 12px; margin: 20px 0; border-left: 4px solid var(--primary);">
+            <p style="margin: 5px 0;"><strong>Final Score:</strong> <span id="final-score" style="color: var(--secondary); font-size: 1.3rem;">0</span></p>
+            <p style="margin: 5px 0;"><strong>Time:</strong> <span id="final-time" style="color: var(--light);">0m 0s</span></p>
         </div>
 
         <div class="upload-section">
             <p>📸 <strong>Show Your Work!</strong></p>
-            <p style="font-size: 0.8rem; color: #aaa;">Upload a photo of your solution (optional)</p>
+            <p style="font-size: 0.8rem; color: var(--light);">Upload a photo of your solution (optional)</p>
             <input type="file" id="solution-upload" accept="image/*" onchange="handleSolutionUpload()">
             <div id="upload-status"></div>
         </div>
 
-        <button class="accent" onclick="backToLobby()">🏠 BACK TO LOBBY</button>
+        <button class="primary" onclick="backToLobby()">🏠 Back To Lobby</button>
+    </div>
+
+    <!-- Host View Uploads Page -->
+    <div id="page-host-uploads" class="page">
+        <h1>📸 Student Solutions</h1>
+        <p style="text-align: center; color: var(--light); margin: 15px 0;">
+            Total: <span id="upload-count" style="color: var(--primary); font-weight: bold;">0</span> submissions
+        </p>
+        
+        <div id="gallery-container" class="gallery-container"></div>
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="primary" onclick="backToLobby()">🏠 Return To Lobby</button>
+        </div>
     </div>
 
 <script type="module">
@@ -552,6 +647,8 @@ const gameData = [
 ];
 
 let roomCode = "", playerName = "", isHost = false, score = 0, currentLevelIndex = 0, timerInterval, startTime;
+let hostTimerInterval;
+let uploads = {};
 
 window.navigate = function(pageId) {
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
@@ -586,8 +683,8 @@ window.startAsHost = function() {
     isHost = true;
     roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
     
-    set(ref(db, "rooms/" + roomCode), { gameStarted: false });
-    document.getElementById("host-room-code").innerText = "🎮 Code: " + roomCode;
+    set(ref(db, "rooms/" + roomCode), { gameStarted: false, level: 1 });
+    document.getElementById("host-room-code").innerText = "🎮 Room Code: " + roomCode;
 
     const qrContainer = document.getElementById("qr-code");
     qrContainer.innerHTML = "";
@@ -607,11 +704,16 @@ window.startAsHost = function() {
             sorted.forEach(([name, info], idx) => {
                 const div = document.createElement("div");
                 div.className = "score-row";
-                const medal = ['🥇', '🥈', '🥉', '👤'][idx] || '👤';
+                const medals = ['🥇', '🥈', '🥉'];
+                const medal = idx < 3 ? medals[idx] : '👤';
                 div.innerHTML = `<span>${medal} ${name}</span><span>${info.score || 0}</span>`;
                 sb.appendChild(div);
             });
         }
+    });
+
+    onValue(ref(db, "rooms/" + roomCode + "/uploads"), (snapshot) => {
+        uploads = snapshot.val() || {};
     });
 };
 
@@ -636,7 +738,7 @@ window.joinRoom = function() {
 };
 
 window.hostStartGame = function() {
-    update(ref(db, "rooms/" + roomCode), { gameStarted: true });
+    update(ref(db, "rooms/" + roomCode), { gameStarted: true, level: 1 });
     startGame();
 };
 
@@ -665,17 +767,68 @@ function startGame() {
 
     updateTimer();
     timerInterval = setInterval(updateTimer, 1000);
+
+    if (isHost) {
+        navigate("page-host-game");
+        startHostTimer(timeLeft);
+    } else {
+        renderProblem();
+        navigate("page-game");
+    }
+}
+
+function startHostTimer(initialTime) {
+    let timeLeft = initialTime;
+    const hostTimerDisplay = document.getElementById("host-timer");
     
-    renderProblem();
-    navigate("page-game");
+    function updateHostTimer() {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        hostTimerDisplay.innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
+        
+        if (timeLeft <= 30) {
+            hostTimerDisplay.style.color = "#FF6B6B";
+        }
+
+        if (timeLeft <= 0) {
+            clearInterval(hostTimerInterval);
+        }
+        timeLeft--;
+    }
+
+    updateHostTimer();
+    hostTimerInterval = setInterval(updateHostTimer, 1000);
 }
 
 function updatePlayerScore(newScore) {
-    if (roomCode && playerName) {
+    if (roomCode && playerName && !isHost) {
         const playerRef = ref(db, `rooms/${roomCode}/players/${playerName}`);
         update(playerRef, { score: newScore });
     }
 }
+
+function updateLiveScoreboard() {
+    const hostSB = document.getElementById("host-scoreboard-container");
+    if (!hostSB) return;
+    
+    hostSB.innerHTML = "";
+    onValue(ref(db, "rooms/" + roomCode + "/players"), (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            const sorted = Object.entries(data).sort((a, b) => (b[1].score || 0) - (a[1].score || 0));
+            sorted.forEach(([name, info], idx) => {
+                const div = document.createElement("div");
+                div.className = "score-row";
+                const medals = ['🥇', '🥈', '🥉'];
+                const medal = idx < 3 ? medals[idx] : '👤';
+                div.innerHTML = `<span>${medal} ${name}</span><span>${info.score || 0}</span>`;
+                hostSB.appendChild(div);
+            });
+        }
+    });
+}
+
+setInterval(updateLiveScoreboard, 1000);
 
 window.renderProblem = function() {
     if (currentLevelIndex >= gameData.length) {
@@ -705,7 +858,7 @@ window.renderProblem = function() {
             if (val === eq.a) {
                 displayArr[idx] = currentLevel.phrase[idx] || "?";
                 cipherDisplay.innerText = displayArr.join(" ");
-                inputField.style.borderColor = "var(--success)";
+                inputField.style.borderColor = "#90EE90";
                 playCorrectBeep();
             } else {
                 displayArr[idx] = "_";
@@ -760,15 +913,21 @@ window.nextLevel = function() {
 
 function endGame() {
     clearInterval(timerInterval);
-    const totalSeconds = Math.floor((new Date() - startTime) / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-
-    document.getElementById("final-score").innerText = score;
-    document.getElementById("final-time").innerText = `${minutes}m ${seconds}s`;
+    clearInterval(hostTimerInterval);
     
-    navigate("page-end-game");
-    playSuccessSound();
+    if (isHost) {
+        viewUploadedSolutions();
+    } else {
+        const totalSeconds = Math.floor((new Date() - startTime) / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+
+        document.getElementById("final-score").innerText = score;
+        document.getElementById("final-time").innerText = `${minutes}m ${seconds}s`;
+        
+        navigate("page-end-game");
+        playSuccessSound();
+    }
 }
 
 window.handleSolutionUpload = function() {
@@ -790,12 +949,53 @@ window.handleSolutionUpload = function() {
     }
 
     statusDiv.className = "upload-status upload-success";
-    statusDiv.innerHTML = '✅ Uploaded! <span class="loading"></span>';
+    statusDiv.innerHTML = '✅ Uploading... <span class="loading"></span>';
     
-    setTimeout(() => {
-        statusDiv.innerHTML = '✅ Saved successfully!';
-    }, 1500);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const timestamp = new Date().toLocaleString();
+        set(ref(db, `rooms/${roomCode}/uploads/${playerName}/${Date.now()}`), {
+            image: e.target.result,
+            timestamp: timestamp,
+            name: playerName
+        });
+        
+        setTimeout(() => {
+            statusDiv.innerHTML = '✅ Saved successfully!';
+        }, 1500);
+    };
+    reader.readAsDataURL(file);
 };
+
+function viewUploadedSolutions() {
+    document.getElementById("upload-count").innerText = Object.keys(uploads).length;
+    const gallery = document.getElementById("gallery-container");
+    gallery.innerHTML = "";
+
+    if (Object.keys(uploads).length === 0) {
+        gallery.innerHTML = '<div class="no-uploads" style="grid-column: 1/-1;"><p>📭</p><p>No solutions uploaded yet</p></div>';
+        navigate("page-host-uploads");
+        return;
+    }
+
+    Object.entries(uploads).forEach(([studentName, solutions]) => {
+        if (typeof solutions === 'object') {
+            Object.entries(solutions).forEach(([id, data]) => {
+                if (data.image) {
+                    const item = document.createElement("div");
+                    item.className = "gallery-item";
+                    item.innerHTML = `
+                        <img src="${data.image}" alt="${studentName}">
+                        <div class="gallery-item-label">${studentName}</div>
+                    `;
+                    gallery.appendChild(item);
+                }
+            });
+        }
+    });
+
+    navigate("page-host-uploads");
+}
 
 window.backToLobby = function() {
     location.reload();
