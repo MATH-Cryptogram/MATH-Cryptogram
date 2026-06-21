@@ -679,7 +679,6 @@ function playSuccessSound() {
     setTimeout(() => playSound(784, 0.3), 200);
 }
 
-// Background Music: replaced with a calmer pad + arpeggio to match requested mood
 function playBackgroundMusic() {
     try {
         if (!audioContext) initAudio();
@@ -706,18 +705,11 @@ function playBackgroundMusic() {
             if (!bgMusicPlaying) return;
             const t = audioContext.currentTime;
 
-            // soft pad chord (G major-ish)
             [196.00, 246.94, 293.66].forEach((f, i) => createNote(f, t, 2.8, 'sine', 0.02));
-
-            // slow arpeggio to add motion
             createNote(392.00, t + 0.25, 0.6, 'triangle', 0.04);
             createNote(329.63, t + 0.7, 0.6, 'triangle', 0.035);
             createNote(440.00, t + 1.15, 0.6, 'triangle', 0.035);
-
-            // light bell/pluck for accent
             createNote(659.25, t + 1.75, 0.35, 'sine', 0.02);
-
-            // gentle sub-bass pulse
             createNote(98.00, t + 0.0, 1.6, 'sine', 0.015);
 
             setTimeout(loop, 2800);
@@ -842,9 +834,8 @@ const gameData = [
 let roomCode = "", playerName = "", isHost = false, score = 0, currentLevelIndex = 0, timerInterval, startTime;
 let hostTimerInterval;
 let uploads = {};
-let localGameStarted = false; // prevent duplicate local starts
+let localGameStarted = false;
 
-// Auto-fill join code (and optional player name) from URL when opened via QR scanner
 (function autoFillRoomFromURL(){
     try {
         const params = new URLSearchParams(window.location.search);
@@ -864,7 +855,6 @@ let localGameStarted = false; // prevent duplicate local starts
     } catch(e) {}
 })();
 
-// Central room listener: keeps clients in sync with host (gameStarted, level)
 function setupRoomListeners(room) {
     if (!room) return;
     try {
@@ -873,13 +863,11 @@ function setupRoomListeners(room) {
             const data = snapshot.val();
             if (!data) return;
 
-            // Start game when host flips gameStarted to true
             if (data.gameStarted === true && !isHost && !localGameStarted) {
                 localGameStarted = true;
                 startGame();
             }
 
-            // Update level indicators when level changes
             if (data.level) {
                 const lvlText = 'LEVEL ' + data.level;
                 const lvlIndicator = document.getElementById('lvl-indicator');
@@ -934,9 +922,7 @@ window.startAsHost = function() {
         new QRCode(qrContainer, { text: joinURL, width: 128, height: 128 });
     } catch(e) {}
 
-    // keep clients synced to this room
     setupRoomListeners(roomCode);
-
     navigate("page-scoreboard");
 
     onValue(ref(db, "rooms/" + roomCode + "/players"), (snapshot) => {
@@ -971,16 +957,12 @@ window.joinRoom = function() {
     }
 
     set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0 });
-
-    // Set up persistent room listener so this client reacts when host starts the game
     setupRoomListeners(roomCode);
-
     navigate("page-scoreboard");
 };
 
 window.hostStartGame = function() {
     update(ref(db, "rooms/" + roomCode), { gameStarted: true, level: 1 });
-    // mark local host as started and begin host flow
     localGameStarted = true;
     startGame();
 };
@@ -992,69 +974,181 @@ function startGame() {
     startTime = new Date();
     let timeLeft = 180;
 
-    // Auto-play background music when game starts
     playBackgroundMusic();
 
     const timerDisplay = document.getElementById("timer");
+    const hostTimerDisplay = document.getElementById("host-timer");
+    
     function updateTimer() {
         const mins = Math.floor(timeLeft / 60);
         const secs = timeLeft % 60;
-        timerDisplay.innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
+        const timeStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        if (timerDisplay) timerDisplay.innerText = timeStr;
+        if (hostTimerDisplay) hostTimerDisplay.innerText = timeStr;
         
-        if (timeLeft <= 30) {
+        if (timeLeft <= 30 && timerDisplay) {
             timerDisplay.classList.add("warning");
         }
-
+        
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
-            endGame();
+            timeUp();
+        } else {
+            timeLeft--;
         }
-        timeLeft--;
     }
 
-    updateTimer();
     timerInterval = setInterval(updateTimer, 1000);
+    updateTimer();
 
-    if (isHost) {
-        navigate("page-host-game");
-        startHostTimer(timeLeft);
+    if (!isHost) {
+        navigate("page-game");
     } else {
-        renderProblem();
+        navigate("page-host-game");
+    }
+
+    loadLevel();
+}
+
+function loadLevel() {
+    if (currentLevelIndex >= gameData.length) {
+        endGame();
+        return;
+    }
+
+    const level = gameData[currentLevelIndex];
+    document.getElementById("clue-text").innerText = level.clue;
+    document.getElementById("cipher-output").innerText = level.phrase.split('').join(' ');
+    
+    const container = document.getElementById("problems-container");
+    container.innerHTML = "";
+
+    level.eqs.forEach((eq, idx) => {
+        const card = document.createElement("div");
+        card.className = "eq-card";
+        card.innerHTML = `
+            <div>${eq.h}</div>
+            <input type="number" id="ans-${idx}" placeholder="Answer" class="answer-input">
+        `;
+        container.appendChild(card);
+    });
+}
+
+window.checkAnswers = function() {
+    const level = gameData[currentLevelIndex];
+    let allCorrect = true;
+
+    level.eqs.forEach((eq, idx) => {
+        const input = document.getElementById(`ans-${idx}`);
+        const userAns = parseInt(input.value);
+        
+        if (userAns !== eq.a) {
+            allCorrect = false;
+            playErrorBeep();
+            input.style.border = "2px solid red";
+        } else {
+            playCorrectBeep();
+            input.style.border = "2px solid green";
+        }
+    });
+
+    if (allCorrect) {
+        score += 100;
+        playSuccessSound();
+        
+        if (isHost) {
+            update(ref(db, `rooms/${roomCode}`), { level: currentLevelIndex + 2 });
+        } else {
+            update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: score });
+        }
+
+        setTimeout(() => {
+            const level = gameData[currentLevelIndex];
+            document.getElementById("trivia-content").innerText = level.trivia;
+            document.getElementById("trivia-author").innerText = `— ${level.author}`;
+            document.getElementById("step-by-step").innerText = level.steps;
+            navigate("page-trivia");
+        }, 500);
+    }
+};
+
+window.nextLevel = function() {
+    currentLevelIndex++;
+    if (currentLevelIndex >= gameData.length) {
+        endGame();
+    } else {
+        loadLevel();
         navigate("page-game");
     }
+};
+
+function timeUp() {
+    endGame();
 }
 
-function startHostTimer(initialTime) {
-    let timeLeft = initialTime;
-    const hostTimerDisplay = document.getElementById("host-timer");
-    
-    function updateHostTimer() {
-        const mins = Math.floor(timeLeft / 60);
-        const secs = timeLeft % 60;
-        hostTimerDisplay.innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
+function endGame() {
+    clearInterval(timerInterval);
+    clearInterval(hostTimerInterval);
+    stopBackgroundMusic();
+
+    const elapsed = Math.floor((new Date() - startTime) / 1000);
+    const mins = Math.floor(elapsed / 60);
+    const secs = elapsed % 60;
+
+    if (isHost) {
+        navigate("page-host-uploads");
+        document.getElementById("upload-count").innerText = Object.keys(uploads).length;
         
-        if (timeLeft <= 30) {
-            hostTimerDisplay.style.color = "#D32F2F";
+        const gallery = document.getElementById("gallery-container");
+        gallery.innerHTML = "";
+        
+        if (Object.keys(uploads).length === 0) {
+            gallery.innerHTML = '<div class="no-uploads"><p>No submissions yet</p></div>';
+        } else {
+            Object.entries(uploads).forEach(([playerName, imageData]) => {
+                const item = document.createElement("div");
+                item.className = "gallery-item";
+                item.innerHTML = `
+                    <img src="${imageData}" alt="${playerName}">
+                    <div class="gallery-item-label">${playerName}</div>
+                `;
+                gallery.appendChild(item);
+            });
         }
-
-        if (timeLeft <= 0) {
-            clearInterval(hostTimerInterval);
-        }
-        timeLeft--;
+    } else {
+        document.getElementById("final-score").innerText = score;
+        document.getElementById("final-time").innerText = `${mins}m ${secs}s`;
+        navigate("page-end-game");
     }
-
-    updateHostTimer();
-    hostTimerInterval = setInterval(updateHostTimer, 1000);
 }
 
-function updatePlayerScore(newScore) {
-    if (roomCode && playerName && !isHost) {
-        const playerRef = ref(db, `rooms/${roomCode}/players/${playerName}`);
-        update(playerRef, { score: newScore });
-    }
-}
+window.handleSolutionUpload = function() {
+    const fileInput = document.getElementById("solution-upload");
+    const file = fileInput.files[0];
+    
+    if (!file) return;
 
-// ... rest of the script remains unchanged (truncated here for brevity in commit) ...
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const imageData = e.target.result;
+        set(ref(db, `rooms/${roomCode}/uploads/${playerName}`), imageData);
+        
+        const statusDiv = document.getElementById("upload-status");
+        statusDiv.className = "upload-status upload-success";
+        statusDiv.innerText = "✓ Photo uploaded successfully!";
+    };
+    reader.readAsDataURL(file);
+};
+
+window.backToLobby = function() {
+    roomCode = "";
+    playerName = "";
+    isHost = false;
+    score = 0;
+    currentLevelIndex = 0;
+    localGameStarted = false;
+    navigate("page-lobby");
+};
 
 </script>
 </body>
