@@ -679,7 +679,7 @@ function playSuccessSound() {
     setTimeout(() => playSound(784, 0.3), 200);
 }
 
-// Background Music: Upbeat Game Loop
+// Background Music: replaced with a calmer pad + arpeggio to match requested mood
 function playBackgroundMusic() {
     try {
         if (!audioContext) initAudio();
@@ -687,41 +687,43 @@ function playBackgroundMusic() {
         
         bgMusicPlaying = true;
         
-        function createNote(freq, startTime, duration, volume = 0.04) {
+        function createNote(freq, startTime, duration, type = 'sine', volume = 0.03) {
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
-            osc.type = 'sine';
+            osc.type = type;
             osc.connect(gain);
             gain.connect(audioContext.destination);
             osc.frequency.value = freq;
             gain.gain.setValueAtTime(0, startTime);
-            gain.gain.linearRampToValueAtTime(volume, startTime + 0.05);
-            gain.gain.linearRampToValueAtTime(0, startTime + duration - 0.05);
+            gain.gain.linearRampToValueAtTime(volume, startTime + 0.02);
+            gain.gain.linearRampToValueAtTime(0, startTime + duration);
             osc.start(startTime);
-            osc.stop(startTime + duration);
+            osc.stop(startTime + duration + 0.05);
             bgMusicOscillators.push(osc);
         }
-        
-        // Upbeat background loop (repeats every 2 seconds) - more energetic!
+
         const loop = () => {
             if (!bgMusicPlaying) return;
             const t = audioContext.currentTime;
-            
-            // Fast upbeat melody with positive chord progression
-            // C major pentatonic scale for happy feel
-            createNote(262, t, 0.25, 0.05);      // C4 - bright start
-            createNote(330, t + 0.25, 0.25, 0.05); // E4 - major third
-            createNote(392, t + 0.5, 0.25, 0.05);  // G4 - perfect fifth
-            createNote(523, t + 0.75, 0.3, 0.04);  // C5 - high bright
-            
-            createNote(294, t + 1.1, 0.25, 0.05); // D4 - energetic
-            createNote(392, t + 1.35, 0.25, 0.05); // G4 - sustain
-            createNote(330, t + 1.6, 0.35, 0.04); // E4 - smooth
-            
-            setTimeout(loop, 2000);
+
+            // soft pad chord (G major-ish)
+            [196.00, 246.94, 293.66].forEach((f, i) => createNote(f, t, 2.8, 'sine', 0.02));
+
+            // slow arpeggio to add motion
+            createNote(392.00, t + 0.25, 0.6, 'triangle', 0.04);
+            createNote(329.63, t + 0.7, 0.6, 'triangle', 0.035);
+            createNote(440.00, t + 1.15, 0.6, 'triangle', 0.035);
+
+            // light bell/pluck for accent
+            createNote(659.25, t + 1.75, 0.35, 'sine', 0.02);
+
+            // gentle sub-bass pulse
+            createNote(98.00, t + 0.0, 1.6, 'sine', 0.015);
+
+            setTimeout(loop, 2800);
         };
         loop();
-        
+
         document.getElementById("musicToggle").textContent = "🎵";
     } catch(e) {
         console.log("Background music unavailable");
@@ -840,6 +842,7 @@ const gameData = [
 let roomCode = "", playerName = "", isHost = false, score = 0, currentLevelIndex = 0, timerInterval, startTime;
 let hostTimerInterval;
 let uploads = {};
+let localGameStarted = false; // prevent duplicate local starts
 
 // Auto-fill join code (and optional player name) from URL when opened via QR scanner
 (function autoFillRoomFromURL(){
@@ -860,6 +863,33 @@ let uploads = {};
         }
     } catch(e) {}
 })();
+
+// Central room listener: keeps clients in sync with host (gameStarted, level)
+function setupRoomListeners(room) {
+    if (!room) return;
+    try {
+        const roomRef = ref(db, `rooms/${room}`);
+        onValue(roomRef, (snapshot) => {
+            const data = snapshot.val();
+            if (!data) return;
+
+            // Start game when host flips gameStarted to true
+            if (data.gameStarted === true && !isHost && !localGameStarted) {
+                localGameStarted = true;
+                startGame();
+            }
+
+            // Update level indicators when level changes
+            if (data.level) {
+                const lvlText = 'LEVEL ' + data.level;
+                const lvlIndicator = document.getElementById('lvl-indicator');
+                if (lvlIndicator) lvlIndicator.innerText = lvlText;
+                const hostGameLevel = document.getElementById('host-game-level');
+                if (hostGameLevel) hostGameLevel.innerText = lvlText;
+            }
+        });
+    } catch(e) { console.warn('Room listener setup failed', e); }
+}
 
 window.navigate = function(pageId) {
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
@@ -904,6 +934,9 @@ window.startAsHost = function() {
         new QRCode(qrContainer, { text: joinURL, width: 128, height: 128 });
     } catch(e) {}
 
+    // keep clients synced to this room
+    setupRoomListeners(roomCode);
+
     navigate("page-scoreboard");
 
     onValue(ref(db, "rooms/" + roomCode + "/players"), (snapshot) => {
@@ -939,21 +972,21 @@ window.joinRoom = function() {
 
     set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0 });
 
-    onValue(ref(db, `rooms/${roomCode}/gameStarted`), (snapshot) => {
-        if (snapshot.val() === true) {
-            startGame();
-        }
-    });
+    // Set up persistent room listener so this client reacts when host starts the game
+    setupRoomListeners(roomCode);
 
     navigate("page-scoreboard");
 };
 
 window.hostStartGame = function() {
     update(ref(db, "rooms/" + roomCode), { gameStarted: true, level: 1 });
+    // mark local host as started and begin host flow
+    localGameStarted = true;
     startGame();
 };
 
 function startGame() {
+    if (!localGameStarted) localGameStarted = true;
     score = 0;
     currentLevelIndex = 0;
     startTime = new Date();
