@@ -44,6 +44,89 @@
             50% { filter: brightness(1.1); }
         }
 
+        #page-lobby {
+            background: linear-gradient(135deg, #FF6B9D 0%, #C44569 25%, #FFA502 50%, #FF6B9D 75%, #C44569 100%) !important;
+            border: 3px solid #FF1744 !important;
+            box-shadow: 0 0 40px rgba(255, 107, 157, 0.6), 0 0 80px rgba(255, 165, 2, 0.3) !important;
+            animation: lobbyGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes lobbyGlow {
+            0%, 100% { 
+                box-shadow: 0 0 40px rgba(255, 107, 157, 0.6), 0 0 80px rgba(255, 165, 2, 0.3);
+            }
+            50% { 
+                box-shadow: 0 0 60px rgba(255, 107, 157, 0.8), 0 0 100px rgba(255, 165, 2, 0.5);
+            }
+        }
+
+        #page-lobby h1 {
+            color: #FFFFFF !important;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 255, 255, 0.4) !important;
+            font-size: 2rem !important;
+            letter-spacing: 3px;
+        }
+
+        #page-lobby p {
+            color: #FFFFFF !important;
+            font-size: 1.1rem !important;
+            font-weight: 600 !important;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        #page-lobby .join-section p {
+            color: #FFFFFF !important;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) !important;
+            font-weight: 700 !important;
+        }
+
+        #page-lobby input[type="text"] {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border: 2px solid #FF1744 !important;
+            color: #333 !important;
+            font-weight: 600;
+        }
+
+        #page-lobby input[type="text"]:focus {
+            border-color: #FFFFFF !important;
+            background: rgba(255, 255, 255, 1) !important;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6), inset 0 0 5px rgba(255, 107, 157, 0.2) !important;
+        }
+
+        #page-lobby button {
+            background: linear-gradient(135deg, #00D4FF, #0099FF) !important;
+            color: #FFFFFF !important;
+            border: 2px solid #00D4FF !important;
+            font-weight: 700;
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4) !important;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+
+        #page-lobby button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.6) !important;
+        }
+
+        #page-lobby button.primary {
+            background: linear-gradient(135deg, #FFD700, #FFA500) !important;
+            border: 2px solid #FFD700 !important;
+            color: #000000 !important;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4) !important;
+            font-size: 1.1rem !important;
+        }
+
+        #page-lobby button.primary:hover {
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.6) !important;
+        }
+
+        #page-lobby div[style*="text-align: center; margin: 20px 0; color: var(--secondary)"] {
+            color: #FFFFFF !important;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
         .page {
             width: 92%;
             max-width: 500px;
