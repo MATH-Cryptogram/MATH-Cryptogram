@@ -11,11 +11,11 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root { 
-            --primary: #3B82F6;
-            --secondary: #f56e6e;
-            --accent: #d9fad4;
+            --primary: #0EA5E9;
+            --secondary: #06B6D4;
+            --accent: #10B981;
             --light: #F0F9FF;
-            --dark: #a12810;
+            --dark: #0369A1;
         }
 
         html, body {
@@ -33,72 +33,73 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #533483 75%, #16213e 100%);
+            background: linear-gradient(135deg, #E0F4FF 0%, #B3E5FC 25%, #81D4FA 50%, #4FC3F7 75%, #B3E5FC 100%);
             background-attachment: fixed;
             margin: 0;
-            animation: gradientShift 15s ease infinite;
+            animation: gradientShift 20s ease infinite;
         }
 
         @keyframes gradientShift {
             0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.1); }
+            50% { filter: brightness(1.05); }
         }
 
         #page-lobby {
-            background: linear-gradient(135deg, #FF6B9D 0%, #C44569 25%, #FFA502 50%, #FF6B9D 75%, #C44569 100%) !important;
-            border: 3px solid #FF1744 !important;
-            box-shadow: 0 0 40px rgba(255, 107, 157, 0.6), 0 0 80px rgba(255, 165, 2, 0.3) !important;
+            background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 25%, #80DEEA 50%, #4DD0E1 75%, #26C6DA 100%) !important;
+            border: 3px solid #00838F !important;
+            box-shadow: 0 0 40px rgba(0, 188, 212, 0.5), 0 0 80px rgba(76, 175, 80, 0.3) !important;
             animation: lobbyGlow 3s ease-in-out infinite;
         }
 
         @keyframes lobbyGlow {
             0%, 100% { 
-                box-shadow: 0 0 40px rgba(255, 107, 157, 0.6), 0 0 80px rgba(255, 165, 2, 0.3);
+                box-shadow: 0 0 40px rgba(0, 188, 212, 0.5), 0 0 80px rgba(76, 175, 80, 0.3);
             }
             50% { 
-                box-shadow: 0 0 60px rgba(255, 107, 157, 0.8), 0 0 100px rgba(255, 165, 2, 0.5);
+                box-shadow: 0 0 60px rgba(0, 188, 212, 0.7), 0 0 100px rgba(76, 175, 80, 0.5);
             }
         }
 
         #page-lobby h1 {
-            color: #FFFFFF !important;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 255, 255, 0.4) !important;
+            color: #004D73 !important;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.7), 0 0 15px rgba(0, 150, 175, 0.3) !important;
             font-size: 2rem !important;
             letter-spacing: 3px;
+            font-weight: 800;
         }
 
         #page-lobby p {
-            color: #FFFFFF !important;
+            color: #00695C !important;
             font-size: 1.1rem !important;
             font-weight: 600 !important;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5) !important;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6) !important;
         }
 
         #page-lobby .join-section p {
-            color: #FFFFFF !important;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) !important;
+            color: #004D73 !important;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5) !important;
             font-weight: 700 !important;
         }
 
         #page-lobby input[type="text"] {
-            background: rgba(255, 255, 255, 0.95) !important;
-            border: 2px solid #FF1744 !important;
-            color: #333 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            border: 2px solid #0097A7 !important;
+            color: #004D73 !important;
             font-weight: 600;
         }
 
         #page-lobby input[type="text"]:focus {
-            border-color: #FFFFFF !important;
+            border-color: #00838F !important;
             background: rgba(255, 255, 255, 1) !important;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6), inset 0 0 5px rgba(255, 107, 157, 0.2) !important;
+            box-shadow: 0 0 15px rgba(0, 188, 212, 0.6), inset 0 0 5px rgba(76, 175, 80, 0.2) !important;
         }
 
         #page-lobby button {
-            background: linear-gradient(135deg, #00D4FF, #0099FF) !important;
+            background: linear-gradient(135deg, #00BCD4, #009688) !important;
             color: #FFFFFF !important;
-            border: 2px solid #00D4FF !important;
+            border: 2px solid #00897B !important;
             font-weight: 700;
-            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4) !important;
+            box-shadow: 0 6px 20px rgba(0, 188, 212, 0.4) !important;
             text-transform: uppercase;
             letter-spacing: 2px;
             transition: all 0.3s ease;
@@ -106,25 +107,25 @@
 
         #page-lobby button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.6) !important;
+            box-shadow: 0 10px 30px rgba(0, 188, 212, 0.6) !important;
         }
 
         #page-lobby button.primary {
-            background: linear-gradient(135deg, #FFD700, #FFA500) !important;
-            border: 2px solid #FFD700 !important;
-            color: #000000 !important;
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4) !important;
+            background: linear-gradient(135deg, #4CAF50, #66BB6A) !important;
+            border: 2px solid #388E3C !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4) !important;
             font-size: 1.1rem !important;
         }
 
         #page-lobby button.primary:hover {
-            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.6) !important;
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.6) !important;
         }
 
         #page-lobby div[style*="text-align: center; margin: 20px 0; color: var(--secondary)"] {
-            color: #FFFFFF !important;
+            color: #004D73 !important;
             font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6);
         }
 
         .page {
@@ -134,10 +135,10 @@
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)) 20px;
-            background: rgba(89, 37, 25, 0.95);
+            background: rgba(224, 247, 250, 0.98);
             border-radius: 20px;
-            border: 3px solid var(--dark);
-            box-shadow: 0 0 30px rgba(242, 231, 75, 0.4);
+            border: 3px solid #0097A7;
+            box-shadow: 0 0 30px rgba(0, 188, 212, 0.4);
             display: none;
         }
 
@@ -159,18 +160,18 @@
             text-align: justify;
             letter-spacing: 2px;
             text-transform: uppercase;
-            color: var(--primary);
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            color: #0097A7;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         h2 {
             font-size: 1.3rem;
             margin: 20px 0;
-            color: var(--secondary);
+            color: #00838F;
         }
 
         p {
-            color: #ddd;
+            color: #004D73;
         }
 
         input[type="text"],
@@ -180,10 +181,10 @@
             padding: 12px 15px;
             margin: 10px 0;
             font-size: 16px !important;
-            border: 2px solid var(--primary);
+            border: 2px solid #00BCD4;
             border-radius: 10px;
-            background: rgba(242, 231, 75, 0.1);
-            color: Black;
+            background: rgba(255, 255, 255, 0.95);
+            color: #004D73;
             outline: none;
             appearance: none;
             -webkit-appearance: none;
@@ -192,9 +193,9 @@
         input[type="text"]:focus,
         input[type="number"]:focus,
         input[type="file"]:focus {
-            border-color: var(--secondary);
-            background: rgba(242, 190, 34, 0.15);
-            box-shadow: 0 0 10px rgba(242, 190, 34, 0.3);
+            border-color: #0097A7;
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 10px rgba(0, 188, 212, 0.4);
         }
 
         button {
@@ -205,12 +206,12 @@
             font-weight: bold;
             border: none;
             border-radius: 10px;
-            background: linear-gradient(135deg, var(--secondary), var(--light));
-            color: Black;
+            background: linear-gradient(135deg, #00BCD4, #009688);
+            color: White;
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 1px;
-            box-shadow: 0 5px 15px rgba(191, 91, 4, 0.4);
+            box-shadow: 0 5px 15px rgba(0, 150, 175, 0.3);
         }
 
         button:active {
@@ -218,8 +219,8 @@
         }
 
         button.primary {
-            background: linear-gradient(135deg, var(--secondary), var(--light));
-            color: #000;
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: White;
         }
 
         .join-section {
@@ -232,7 +233,7 @@
 
         .join-section p {
             font-size: 0.9rem;
-            color: var(--primary);
+            color: #0097A7;
             text-transform: uppercase;
             letter-spacing: 1px;
             align-self: center;
@@ -249,40 +250,40 @@
             text-align: center;
             margin: 25px 0;
             padding: 20px;
-            background: rgba(191, 91, 4, 0.2);
-            border: 2px solid var(--primary);
+            background: rgba(0, 188, 212, 0.1);
+            border: 2px solid #00BCD4;
             border-radius: 15px;
-            color: var(--primary);
+            color: #0097A7;
             text-transform: uppercase;
         }
 
         .phrase-complete {
             animation: successPulse 0.8s ease-in-out;
-            color: #90EE90 !important;
+            color: #4CAF50 !important;
         }
 
         .clue-box {
-            background: rgba(242, 190, 34, 0.15);
+            background: rgba(76, 175, 80, 0.1);
             padding: 15px;
-            border-left: 4px solid var(--secondary);
+            border-left: 4px solid #4CAF50;
             border-radius: 8px;
             margin: 15px 0;
             font-style: italic;
-            color: #ddd;
+            color: #004D73;
         }
 
         .eq-card {
-            background: rgba(242, 231, 75, 0.08);
+            background: rgba(0, 188, 212, 0.08);
             padding: 15px;
             margin: 10px 0;
             border-radius: 12px;
-            border: 1px solid rgba(242, 190, 34, 0.3);
+            border: 1px solid rgba(0, 188, 212, 0.3);
         }
 
         .eq-card div {
             font-size: 1.1rem;
             margin-bottom: 10px;
-            color: var(--primary);
+            color: #0097A7;
         }
 
         .eq-card input {
@@ -316,23 +317,23 @@
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 2px solid rgba(242, 190, 34, 0.3);
+            border-bottom: 2px solid rgba(0, 188, 212, 0.3);
             gap: 10px;
         }
 
         .top-bar span {
             font-weight: bold;
-            color: var(--primary);
+            color: #0097A7;
             font-size: 1.1rem;
         }
 
         #timer {
-            color: var(--secondary);
+            color: #00838F;
             font-size: 1.3rem;
         }
 
         #timer.warning {
-            color: #e87a61;
+            color: #D32F2F;
             animation: pulse-warning 1s infinite;
         }
 
@@ -345,9 +346,9 @@
             width: auto !important;
             padding: 8px 12px !important;
             font-size: 0.8rem !important;
-            background: rgba(242, 190, 34, 0.3) !important;
-            color: var(--primary) !important;
-            border: 1px solid var(--primary) !important;
+            background: rgba(0, 188, 212, 0.2) !important;
+            color: #0097A7 !important;
+            border: 1px solid #0097A7 !important;
             box-shadow: none !important;
             margin: 0 !important;
         }
@@ -358,43 +359,43 @@
             align-items: center;
             padding: 14px 15px;
             margin: 8px 0;
-            background: rgba(242, 190, 34, 0.15);
+            background: rgba(0, 188, 212, 0.15);
             border-radius: 8px;
-            border-left: 4px solid var(--secondary);
+            border-left: 4px solid #00BCD4;
             font-weight: bold;
         }
 
         .score-row span:first-child {
-            color: var(--primary);
+            color: #0097A7;
             font-size: 1.1rem;
         }
 
         .score-row span:last-child {
-            color: var(--secondary);
+            color: #00838F;
             font-size: 1.2rem;
         }
 
         .solution-box {
-            background: rgba(144, 238, 144, 0.1);
+            background: rgba(76, 175, 80, 0.1);
             padding: 15px;
-            border-left: 4px solid #d1e0d1;
+            border-left: 4px solid #4CAF50;
             border-radius: 8px;
             margin: 15px 0;
-            color: #ddd;
+            color: #004D73;
             line-height: 1.6;
         }
 
         .upload-section {
-            background: rgba(242, 190, 34, 0.1);
+            background: rgba(0, 188, 212, 0.1);
             padding: 20px;
-            border: 2px dashed var(--secondary);
+            border: 2px dashed #00BCD4;
             border-radius: 12px;
             margin: 20px 0;
             text-align: center;
         }
 
         .upload-section p {
-            color: var(--primary);
+            color: #0097A7;
             margin-bottom: 10px;
             font-size: 0.9rem;
         }
@@ -412,15 +413,15 @@
         }
 
         .upload-success {
-            background: rgba(144, 238, 144, 0.2);
-            border: 1px solid #90EE90;
-            color: #90EE90;
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
+            color: #2E7D32;
         }
 
         .upload-error {
-            background: rgba(255, 107, 107, 0.2);
-            border: 1px solid #FF6B6B;
-            color: #FF6B6B;
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #F44336;
+            color: #C62828;
         }
 
         .gallery-container {
@@ -436,8 +437,8 @@
             aspect-ratio: 1;
             border-radius: 8px;
             overflow: hidden;
-            border: 2px solid var(--primary);
-            background: rgba(242, 231, 75, 0.1);
+            border: 2px solid #00BCD4;
+            background: rgba(0, 188, 212, 0.1);
         }
 
         .gallery-item img {
@@ -451,8 +452,8 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(89, 37, 25, 0.9);
-            color: var(--primary);
+            background: rgba(0, 97, 110, 0.9);
+            color: #FFFFFF;
             padding: 8px;
             font-size: 0.75rem;
             text-align: center;
@@ -461,7 +462,7 @@
         .no-uploads {
             text-align: center;
             padding: 30px;
-            color: var(--light);
+            color: #004D73;
             font-size: 0.9rem;
         }
 
@@ -484,7 +485,7 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: var(--primary);
+            background: #0097A7;
             animation: pulse 1.5s infinite;
         }
 
@@ -500,12 +501,12 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: var(--secondary);
+            background: linear-gradient(135deg, #00BCD4, #4CAF50);
             border: none;
             color: white;
             font-size: 1.5rem;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 150, 175, 0.4);
             z-index: 1000;
             display: flex;
             align-items: center;
@@ -522,11 +523,6 @@
     </style>
 </head>
 <body>
-    <!-- Background Music -->
-    <audio id="bgMusic" loop style="display: none;">
-        <source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav">
-    </audio>
-
     <!-- Music Toggle Button -->
     <button class="music-toggle" id="musicToggle" onclick="toggleMusic()">🎵</button>
 
@@ -567,12 +563,12 @@
 
     <!-- Success/Trivia Page -->
     <div id="page-trivia" class="page">
-        <h1 style="color: #9dedca; font-size: 2.5rem;">🎉 Success!</h1>
+        <h1 style="color: #4CAF50; font-size: 2.5rem;">🎉 Success!</h1>
         <p id="trivia-content" style="font-size: 1.1rem; line-height: 1.8; margin: 20px 0;"></p>
-        <p id="trivia-author" style="font-style: italic; color: var(--secondary); font-size: 0.9rem;"></p>
+        <p id="trivia-author" style="font-style: italic; color: #0097A7; font-size: 0.9rem;"></p>
         
         <div class="solution-box">
-            <strong style="color: #ede8e8;">📝 Solution Steps:</strong>
+            <strong style="color: #004D73;">📝 Solution Steps:</strong>
             <p id="step-by-step" style="margin-top: 10px;"></p>
         </div>
 
@@ -582,10 +578,10 @@
     <!-- Scoreboard Page (Host) -->
     <div id="page-scoreboard" class="page">
         <h1>🏆 Live Ranking Board</h1>
-        <h2 id="host-room-code" style="color: var(--secondary); text-align: center;"></h2>
+        <h2 id="host-room-code" style="color: #0097A7; text-align: center;"></h2>
         
         <div style="text-align: center; margin: 20px 0;">
-            <p style="font-size: 0.85rem; color: var(--light); margin-bottom: 10px;">📱 Scan or Enter Code</p>
+            <p style="font-size: 0.85rem; color: #004D73; margin-bottom: 10px;">📱 Scan or Enter Code</p>
             <div id="qr-code" style="background: white; padding: 15px; display: inline-block; border-radius: 12px;"></div>
         </div>
         
@@ -596,30 +592,30 @@
     <!-- Host Live Game Page -->
     <div id="page-host-game" class="page">
         <h1>🎮 Game In Progress</h1>
-        <h2 id="host-game-level" style="color: var(--secondary); text-align: center;">LEVEL 1</h2>
-        <p style="text-align: center; color: var(--light); margin: 15px 0;">
-            Time Left: <span id="host-timer" style="color: var(--primary); font-weight: bold;">03:00</span>
+        <h2 id="host-game-level" style="color: #0097A7; text-align: center;">LEVEL 1</h2>
+        <p style="text-align: center; color: #004D73; margin: 15px 0;">
+            Time Left: <span id="host-timer" style="color: #0097A7; font-weight: bold;">03:00</span>
         </p>
         
         <div id="host-scoreboard-container" style="margin: 20px 0;"></div>
         
-        <p style="text-align: center; color: var(--light); font-size: 0.85rem; margin-top: 20px;">
+        <p style="text-align: center; color: #004D73; font-size: 0.85rem; margin-top: 20px;">
             Players are solving... 
         </p>
     </div>
 
     <!-- End Game - Solution Upload Page -->
     <div id="page-end-game" class="page">
-        <h1 style="color: #90EE90;">🏆 Game Complete!</h1>
+        <h1 style="color: #4CAF50;">🏆 Game Complete!</h1>
         
-        <div style="background: rgba(242, 231, 75, 0.1); padding: 15px; border-radius: 12px; margin: 20px 0; border-left: 4px solid var(--primary);">
-            <p style="margin: 5px 0;"><strong>Final Score:</strong> <span id="final-score" style="color: var(--secondary); font-size: 1.3rem;">0</span></p>
-            <p style="margin: 5px 0;"><strong>Time:</strong> <span id="final-time" style="color: var(--light);">0m 0s</span></p>
+        <div style="background: rgba(0, 188, 212, 0.1); padding: 15px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #00BCD4;">
+            <p style="margin: 5px 0;"><strong>Final Score:</strong> <span id="final-score" style="color: #00838F; font-size: 1.3rem;">0</span></p>
+            <p style="margin: 5px 0;"><strong>Time:</strong> <span id="final-time" style="color: #004D73;">0m 0s</span></p>
         </div>
 
         <div class="upload-section">
             <p>📸 <strong>Show Your Work!</strong></p>
-            <p style="font-size: 0.8rem; color: var(--light);">Upload a photo of your solution (optional)</p>
+            <p style="font-size: 0.8rem; color: #004D73;">Upload a photo of your solution (optional)</p>
             <input type="file" id="solution-upload" accept="image/*" onchange="handleSolutionUpload()">
             <div id="upload-status"></div>
         </div>
@@ -630,8 +626,8 @@
     <!-- Host View Uploads Page -->
     <div id="page-host-uploads" class="page">
         <h1>📸 Student Solutions</h1>
-        <p style="text-align: center; color: var(--light); margin: 15px 0;">
-            Total: <span id="upload-count" style="color: var(--primary); font-weight: bold;">0</span> submissions
+        <p style="text-align: center; color: #004D73; margin: 15px 0;">
+            Total: <span id="upload-count" style="color: #0097A7; font-weight: bold;">0</span> submissions
         </p>
         
         <div id="gallery-container" class="gallery-container"></div>
@@ -674,25 +670,23 @@ function playSound(freq, dur) {
     } catch(e) {}
 }
 
-function playCorrectBeep() { playSound(784, 0.1); }
-function playErrorBeep() { playSound(200, 0.15); }
+function playCorrectBeep() { playSound(880, 0.1); }
+function playErrorBeep() { playSound(262, 0.15); }
 function playSuccessSound() {
     playSound(523, 0.15);
     setTimeout(() => playSound(659, 0.15), 100);
     setTimeout(() => playSound(784, 0.3), 200);
 }
 
-// Background Music: Ambient Game Loop
+// Background Music: Upbeat Game Loop
 function playBackgroundMusic() {
     try {
         if (!audioContext) initAudio();
         if (bgMusicPlaying) stopBackgroundMusic();
         
         bgMusicPlaying = true;
-        const now = audioContext.currentTime;
         
-        // Create an ambient background loop with multiple layers
-        function createNote(freq, startTime, duration, volume = 0.05) {
+        function createNote(freq, startTime, duration, volume = 0.04) {
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
             osc.type = 'sine';
@@ -700,23 +694,30 @@ function playBackgroundMusic() {
             gain.connect(audioContext.destination);
             osc.frequency.value = freq;
             gain.gain.setValueAtTime(0, startTime);
-            gain.gain.linearRampToValueAtTime(volume, startTime + 0.1);
-            gain.gain.linearRampToValueAtTime(0, startTime + duration - 0.1);
+            gain.gain.linearRampToValueAtTime(volume, startTime + 0.05);
+            gain.gain.linearRampToValueAtTime(0, startTime + duration - 0.05);
             osc.start(startTime);
             osc.stop(startTime + duration);
             bgMusicOscillators.push(osc);
         }
         
-        // Play ambient background loop (repeats every 4 seconds)
+        // Upbeat background loop (repeats every 2 seconds) - more energetic!
         const loop = () => {
             if (!bgMusicPlaying) return;
             const t = audioContext.currentTime;
-            // Base notes for ambient feeling
-            createNote(220, t, 1, 0.03);      // A3
-            createNote(277, t + 0.5, 1, 0.03); // C#4
-            createNote(330, t + 1, 1, 0.03);   // E4
-            createNote(247, t + 1.5, 1.5, 0.03); // B3
-            setTimeout(loop, 4000);
+            
+            // Fast upbeat melody with positive chord progression
+            // C major pentatonic scale for happy feel
+            createNote(262, t, 0.25, 0.05);      // C4 - bright start
+            createNote(330, t + 0.25, 0.25, 0.05); // E4 - major third
+            createNote(392, t + 0.5, 0.25, 0.05);  // G4 - perfect fifth
+            createNote(523, t + 0.75, 0.3, 0.04);  // C5 - high bright
+            
+            createNote(294, t + 1.1, 0.25, 0.05); // D4 - energetic
+            createNote(392, t + 1.35, 0.25, 0.05); // G4 - sustain
+            createNote(330, t + 1.6, 0.35, 0.04); // E4 - smooth
+            
+            setTimeout(loop, 2000);
         };
         loop();
         
@@ -979,7 +980,7 @@ function startHostTimer(initialTime) {
         hostTimerDisplay.innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
         
         if (timeLeft <= 30) {
-            hostTimerDisplay.style.color = "#FF6B6B";
+            hostTimerDisplay.style.color = "#D32F2F";
         }
 
         if (timeLeft <= 0) {
@@ -1050,12 +1051,12 @@ window.renderProblem = function() {
             if (val === eq.a) {
                 displayArr[idx] = currentLevel.phrase[idx] || "?";
                 cipherDisplay.innerText = displayArr.join(" ");
-                inputField.style.borderColor = "#90EE90";
+                inputField.style.borderColor = "#4CAF50";
                 playCorrectBeep();
             } else {
                 displayArr[idx] = "_";
                 cipherDisplay.innerText = displayArr.join(" ");
-                inputField.style.borderColor = "var(--primary)";
+                inputField.style.borderColor = "#00BCD4";
             }
         };
     });
