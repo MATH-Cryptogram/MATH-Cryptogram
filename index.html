@@ -33,8 +33,15 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            background: linear-gradient(135deg, #f7f7f7 0%, #3B82F6 50%, #FDFBF7 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #533483 75%, #16213e 100%);
+            background-attachment: fixed;
             margin: 0;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.1); }
         }
 
         .page {
@@ -402,9 +409,44 @@
             0%, 100% { opacity: 0.3; }
             50% { opacity: 1; }
         }
+
+        .music-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--secondary);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .music-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .music-toggle:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body>
+    <!-- Background Music -->
+    <audio id="bgMusic" loop style="display: none;">
+        <source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav">
+    </audio>
+
+    <!-- Music Toggle Button -->
+    <button class="music-toggle" id="musicToggle" onclick="toggleMusic()">🎵</button>
+
     <!-- Lobby Page -->
     <div id="page-lobby" class="page active">
         <h1>🎮 THE RATIONAL CRYPTOGRAM</h1>
@@ -521,6 +563,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 let audioContext;
+let bgMusicPlaying = false;
+let bgMusicOscillators = [];
+
 function initAudio() {
     try {
         if (!audioContext) {
@@ -553,6 +598,67 @@ function playSuccessSound() {
     setTimeout(() => playSound(659, 0.15), 100);
     setTimeout(() => playSound(784, 0.3), 200);
 }
+
+// Background Music: Ambient Game Loop
+function playBackgroundMusic() {
+    try {
+        if (!audioContext) initAudio();
+        if (bgMusicPlaying) stopBackgroundMusic();
+        
+        bgMusicPlaying = true;
+        const now = audioContext.currentTime;
+        
+        // Create an ambient background loop with multiple layers
+        function createNote(freq, startTime, duration, volume = 0.05) {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = 'sine';
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0, startTime);
+            gain.gain.linearRampToValueAtTime(volume, startTime + 0.1);
+            gain.gain.linearRampToValueAtTime(0, startTime + duration - 0.1);
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+            bgMusicOscillators.push(osc);
+        }
+        
+        // Play ambient background loop (repeats every 4 seconds)
+        const loop = () => {
+            if (!bgMusicPlaying) return;
+            const t = audioContext.currentTime;
+            // Base notes for ambient feeling
+            createNote(220, t, 1, 0.03);      // A3
+            createNote(277, t + 0.5, 1, 0.03); // C#4
+            createNote(330, t + 1, 1, 0.03);   // E4
+            createNote(247, t + 1.5, 1.5, 0.03); // B3
+            setTimeout(loop, 4000);
+        };
+        loop();
+        
+        document.getElementById("musicToggle").textContent = "🎵";
+    } catch(e) {
+        console.log("Background music unavailable");
+    }
+}
+
+function stopBackgroundMusic() {
+    bgMusicPlaying = false;
+    bgMusicOscillators.forEach(osc => {
+        try { osc.stop(); } catch(e) {}
+    });
+    bgMusicOscillators = [];
+    document.getElementById("musicToggle").textContent = "🔇";
+}
+
+window.toggleMusic = function() {
+    if (bgMusicPlaying) {
+        stopBackgroundMusic();
+    } else {
+        playBackgroundMusic();
+    }
+};
 
 const firebaseConfig = {
     apiKey: "AIzaSyCkoqlW8Fb1yhmvrAv7bBM50CyeCUjZKyA",
@@ -748,6 +854,9 @@ function startGame() {
     startTime = new Date();
     let timeLeft = 180;
 
+    // Auto-play background music when game starts
+    playBackgroundMusic();
+
     const timerDisplay = document.getElementById("timer");
     function updateTimer() {
         const mins = Math.floor(timeLeft / 60);
@@ -914,6 +1023,7 @@ window.nextLevel = function() {
 function endGame() {
     clearInterval(timerInterval);
     clearInterval(hostTimerInterval);
+    stopBackgroundMusic();
     
     if (isHost) {
         viewUploadedSolutions();
@@ -998,17 +1108,9 @@ function viewUploadedSolutions() {
 }
 
 window.backToLobby = function() {
-    location.reload();
+    stopBackgroundMusic();
+    navigate("page-lobby");
 };
-
-window.addEventListener('load', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlRoom = urlParams.get('room');
-    if (urlRoom) {
-        document.getElementById("join-code").value = urlRoom.toUpperCase();
-    }
-});
-
 </script>
 </body>
 </html>
