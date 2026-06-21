@@ -154,6 +154,11 @@
             50% { transform: scale(1.08); }
         }
 
+        @keyframes revealLetter {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
         h1 {
             font-size: 1.5rem;
             margin-bottom: 20px;
@@ -256,11 +261,25 @@
             border-radius: 15px;
             color: #0097A7;
             text-transform: uppercase;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .phrase-complete {
             animation: successPulse 0.8s ease-in-out;
             color: #4CAF50 !important;
+        }
+
+        .revealed-letter {
+            animation: revealLetter 0.4s ease-out;
+            color: #4CAF50;
+            font-weight: 900;
+        }
+
+        .hidden-letter {
+            color: #9ECAE1;
         }
 
         .clue-box {
@@ -835,6 +854,7 @@ let roomCode = "", playerName = "", isHost = false, score = 0, currentLevelIndex
 let hostTimerInterval;
 let uploads = {};
 let localGameStarted = false;
+let solvedIndices = []; // Track which equations have been solved
 
 (function autoFillRoomFromURL(){
     try {
@@ -1010,15 +1030,33 @@ function startGame() {
     loadLevel();
 }
 
+function updateCipherDisplay() {
+    const level = gameData[currentLevelIndex];
+    const phrase = level.phrase;
+    let display = "";
+    
+    for (let i = 0; i < phrase.length; i++) {
+        if (solvedIndices.includes(i)) {
+            display += `<span class="revealed-letter">${phrase[i]}</span>`;
+        } else {
+            display += `<span class="hidden-letter">_</span>`;
+        }
+        if (i < phrase.length - 1) display += " ";
+    }
+    
+    document.getElementById("cipher-output").innerHTML = display;
+}
+
 function loadLevel() {
     if (currentLevelIndex >= gameData.length) {
         endGame();
         return;
     }
 
+    solvedIndices = []; // Reset solved indices for new level
     const level = gameData[currentLevelIndex];
     document.getElementById("clue-text").innerText = level.clue;
-    document.getElementById("cipher-output").innerText = level.phrase.split('').join(' ');
+    updateCipherDisplay();
     
     const container = document.getElementById("problems-container");
     container.innerHTML = "";
@@ -1037,6 +1075,7 @@ function loadLevel() {
 window.checkAnswers = function() {
     const level = gameData[currentLevelIndex];
     let allCorrect = true;
+    let newCorrect = false;
 
     level.eqs.forEach((eq, idx) => {
         const input = document.getElementById(`ans-${idx}`);
@@ -1049,8 +1088,19 @@ window.checkAnswers = function() {
         } else {
             playCorrectBeep();
             input.style.border = "2px solid green";
+            
+            // Add this equation index to solved if not already there
+            if (!solvedIndices.includes(idx)) {
+                solvedIndices.push(idx);
+                newCorrect = true;
+            }
         }
     });
+
+    // Update cipher display to reveal newly solved letters
+    if (newCorrect) {
+        updateCipherDisplay();
+    }
 
     if (allCorrect) {
         score += 100;
@@ -1147,6 +1197,7 @@ window.backToLobby = function() {
     score = 0;
     currentLevelIndex = 0;
     localGameStarted = false;
+    solvedIndices = [];
     navigate("page-lobby");
 };
 
