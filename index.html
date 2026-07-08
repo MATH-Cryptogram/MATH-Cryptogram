@@ -9,28 +9,31 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
     <style>
         :root { --primary: #00d2ff; --bg: #0b0e14; --accent: #f1c40f; --success: #00ff88; --card-bg: rgba(23, 32, 42, 0.95); }
-         body { 
-            font-family: 'Segoe UI', sans-serif; 
-            color: white; 
-            margin: 0; 
-            overflow: hidden; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh;
-            background-color: #5c5c5c;
-            /* 8-Bit Brick Pattern */
-            background-image: 
-                linear-gradient(30deg, #474747 12%, transparent 12.5%, transparent 87%, #474747 87.5%, #474747),
-                linear-gradient(150deg, #474747 12%, transparent 12.5%, transparent 87%, #474747 87.5%, #474747),
-                linear-gradient(30deg, #474747 12%, transparent 12.5%, transparent 87%, #474747 87.5%, #474747),
-                linear-gradient(150deg, #474747 12%, transparent 12.5%, transparent 87%, #474747 87.5%, #474747),
-                linear-gradient(60deg, #7a7a7a 25%, transparent 25.5%, transparent 75%, #7a7a7a 75.5%, #7a7a7a),
-                linear-gradient(60deg, #7a7a7a 25%, transparent 25.5%, transparent 75%, #7a7a7a 75.5%, #7a7a7a);
-            /* Controls the brick size */
-            background-size: 40px 70px;
-            background-position: 0 0, 0 0, 20px 35px, 20px 35px, 0 0, 20px 35px;
-        }
+         body {
+    font-family: 'Segoe UI', sans-serif;
+    color: white;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    
+    /* Layout fixes for mobile & responsiveness */
+    overflow: hidden; 
+    touch-action: manipulation;
+    
+    /* 8-Bit Brick Pattern */
+    background-color: #5c5c5c;
+    background-image: 
+        linear-gradient(30deg, #474747 12%, transparent 12.5%, transparent 87%, #474747 87.5%, #474747),
+        linear-gradient(150deg, #474747 12%, transparent 12.5%, transparent 87%, #474747 87.5%, #474747),
+        linear-gradient(30deg, #474747 12%, transparent 12.5%, transparent 87%, #474747 87.5%, #474747),
+        linear-gradient(150deg, #474747 12%, transparent 12.5%, transparent 87%, #474747 87.5%, #474747),
+        linear-gradient(60deg, #7a7a7a 25%, transparent 25.5%, transparent 75%, #7a7a7a 75.5%, #7a7a7a),
+        linear-gradient(60deg, #7a7a7a 25%, transparent 25.5%, transparent 75%, #7a7a7a 75.5%, #7a7a7a);
+    background-size: 40px 70px;
+    background-position: 0 0, 0 0, 20px 35px, 20px 35px, 0 0, 20px 35px;
+}
 /* Animation for page switching */
 @keyframes slideUpFade {
     from { opacity: 0; transform: translateY(20px); filter: blur(5px); }
