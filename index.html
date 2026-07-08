@@ -42,7 +42,7 @@
             50% { filter: brightness(1.05); }
         }
 
-        #page-lobby, #page-avatar-select, #page-scoreboard {
+        #page-lobby, #page-avatar-select, #page-scoreboard, #page-end-game {
             background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 25%, #80DEEA 50%, #4DD0E1 75%, #26C6DA 100%) !important;
             border: 3px solid #00838F !important;
             box-shadow: 0 0 40px rgba(0, 188, 212, 0.5), 0 0 80px rgba(76, 175, 80, 0.3) !important;
@@ -121,14 +121,15 @@
             align-items: center;
         }
 
+        /* Modernized Illustrated/Badged Avatar Matrix Grid Style [cite: 27, 28] */
         .avatar-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
             margin: 15px 0;
             padding: 15px;
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
             border: 2px solid #00BCD4;
             max-height: 260px;
             overflow-y: auto;
@@ -136,18 +137,26 @@
         .avatar-option {
             font-size: 2.2rem;
             text-align: center;
-            padding: 8px;
+            padding: 10px;
             cursor: pointer;
-            border-radius: 12px;
-            transition: all 0.2s;
-            border: 2px solid transparent;
-            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            width: 65px;
+            height: 65px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid rgba(0, 188, 212, 0.2);
+            background: linear-gradient(135deg, #FFFFFF, #E0F7FA);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.06);
         }
-        .avatar-option:hover { transform: scale(1.1); }
+        .avatar-option:hover { transform: scale(1.15); box-shadow: 0 6px 12px rgba(0,188,212,0.3); }
         .avatar-option.selected {
-            background-color: #00BCD4;
-            border-color: #00838F;
-            transform: scale(1.05);
+            background: linear-gradient(135deg, #00BCD4, #0097A7);
+            border-color: #006064;
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 15px rgba(0,188,212,0.6);
         }
 
         .lobby-users-display {
@@ -161,15 +170,66 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             padding: 12px;
-            border-radius: 12px;
+            border-radius: 14px;
             border: 2px solid #0097A7;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             text-align: center;
         }
-        .lobby-user-avatar { font-size: 2.8rem; margin-bottom: 5px; }
+        .lobby-user-avatar { 
+            font-size: 2.4rem; 
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #E0F7FA, #B2EBF2);
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #00BCD4;
+        }
         .lobby-user-name { font-size: 0.9rem; font-weight: bold; color: #004D73; word-break: break-all; }
+
+        /* 3D Winners Podium UI Styling [cite: 143] */
+        .podium-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 12px;
+            margin: 30px auto 15px auto;
+            height: 180px;
+            width: 100%;
+            max-width: 400px;
+            padding-bottom: 5px;
+        }
+        .podium-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+            animation: growPodium 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+        }
+        @keyframes growPodium { from { transform: scaleY(0); transform-origin: bottom; } to { transform: scaleY(1); } }
+        .podium-avatar { font-size: 2.3rem; margin-bottom: 6px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); }
+        .podium-name { font-size: 0.85rem; font-weight: bold; color: #004D73; margin-bottom: 6px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
+        .podium-block {
+            width: 100%;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            position: relative;
+        }
+        .podium-rank { font-size: 1.6rem; font-weight: 900; color: rgba(255,255,255,0.9); text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .podium-score { font-size: 0.75rem; font-weight: bold; color: rgba(255,255,255,0.85); }
+        .podium-1st { height: 110px; background: linear-gradient(to top, #D4AF37, #FFD700); border: 2px solid #B8860B; }
+        .podium-2nd { height: 80px; background: linear-gradient(to top, #AAA, #E6E6E6); border: 2px solid #888; }
+        .podium-3rd { height: 55px; background: linear-gradient(to top, #CD7F32, #D2691E); border: 2px solid #8B4513; }
 
         .phrase-display {
             font-size: 2.2rem;
@@ -239,7 +299,7 @@
 
         .gallery-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
         .gallery-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 2px solid #00BCD4; background: rgba(0, 188, 212, 0.1); transition: transform 0.2s ease; }
-        .gallery-item:hover { transform: scale(1.02); }
+        .gallery-item:hover { transform: scale(1.03); }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
         .gallery-item-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0, 97, 110, 0.9); color: #FFFFFF; padding: 8px; font-size: 0.75rem; text-align: center; }
         .no-uploads { text-align: center; padding: 30px; color: #004D73; font-size: 0.9rem; }
@@ -250,7 +310,7 @@
             cursor: pointer; box-shadow: 0 4px 12px rgba(0, 150, 175, 0.4); z-index: 1000; display: flex; align-items: center; justify-content: center;
         }
 
-        /* Photo Viewer Lightbox Overlay Styling for Teachers */
+        /* Photo Lightbox Overlay for viewing student images [cite: 74, 75] */
         .zoom-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85); z-index: 2000;
@@ -258,20 +318,15 @@
             touch-action: none;
         }
         .zoom-modal-content {
-            width: 90%; height: 70%; display: flex; justify-content: center; align-items: center;
+            width: 90%; height: 65%; display: flex; justify-content: center; align-items: center;
             overflow: hidden; position: relative; border-radius: 12px; background: rgba(255,255,255,0.05);
         }
         .zoom-modal-content img {
             max-width: 100%; max-height: 100%; object-fit: contain;
             transition: transform 0.15s ease-out; transform-origin: center center;
         }
-        .zoom-controls-wrapper {
-            display: flex; gap: 15px; margin-top: 20px; z-index: 2100;
-        }
-        .zoom-btn {
-            width: auto !important; padding: 10px 20px !important; margin: 0 !important;
-            font-size: 0.9rem !important; border-radius: 8px !important;
-        }
+        .zoom-controls-wrapper { display: flex; gap: 15px; margin-top: 20px; z-index: 2100; }
+        .zoom-btn { width: auto !important; padding: 10px 20px !important; margin: 0 !important; font-size: 0.9rem !important; border-radius: 8px !important; }
         .zoom-close-btn {
             position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.6);
             color: #fff; border: 2px solid #fff; border-radius: 50%; width: 44px; height: 44px;
@@ -369,6 +424,8 @@
     <div id="page-end-game" class="page">
         <h1>🏆 Game Complete!</h1>
 
+        <div id="game-winners-podium" class="podium-wrapper"></div>
+
         <div style="background: rgba(0, 188, 212, 0.1); padding: 15px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #00BCD4;">
             <p style="margin: 5px 0;"><strong>Final Score:</strong> <span id="final-score" style="color: #00838F; font-size: 1.3rem;">0</span></p>
             <p style="margin: 5px 0;"><strong>Time:</strong> <span id="final-time" style="color: #004D73;">0m 0s</span></p>
@@ -386,6 +443,9 @@
 
     <div id="page-host-uploads" class="page">
         <h1>📸 Student Solutions</h1>
+        
+        <div id="host-winners-podium" class="podium-wrapper"></div>
+
         <p style="text-align: center; color: #004D73; margin: 15px 0;">
             Total: <span id="upload-count" style="color: #0097A7; font-weight: bold;">0</span> submissions
         </p>
@@ -416,6 +476,7 @@ let audioContext;
 let bgMusicPlaying = false;
 let bgMusicOscillators = [];
 let targetImageScale = 1;
+let currentLobbyDataSnapshot = null;
 
 function initAudio() {
     try { if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
@@ -493,7 +554,7 @@ const db = getDatabase(app);
 
 const avatarPool = [
     "🦊", "🦁", "🐼", "🐯", "🐨", "🐸", "🦩", "🦉", "🐺", "🦥", "🐹", "🐰", "🦆", "🦌", "🐱", "🐶",
-    "🤖", "👽", "👻", "🦄", "🐉", "🦖", "🦅", "🦁", "🐵", "🐧", "🐙", "🐬", "🧙‍♂️", "🥷", "🧑‍🚀", "🤠",
+    "🤖", "👽", "👻", "🦄", "🐉", "🦖", "🦅", "🐵", "🐧", "🐙", "🐬", "🧙‍♂️", "🥷", "🧑‍🚀", "🤠",
     "💎", "👑", "🚀", "🌟", "🔥", "🔮", "🍕", "🎮", "🎯", "🍀", "🎨", "🎭"
 ];
 let selectedAvatar = "🦊";
@@ -532,6 +593,7 @@ window.confirmAndJoinLobby = function() {
     setupRoomListeners(roomCode);
     navigate("page-scoreboard");
     onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
+        currentLobbyDataSnapshot = snapshot.val();
         renderScoreboardData(snapshot, ["scoreboard-container"]);
     });
 };
@@ -620,6 +682,62 @@ function renderScoreboardData(snapshot, containers) {
     });
 }
 
+/* Beautiful Podium Generator logic for active winners view [cite: 143] */
+function constructWinnersPodium(podiumContainerId) {
+    const targetElement = document.getElementById(podiumContainerId);
+    if (!targetElement || !currentLobbyDataSnapshot) return;
+
+    const sortedPlayers = Object.entries(currentLobbyDataSnapshot)
+        .sort((a, b) => (b[1].score || 0) - (a[1].score || 0));
+
+    const first = sortedPlayers[0] ? { name: sortedPlayers[0][0], ...sortedPlayers[0][1] } : null;
+    const second = sortedPlayers[1] ? { name: sortedPlayers[1][0], ...sortedPlayers[1][1] } : null;
+    const third = sortedPlayers[2] ? { name: sortedPlayers[2][0], ...sortedPlayers[2][1] } : null;
+
+    let html = '';
+
+    // 2nd Place Column
+    if (second) {
+        html += `
+        <div class="podium-column" style="animation-delay: 0.2s">
+            <div class="podium-avatar">${second.avatar || "👤"}</div>
+            <div class="podium-name">${second.name}</div>
+            <div class="podium-block podium-2nd">
+                <span class="podium-rank">2</span>
+                <span class="podium-score">${second.score} pts</span>
+            </div>
+        </div>`;
+    } else { html += '<div class="podium-column"></div>'; }
+
+    // 1st Place Column
+    if (first) {
+        html += `
+        <div class="podium-column" style="animation-delay: 0s">
+            <div class="podium-avatar">${first.avatar || "👤"}</div>
+            <div class="podium-name" style="font-weight: 900; color: #B8860B;">👑 ${first.name}</div>
+            <div class="podium-block podium-1st">
+                <span class="podium-rank">1</span>
+                <span class="podium-score">${first.score} pts</span>
+            </div>
+        </div>`;
+    }
+
+    // 3rd Place Column
+    if (third) {
+        html += `
+        <div class="podium-column" style="animation-delay: 0.4s">
+            <div class="podium-avatar">${third.avatar || "👤"}</div>
+            <div class="podium-name">${third.name}</div>
+            <div class="podium-block podium-3rd">
+                <span class="podium-rank">3</span>
+                <span class="podium-score">${third.score} pts</span>
+            </div>
+        </div>`;
+    } else { html += '<div class="podium-column"></div>'; }
+
+    targetElement.innerHTML = html;
+}
+
 function updateHostGalleryView(uploadsData) {
     const gallery = document.getElementById("gallery-container");
     if (!gallery) return;
@@ -685,6 +803,7 @@ window.startAsHost = function() {
     setupRoomListeners(roomCode);
     navigate("page-scoreboard");
     onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
+        currentLobbyDataSnapshot = snapshot.val();
         renderScoreboardData(snapshot, ["scoreboard-container", "host-scoreboard-container"]);
     });
     onValue(ref(db, `rooms/${roomCode}/uploads`), (snapshot) => {
@@ -858,11 +977,13 @@ function endGame() {
 
     if (isHost) {
         navigate("page-host-uploads");
+        constructWinnersPodium("host-winners-podium");
         updateHostGalleryView(uploads);
     } else {
         document.getElementById("final-score").innerText = score;
         document.getElementById("final-time").innerText = `${mins}m ${secs}s`;
         navigate("page-end-game");
+        constructWinnersPodium("game-winners-podium");
     }
 }
 
