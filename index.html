@@ -238,7 +238,8 @@
         .upload-error { background: rgba(244, 67, 54, 0.2); border: 1px solid #F44336; color: #C62828; }
 
         .gallery-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-        .gallery-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 2px solid #00BCD4; background: rgba(0, 188, 212, 0.1); }
+        .gallery-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 2px solid #00BCD4; background: rgba(0, 188, 212, 0.1); transition: transform 0.2s ease; }
+        .gallery-item:hover { transform: scale(1.02); }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
         .gallery-item-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0, 97, 110, 0.9); color: #FFFFFF; padding: 8px; font-size: 0.75rem; text-align: center; }
         .no-uploads { text-align: center; padding: 30px; color: #004D73; font-size: 0.9rem; }
@@ -247,6 +248,34 @@
             position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%;
             background: linear-gradient(135deg, #00BCD4, #4CAF50); border: none; color: white; font-size: 1.5rem;
             cursor: pointer; box-shadow: 0 4px 12px rgba(0, 150, 175, 0.4); z-index: 1000; display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Photo Viewer Lightbox Overlay Styling for Teachers */
+        .zoom-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); z-index: 2000;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            touch-action: none;
+        }
+        .zoom-modal-content {
+            width: 90%; height: 70%; display: flex; justify-content: center; align-items: center;
+            overflow: hidden; position: relative; border-radius: 12px; background: rgba(255,255,255,0.05);
+        }
+        .zoom-modal-content img {
+            max-width: 100%; max-height: 100%; object-fit: contain;
+            transition: transform 0.15s ease-out; transform-origin: center center;
+        }
+        .zoom-controls-wrapper {
+            display: flex; gap: 15px; margin-top: 20px; z-index: 2100;
+        }
+        .zoom-btn {
+            width: auto !important; padding: 10px 20px !important; margin: 0 !important;
+            font-size: 0.9rem !important; border-radius: 8px !important;
+        }
+        .zoom-close-btn {
+            position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.6);
+            color: #fff; border: 2px solid #fff; border-radius: 50%; width: 44px; height: 44px;
+            font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2200;
         }
     </style>
 </head>
@@ -259,12 +288,12 @@
         <p style="text-align: center; color: #004D73; margin-bottom: 25px;">Solve equations to Decode</p>
 
         <div class="join-section">
-            <p>👤 Enter Your Name</p>
+            <p><b>👤 Enter Your Name</b></p>
             <input type="text" id="player-name" placeholder="Your name" maxlength="20">
         </div>
 
         <div class="join-section">
-            <p>🎯 Game Room Code</p>
+            <p><b>🎯 Game Room Code</b></p>
             <input type="text" id="join-code" placeholder="XXXXXX" maxlength="6" style="text-transform: uppercase;">
             <button onclick="goToAvatarSelection()">Next ➡️</button>
         </div>
@@ -367,6 +396,18 @@
         </div>
     </div>
 
+    <div id="teacher-zoom-modal" class="zoom-modal-overlay">
+        <div class="zoom-close-btn" onclick="closeZoomModal()">&times;</div>
+        <div class="zoom-modal-content">
+            <img id="zoom-target-image" src="" alt="Submission Preview">
+        </div>
+        <div class="zoom-controls-wrapper">
+            <button class="zoom-btn" onclick="applyZoomAdjustment(0.25)">🔍+ Zoom In</button>
+            <button class="zoom-btn" onclick="applyZoomAdjustment(-0.25)">🔍- Zoom Out</button>
+            <button class="zoom-btn primary" onclick="resetZoomScale()">🔄 Reset</button>
+        </div>
+    </div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -374,6 +415,7 @@ import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/
 let audioContext;
 let bgMusicPlaying = false;
 let bgMusicOscillators = [];
+let targetImageScale = 1;
 
 function initAudio() {
     try { if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
@@ -417,7 +459,6 @@ function playBackgroundMusic() {
             osc.start(startTime); osc.stop(startTime + duration + 0.05);
             bgMusicOscillators.push(osc);
         };
-
         const loop = () => {
             if (!bgMusicPlaying) return;
             const t = audioContext.currentTime;
@@ -439,7 +480,6 @@ function stopBackgroundMusic() {
 }
 
 window.toggleMusic = function() { bgMusicPlaying ? stopBackgroundMusic() : playBackgroundMusic(); };
-
 const firebaseConfig = {
     apiKey: "AIzaSyCkoqlW8Fb1yhmvrAv7bBM50CyeCUjZKyA",
     authDomain: "rational-cryptogram-game.firebaseapp.com",
@@ -448,7 +488,6 @@ const firebaseConfig = {
     messagingSenderId: "654271677921",
     appId: "1:654271677921:web:ac7245dfd3b376a55e3ea0"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
@@ -492,7 +531,6 @@ window.confirmAndJoinLobby = function() {
     set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0, avatar: selectedAvatar });
     setupRoomListeners(roomCode);
     navigate("page-scoreboard");
-
     onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
         renderScoreboardData(snapshot, ["scoreboard-container"]);
     });
@@ -588,7 +626,6 @@ function updateHostGalleryView(uploadsData) {
     
     gallery.innerHTML = "";
     const keys = Object.keys(uploadsData);
-    
     const countEl = document.getElementById("upload-count");
     if (countEl) countEl.innerText = keys.length;
 
@@ -598,11 +635,36 @@ function updateHostGalleryView(uploadsData) {
         Object.entries(uploadsData).forEach(([pName, imageData]) => {
             const item = document.createElement("div");
             item.className = "gallery-item";
+            item.style.cursor = "pointer";
             item.innerHTML = `<img src="${imageData}"><div class="gallery-item-label">${pName}</div>`;
+            item.onclick = () => window.launchTeacherZoomModal(imageData);
             gallery.appendChild(item);
         });
     }
 }
+
+window.launchTeacherZoomModal = function(imgSrc) {
+    const modal = document.getElementById("teacher-zoom-modal");
+    const targetImg = document.getElementById("zoom-target-image");
+    targetImg.src = imgSrc;
+    targetImg.style.transform = "scale(1)";
+    targetImageScale = 1;
+    modal.style.display = "flex";
+};
+
+window.closeZoomModal = function() {
+    document.getElementById("teacher-zoom-modal").style.display = "none";
+};
+
+window.applyZoomAdjustment = function(amount) {
+    targetImageScale = Math.max(0.5, Math.min(4.0, targetImageScale + amount));
+    document.getElementById("zoom-target-image").style.transform = `scale(${targetImageScale})`;
+};
+
+window.resetZoomScale = function() {
+    targetImageScale = 1;
+    document.getElementById("zoom-target-image").style.transform = "scale(1)";
+};
 
 window.startAsHost = function() {
     playerName = document.getElementById("player-name").value.trim();
@@ -612,7 +674,6 @@ window.startAsHost = function() {
     roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
     set(ref(db, "rooms/" + roomCode), { gameStarted: false, level: 1 });
     document.getElementById("host-room-code").innerText = "🎮 Room Code: " + roomCode;
-    
     document.getElementById("start-game-btn").style.display = "block";
     document.getElementById("waiting-msg").style.display = "none";
 
@@ -623,11 +684,9 @@ window.startAsHost = function() {
 
     setupRoomListeners(roomCode);
     navigate("page-scoreboard");
-
     onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
         renderScoreboardData(snapshot, ["scoreboard-container", "host-scoreboard-container"]);
     });
-
     onValue(ref(db, `rooms/${roomCode}/uploads`), (snapshot) => {
         uploads = snapshot.val() || {};
         updateHostGalleryView(uploads);
@@ -670,7 +729,6 @@ function startGame() {
     startTime = new Date();
     let timeLeft = 180;
     playBackgroundMusic();
-
     const timerDisplay = document.getElementById("timer");
     const hostTimerDisplay = document.getElementById("host-timer");
 
@@ -688,7 +746,6 @@ function startGame() {
 
     timerInterval = setInterval(updateTimer, 1000);
     updateTimer();
-
     if (isHost) { navigate("page-host-game"); } else { navigate("page-game"); loadLevel(); }
 }
 
@@ -748,7 +805,6 @@ window.liveCheckAnswer = function(idx) {
 window.checkAnswers = function() {
     const level = gameData[currentLevelIndex];
     let allCorrect = true;
-
     level.eqs.forEach((eq, idx) => {
         const input = document.getElementById(`ans-${idx}`);
         const userAns = parseInt(input.value);
@@ -764,7 +820,6 @@ window.checkAnswers = function() {
             }
         }
     });
-
     updateCipherDisplay();
 
     if (allCorrect) {
@@ -798,7 +853,8 @@ function endGame() {
     clearInterval(timerInterval);
     stopBackgroundMusic();
     const elapsed = Math.floor((new Date() - startTime) / 1000);
-    const mins = Math.floor(elapsed / 60); const secs = elapsed % 60;
+    const mins = Math.floor(elapsed / 60);
+    const secs = elapsed % 60;
 
     if (isHost) {
         navigate("page-host-uploads");
@@ -814,7 +870,6 @@ window.handleSolutionUpload = function() {
     const fileInput = document.getElementById("solution-upload");
     const file = fileInput.files[0];
     if (!file) return;
-
     const statusDiv = document.getElementById("upload-status");
     statusDiv.className = "upload-status";
     statusDiv.innerText = "Processing & Compressing Image...";
@@ -829,12 +884,10 @@ window.handleSolutionUpload = function() {
             
             canvas.width = MAX_WIDTH;
             canvas.height = img.height * scale;
-
             const ctx2d = canvas.getContext("2d");
             ctx2d.drawImage(img, 0, 0, canvas.width, canvas.height);
             
             const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
-            
             set(ref(db, `rooms/${roomCode}/uploads/${playerName}`), compressedBase64)
                 .then(() => {
                     statusDiv.className = "upload-status upload-success";
@@ -851,16 +904,15 @@ window.handleSolutionUpload = function() {
 };
 
 window.backToLobby = function() {
-    roomCode = ""; playerName = ""; isHost = false; score = 0; currentLevelIndex = 0; localGameStarted = false; solvedIndices = [];
+    roomCode = ""; playerName = "";
+    isHost = false; score = 0; currentLevelIndex = 0; localGameStarted = false; solvedIndices = [];
     navigate("page-lobby");
 };
-
 window.navigate = function(pageId) {
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
     const page = document.getElementById(pageId);
     if (page) page.classList.add("active");
 };
-
 window.toggleFullScreen = function() {
     const elem = document.documentElement;
     if (!document.fullscreenElement) {
@@ -869,7 +921,6 @@ window.toggleFullScreen = function() {
         document.exitFullscreen();
     }
 };
-
 try {
     const params = new URLSearchParams(window.location.search);
     const room = params.get('room') || params.get('code');
