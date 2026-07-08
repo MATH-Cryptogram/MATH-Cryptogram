@@ -545,39 +545,12 @@ window.goToAvatarSelection = function() {
     navigate("page-avatar-select");
 };
 
-function renderAvatarSelector() {
-    const grid = document.getElementById("avatar-selector-grid");
-    if (!grid) return;
-    grid.innerHTML = ""; // Clear existing
-
-    // Loop for 50 avatars (10 columns x 5 rows)
-    for (let i = 0; i < 50; i++) {
-        const col = i % 10;
-        const row = Math.floor(i / 10);
-        
-        const wrapper = document.createElement("div");
-        wrapper.className = "avatar-option";
-        
-        // Use the CSS class for the sprite rendering
-        wrapper.innerHTML = `<div class="avatar-render" 
-            style="background-position: ${col * 11.11}% ${row * 25}%"></div>`;
-        
-        wrapper.onclick = () => {
-            document.querySelectorAll(".avatar-option").forEach(el => el.classList.remove("selected"));
-            wrapper.classList.add("selected");
-            // Store coordinates as an object
-            selectedAvatar = { col, row }; 
-        };
-        grid.appendChild(wrapper);
-    }
-}
-
 window.confirmAndJoinLobby = function() {
     // Save the coordinate object instead of the string emoji
-    set(ref(db, `rooms/${roomCode}/players/${playerName}`), { 
-        score: 0, 
-        avatar: selectedAvatar 
-    });
+    set(ref(db, `rooms/${roomCode}/players/${playerName}`), {
+    score: 0,
+    avatarIndex: selectedAvatarIndex
+});
     setupRoomListeners(roomCode);
     navigate("page-scoreboard");
 };
@@ -625,6 +598,7 @@ const gameData = [
 ];
 
 let roomCode = "", playerName = "", isHost = false, score = 0, currentLevelIndex = 0, timerInterval, startTime;
+let selectedAvatarIndex = 0;
 let uploads = {};
 let localGameStarted = false;
 let solvedIndices = [];
@@ -640,7 +614,22 @@ function renderScoreboardData(snapshot, containers) {
                 const card = document.createElement("div");
                 card.className = "lobby-user-card";
                 card.innerHTML = `
-                    <div class="lobby-user-avatar">${info.avatar || "👤"}</div>
+                    const avatarIndex = info.avatarIndex ?? 0;
+const col = avatarIndex % 10;
+const row = Math.floor(avatarIndex / 10);
+
+card.innerHTML = `
+<div class="lobby-user-avatar">
+    <div class="avatar-render"
+        style="
+            background-position:${col*11.11}% ${row*25}%;
+            width:55px;
+            height:55px;
+        ">
+    </div>
+</div>
+<div class="lobby-user-name">${name}</div>
+`;
                     <div class="lobby-user-name">${name}</div>
                 `;
                 visualGrid.appendChild(card);
@@ -657,8 +646,22 @@ function renderScoreboardData(snapshot, containers) {
                 sorted.forEach(([name, info], idx) => {
                     const div = document.createElement("div");
                     div.className = "score-row";
-                    const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '👤';
-                    div.innerHTML = `<span>${medal} <b style='font-size:1.25rem;line-height:1;'>${info.avatar || "👤"}</b> ${name}</span><span>${info.score || 0} pts</span>`;
+                    const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '';
+                    div.innerHTML = <span>${medal} ${avatarHTML} ${name}</span> <b style='font-size:1.25rem;line-height:1;'>const avatarIndex = info.avatarIndex ?? 0;
+const col = avatarIndex % 10;
+const row = Math.floor(avatarIndex / 10);
+
+const avatarHTML = `
+<div class="avatar-render"
+style="
+background-position:${col*11.11}% ${row*25}%;
+width:35px;
+height:35px;
+display:inline-block;
+vertical-align:middle;
+">
+</div>`;
+    </b> ${name}</span><span>${info.score || 0} pts</span>`;
                     el.appendChild(div);
                 });
             }
@@ -852,8 +855,7 @@ function renderAvatarSelector() {
 }
 
 // Call this when the page loads or when entering the avatar select screen
-renderAvatarSelector();
-}    
+renderAvatarSelector();    
     
 function startGame() {
     score = 0;
