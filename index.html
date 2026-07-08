@@ -343,37 +343,34 @@
         <p style="text-align: center; color: #004D73; margin-bottom: 25px;">Solve equations to Decode</p>
 
         <div class="join-section">
-            <p><b>👤 Enter Your Name</b></p>
+            <p><b>👤 ENTER YOUR NAME</b></p>
             <input type="text" id="player-name" placeholder="Your name" maxlength="20">
         </div>
 
         <div class="join-section">
-            <p><b>🎯 Game Room Code</b></p>
+            <p><b>🎯JOIN ROOM</b></p>
             <input type="text" id="join-code" placeholder="XXXXXX" maxlength="6" style="text-transform: uppercase;">
-            <button onclick="goToAvatarSelection()">Next ➡️</button>
+            <button onclick="goToAvatarSelection()">Enter The Game</button>
         </div>
 
         <div style="text-align: center; margin: 10px 0; color: #004D73;">— OR —</div>
-        <button class="primary" onclick="startAsHost()">👑 Start As Host</button>
+        <button class="primary" onclick="startAsHost()">👑 CREATE LOBBY</button>
     </div>
 
     <div id="page-avatar-select" class="page">
-        <h1>🦊 CHOOSE YOUR IDENTITY</h1>
+        <h1>🦊 CHOOSE YOUR AVATAR</h1>
         <p style="text-align: center; color: #004D73; margin-bottom: 15px;">Select an avatar to display in the game lobby</p>
         
         <div class="avatar-grid" id="avatar-selector-grid"></div>
 
-        <button class="primary" onclick="confirmAndJoinLobby()">⚡ Enter The Lobby</button>
+        <button class="primary" onclick="confirmAndJoinLobby()">⚡ ENTER THE LOBBY</button>
         <button style="background: #9E9E9E;" onclick="navigate('page-lobby')">⬅️ Back</button>
     </div>
 
     <div id="page-scoreboard" class="page">
-        <h1>🏆 Game Lobby</h1>
+        <h1>🏆 GAME LOBBY</h1>
         <h2 id="host-room-code"></h2>
 
-        <div style="text-align: center; margin: 15px 0;">
-            <p style="font-size: 0.85rem; color: #004D73; margin-bottom: 5px;">📱 Scan or Enter Code</p>
-            <div id="qr-code" style="background: white; padding: 15px; display: inline-block; border-radius: 12px;"></div>
         </div>
 
         <p style="font-size: 0.9rem; font-weight: bold; color: #0097A7; text-align: center; margin-top: 10px;">👥 PLAYERS IN LOBBY:</p>
