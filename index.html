@@ -69,11 +69,52 @@
             text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6) !important;
         }
 
-        #page-lobby .join-section p {
+        .join-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+            align-items: center;
+            width: 100%;
+        }
+
+        .join-section p {
+            font-size: 0.9rem;
             color: #004D73 !important;
-            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5) !important;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             font-weight: 700 !important;
         }
+
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .avatar-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .avatar-item:hover { transform: translateY(-2px); background: rgba(255, 255, 255, 0.9); }
+        .avatar-item.selected {
+            background: #E0F2FE;
+            border-color: #0284C7;
+            box-shadow: 0 0 10px rgba(2, 132, 199, 0.4);
+        }
+
+        .avatar-emoji { font-size: 2rem; margin-bottom: 2px; }
+        .avatar-label { font-size: 0.75rem; font-weight: bold; color: #0369A1; }
 
         #page-lobby input[type="text"] {
             background: rgba(255, 255, 255, 0.98) !important;
@@ -110,10 +151,6 @@
             color: #FFFFFF !important;
             box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4) !important;
             font-size: 1.1rem !important;
-        }
-
-        #page-lobby button.primary:hover {
-            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.6) !important;
         }
 
         .page {
@@ -184,23 +221,6 @@
         button:active { transform: scale(0.98); }
         button.primary { background: linear-gradient(135deg, #4CAF50, #66BB6A); color: White; }
 
-        .join-section {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin: 20px 0;
-            align-items: center;
-        }
-
-        .join-section p {
-            font-size: 0.9rem;
-            color: #0097A7;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .join-section input { max-width: 280px; }
-
         .phrase-display {
             font-size: 2.2rem;
             font-weight: bold;
@@ -256,7 +276,7 @@
 
         .small-btn { width: auto !important; padding: 8px 12px !important; font-size: 0.8rem !important; background: rgba(0, 188, 212, 0.2) !important; color: #0097A7 !important; border: 1px solid #0097A7 !important; box-shadow: none !important; margin: 0 !important; }
         .score-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 15px; margin: 8px 0; background: rgba(0, 188, 212, 0.15); border-radius: 8px; border-left: 4px solid #00BCD4; font-weight: bold; }
-        .score-row span:first-child { color: #0097A7; font-size: 1.1rem; }
+        .score-row span:first-child { color: #0097A7; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
         .score-row span:last-child { color: #00838F; font-size: 1.2rem; }
 
         .solution-box { background: rgba(76, 175, 80, 0.1); padding: 15px; border-left: 4px solid #4CAF50; border-radius: 8px; margin: 15px 0; color: #004D73; line-height: 1.6; }
@@ -274,7 +294,7 @@
         .gallery-item-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0, 97, 110, 0.9); color: #FFFFFF; padding: 8px; font-size: 0.75rem; text-align: center; }
         .no-uploads { text-align: center; padding: 30px; color: #004D73; font-size: 0.9rem; }
 
-        .leaderboard-container { max-height: 150px; overflow-y: auto; margin: 10px 0; padding: 5px; background: rgba(255,255,255,0.5); border-radius: 8px; }
+        .leaderboard-container { max-height: 250px; overflow-y: auto; margin: 10px 0; padding: 5px; background: rgba(255,255,255,0.5); border-radius: 8px; }
 
         @media (max-width: 480px) {
             .phrase-display { font-size: 1.8rem; letter-spacing: 10px; }
@@ -296,11 +316,35 @@
 
     <div id="page-lobby" class="page active">
         <h1>🎮 THE RATIONAL CRYPTOGRAM</h1>
-        <p style="text-align: center; color: #004D73; margin-bottom: 25px;">Solve equations to Decode</p>
+        <p style="text-align: center; color: #004D73; margin-bottom: 15px;">Solve equations to Decode</p>
 
         <div class="join-section">
             <p>👤 Enter Your Name</p>
             <input type="text" id="player-name" placeholder="Your name" maxlength="20">
+        </div>
+
+        <div class="join-section">
+            <p>🎭 Choose Your Avatar</p>
+            <div class="avatar-grid">
+                <div class="avatar-item" onclick="selectAvatar('👩‍🏫', 'Teacher')">
+                    <span class="avatar-emoji">👩‍🏫</span><span class="avatar-label">Teacher</span>
+                </div>
+                <div class="avatar-item" onclick="selectAvatar('👨‍🍳', 'Chef')">
+                    <span class="avatar-emoji">👨‍🍳</span><span class="avatar-label">Chef</span>
+                </div>
+                <div class="avatar-item" onclick="selectAvatar('👷', 'Engineer')">
+                    <span class="avatar-emoji">👷</span><span class="avatar-label">Engineer</span>
+                </div>
+                <div class="avatar-item" onclick="selectAvatar('👨‍🚀', 'Astronaut')">
+                    <span class="avatar-emoji">👨‍🚀</span><span class="avatar-label">Astronaut</span>
+                </div>
+                <div class="avatar-item" onclick="selectAvatar('👩‍⚕️', 'Doctor')">
+                    <span class="avatar-emoji">👩‍⚕️</span><span class="avatar-label">Doctor</span>
+                </div>
+                <div class="avatar-item" onclick="selectAvatar('🎨', 'Artist')">
+                    <span class="avatar-emoji">🎨</span><span class="avatar-label">Artist</span>
+                </div>
+            </div>
         </div>
 
         <div class="join-section">
@@ -309,7 +353,7 @@
             <button onclick="joinRoom()">⚡ Enter The Game</button>
         </div>
 
-        <div style="text-align: center; margin: 20px 0; color: #004D73;">— OR —</div>
+        <div style="text-align: center; margin: 10px 0; color: #004D73;">— OR —</div>
         <button class="primary" onclick="startAsHost()">👑 Start As Host</button>
     </div>
 
@@ -325,9 +369,6 @@
         <div id="problems-container"></div>
         
         <button onclick="checkAnswers()">🔓 Decode Cryptogram</button>
-
-        <p style="font-size:0.8rem; font-weight:bold; margin-top:15px; color:#0097A7;">📈 LIVE RANKINGS:</p>
-        <div id="player-live-leaderboard" class="leaderboard-container"></div>
     </div>
 
     <div id="page-trivia" class="page">
@@ -363,13 +404,13 @@
             Time Left: <span id="host-timer" style="color: #0097A7; font-weight: bold;">03:00</span>
         </p>
 
-        <div id="host-scoreboard-container" style="margin: 20px 0;"></div>
-        <p style="text-align: center; color: #004D73; font-size: 0.85rem; margin-top: 20px;">Players are solving...</p>
+        <p style="font-size:0.9rem; font-weight:bold; margin-bottom:10px; color:#0097A7;">📈 LIVE REAL-TIME LEADERBOARD:</p>
+        <div id="host-scoreboard-container" class="leaderboard-container"></div>
     </div>
 
     <div id="page-host-winners" class="page">
-        <h1 style="color: #4CAF50;">🏆 Final Winners</h1>
-        <div id="podium-container" style="margin: 20px 0;"></div>
+        <h1 style="color: #4CAF50; font-size: 2rem;">🏆 Final Winners Podium</h1>
+        <div id="podium-container" style="margin: 25px 0;"></div>
         <button class="primary" onclick="proceedToUploads()">Next: View Solutions 📸</button>
     </div>
 
@@ -421,6 +462,18 @@ import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/
 let audioContext;
 let bgMusicPlaying = false;
 let bgMusicOscillators = [];
+let selectedAvatarEmoji = "👤"; 
+
+window.selectAvatar = function(emoji, label) {
+    document.querySelectorAll(".avatar-item").forEach(item => item.classList.remove("selected"));
+    selectedAvatarEmoji = emoji;
+    const items = document.querySelectorAll(".avatar-item");
+    items.forEach(item => {
+        if (item.innerText.includes(label)) {
+            item.classList.add("selected");
+        }
+    });
+};
 
 function initAudio() {
     try { if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
@@ -585,7 +638,8 @@ function renderScoreboardData(snapshot, containers) {
                     const div = document.createElement("div");
                     div.className = "score-row";
                     const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '👤';
-                    div.innerHTML = `<span>${medal} ${name}</span><span>${info.score || 0} pts</span>`;
+                    const av = info.avatar ? info.avatar : "👤";
+                    div.innerHTML = `<span>${medal} ${av} ${name}</span><span>${info.score || 0} pts</span>`;
                     el.appendChild(div);
                 });
             }
@@ -670,12 +724,12 @@ window.joinRoom = function() {
     roomCode = document.getElementById("join-code").value.trim().toUpperCase();
     if (!playerName || !roomCode) { alert("Enter name and code!"); return; }
 
-    set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0 });
+    set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0, avatar: selectedAvatarEmoji });
     setupRoomListeners(roomCode);
     navigate("page-scoreboard");
 
     onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
-        renderScoreboardData(snapshot, ["scoreboard-container", "player-live-leaderboard"]);
+        renderScoreboardData(snapshot, ["scoreboard-container"]);
     });
 };
 
@@ -813,7 +867,7 @@ window.checkAnswers = function() {
     updateCipherDisplay();
 
     if (allCorrect) {
-        score += 100; // 100 Points Completion Bonus Added Here
+        score += 100; 
         update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: score });
         playSuccessSound();
         setTimeout(() => {
@@ -873,7 +927,8 @@ function renderPodium() {
                 const div = document.createElement("div");
                 div.className = "score-row";
                 div.style.fontSize = "1.2rem";
-                div.innerHTML = `<span>${medals[idx]} : ${name}</span><span>${info.score || 0} pts</span>`;
+                const av = info.avatar ? info.avatar : "👤";
+                div.innerHTML = `<span>${medals[idx]} : ${av} ${name}</span><span>${info.score || 0} pts</span>`;
                 podiumContainer.appendChild(div);
             });
             if (sorted.length === 0) {
@@ -926,8 +981,9 @@ window.handleSolutionUpload = function() {
 };
 
 window.backToLobby = function() {
-    roomCode = ""; playerName = "";
+    roomCode = ""; playerName = ""; selectedAvatarEmoji = "👤";
     isHost = false; score = 0; currentLevelIndex = 0; localGameStarted = false; solvedIndices = [];
+    document.querySelectorAll(".avatar-item").forEach(item => item.classList.remove("selected"));
     navigate("page-lobby");
 };
 
