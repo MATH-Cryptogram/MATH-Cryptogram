@@ -495,10 +495,12 @@
     </div>
 
 <script type="module">
+import {getDatabase,ref,set,update,get,remove,onValue,onDisconnect} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 let audioContext;
+let playerId = "";
 let bgMusicPlaying = false;
 let bgMusicOscillators = [];
 let targetImageScale = 1;
@@ -819,7 +821,26 @@ window.startAsHost = function() {
 
     isHost = true;
     roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-    update(ref(db, `rooms/${roomCode}/players/${playerName}`), {score: score});
+   playerId = crypto.randomUUID();
+
+set(ref(db, `rooms/${roomCode}`), {
+    gameStarted: false,
+    level: 1,
+    createdAt: Date.now()
+});
+
+set(ref(db, `rooms/${roomCode}/players/${playerId}`), {
+    id: playerId,
+    name: playerName,
+    avatar: selectedAvatar,
+    score: 0,
+    isHost: true,
+    connected: true
+});
+
+onDisconnect(
+    ref(db, `rooms/${roomCode}/players/${playerId}`)
+).remove();
     document.getElementById("host-room-code").innerText = "🎮 Room Code: " + roomCode;
     document.getElementById("start-game-btn").style.display = "block";
     document.getElementById("waiting-msg").style.display = "none";
@@ -973,7 +994,7 @@ window.checkAnswers = function() {
     if (allCorrect) {
         score += 100;
         playSuccessSound();
-        update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: score });
+        update(ref(db, `rooms/${roomCode}/players/${playerId}`), { score: score });
 
         setTimeout(() => {
             document.getElementById("trivia-content").innerText = level.trivia;
