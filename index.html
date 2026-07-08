@@ -221,6 +221,7 @@
 
         .revealed-letter { color: #4CAF50; font-weight: 900; }
         .hidden-letter { color: #9ECAE1; }
+        
         .clue-box {
             background: rgba(76, 175, 80, 0.1);
             padding: 15px;
@@ -267,7 +268,7 @@
         .upload-success { background: rgba(76, 175, 80, 0.2); border: 1px solid #4CAF50; color: #2E7D32; }
         .upload-error { background: rgba(244, 67, 54, 0.2); border: 1px solid #F44336; color: #C62828; }
 
-        .gallery-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .gallery-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
         .gallery-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 2px solid #00BCD4; background: rgba(0, 188, 212, 0.1); }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
         .gallery-item-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0, 97, 110, 0.9); color: #FFFFFF; padding: 8px; font-size: 0.75rem; text-align: center; }
@@ -286,7 +287,6 @@
             background: linear-gradient(135deg, #00BCD4, #4CAF50); border: none; color: white; font-size: 1.5rem;
             cursor: pointer; box-shadow: 0 4px 12px rgba(0, 150, 175, 0.4); z-index: 1000; display: flex; align-items: center; justify-content: center;
         }
-        .music-toggle:hover { transform: scale(1.1); }
     </style>
 </head>
 <body>
@@ -434,7 +434,7 @@ function playBackgroundMusic() {
         if (bgMusicPlaying) stopBackgroundMusic();
         bgMusicPlaying = true;
 
-        function createNote(freq, startTime, duration, type = 'sine', volume = 0.03) {
+        const createNote = (freq, startTime, duration, type = 'sine', volume = 0.03) => {
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
             osc.type = type; osc.connect(gain); gain.connect(audioContext.destination);
@@ -444,7 +444,7 @@ function playBackgroundMusic() {
             gain.gain.linearRampToValueAtTime(0, startTime + duration);
             osc.start(startTime); osc.stop(startTime + duration + 0.05);
             bgMusicOscillators.push(osc);
-        }
+        };
 
         const loop = () => {
             if (!bgMusicPlaying) return;
@@ -503,7 +503,7 @@ const gameData = [
             { h: `<div class="frac"><span class="numb">8</span><span>(x-2)</span></div> = 4`, a: 4 },
             { h: `<div class="frac"><span class="numb">4</span><span>(x-1)</span></div> = 2`, a: 3 }
         ],
-        trivia: "Ancient India developed the concept of zero as a number, not just a placeholder.",
+        trivia: "Ancient India developed the concept of zero as a number, not just a placeholder. This was revolutionary for mathematics!",
         author: "Brahmagupta (598–668 CE)",
         steps: "1. Multiply both sides by the denominator\n2. Expand binomials if needed\n3. Solve for x"
     },
@@ -519,6 +519,34 @@ const gameData = [
         trivia: "Leonhard Euler invented many mathematical notations we use today, including f(x) and the number e.",
         author: "Leonhard Euler (1707–1783)",
         steps: "1. Isolate the fraction\n2. Clear the denominator\n3. Solve the resulting equation"
+    },
+    {
+        lvl: 4, phrase: "EUCLID", clue: "⚙️ Move constants before multiplying.",
+        eqs: [
+            { h: `<div class="frac"><span class="numb">x</span><span>64</span></div> = <div class="frac"><span class="numb">1</span><span>2</span></div>`, a: 32 },
+            { h: `<div class="frac"><span class="numb">3x</span><span>36</span></div> = <div class="frac"><span class="numb">4</span><span>3</span></div>`, a: 16 },
+            { h: `<div class="frac"><span class="numb">4x</span><span>10</span></div> = <div class="frac"><span class="numb">6</span><span>5</span></div>`, a: 3 },
+            { h: `<div class="frac"><span class="numb">2</span><span>x</span></div> = <div class="frac"><span class="numb">3</span><span>(x+1)</span></div>`, a: 1 },
+            { h: `<div class="frac"><span class="numb">4</span><span>(x-1)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: -1 },
+            { h: `<div class="frac"><span class="numb">3</span><span>(x+2)</span></div> = <div class="frac"><span class="numb">5</span><span>(x-2)</span></div>`, a: -8 }
+        ],
+        trivia: "Euclid's 'Elements' is one of the most influential mathematical texts ever written, used for over 2000 years.",
+        author: "Euclid (300 BCE)",
+        steps: "1. Cross-multiply both sides\n2. Expand binomials\n3. Collect x terms\n4. Solve for x"
+    },
+    {
+        lvl: 5, phrase: "GREECE", clue: "🧮 Multiply denominators to isolate x.",
+        eqs: [
+            { h: `<div class="frac"><span class="numb">6</span><span>(x+4)</span></div> = <div class="frac"><span class="numb">3</span><span>(x+1)</span></div>`, a: 2 },
+            { h: `<div class="frac"><span class="numb">4</span><span>(x-2)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: -2 },
+            { h: `<div class="frac"><span class="numb">3</span><span>(x+2)</span></div> = <div class="frac"><span class="numb">2</span><span>(x-2)</span></div>`, a: 10 },
+            { h: `<div class="frac"><span class="numb">3</span><span>x</span></div> = <div class="frac"><span class="numb">2</span><span>(x-4)</span></div>`, a: -2 },
+            { h: `<div class="frac"><span class="numb">4</span><span>(x-2)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: 7 },
+            { h: `<div class="frac"><span class="numb">6</span><span>(x-3)</span></div> = <div class="frac"><span class="numb">3</span><span>x</span></div>`, a: -3 }
+        ],
+        trivia: "Ancient Greece revolutionized mathematics with logic and proof. Philosophers explored mathematical reasoning as a path to truth!",
+        author: "Aristotle (384–322 BCE)",
+        steps: "1. Cross-multiply\n2. Expand all expressions\n3. Collect like terms\n4. Solve"
     }
 ];
 
@@ -526,21 +554,6 @@ let roomCode = "", playerName = "", isHost = false, score = 0, currentLevelIndex
 let uploads = {};
 let localGameStarted = false;
 let solvedIndices = [];
-
-window.navigate = function(pageId) {
-    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-    const page = document.getElementById(pageId);
-    if (page) page.classList.add("active");
-};
-
-window.toggleFullScreen = function() {
-    const elem = document.documentElement;
-    if (!document.fullscreenElement) {
-        elem.requestFullscreen().catch(() => {});
-    } else {
-        document.exitFullscreen();
-    }
-};
 
 function renderScoreboardData(snapshot, containers) {
     const data = snapshot.val();
@@ -560,6 +573,28 @@ function renderScoreboardData(snapshot, containers) {
             }
         }
     });
+}
+
+function updateHostGalleryView(uploadsData) {
+    const gallery = document.getElementById("gallery-container");
+    if (!gallery) return;
+    
+    gallery.innerHTML = "";
+    const keys = Object.keys(uploadsData);
+    
+    const countEl = document.getElementById("upload-count");
+    if (countEl) countEl.innerText = keys.length;
+
+    if (keys.length === 0) {
+        gallery.innerHTML = '<div class="no-uploads"><p>No submissions yet</p></div>';
+    } else {
+        Object.entries(uploadsData).forEach(([pName, imageData]) => {
+            const item = document.createElement("div");
+            item.className = "gallery-item";
+            item.innerHTML = `<img src="${imageData}"><div class="gallery-item-label">${pName}</div>`;
+            gallery.appendChild(item);
+        });
+    }
 }
 
 window.startAsHost = function() {
@@ -585,8 +620,7 @@ window.startAsHost = function() {
 
     onValue(ref(db, `rooms/${roomCode}/uploads`), (snapshot) => {
         uploads = snapshot.val() || {};
-        const countEl = document.getElementById("upload-count");
-        if (countEl) countEl.innerText = Object.keys(uploads).length;
+        updateHostGalleryView(uploads);
     });
 };
 
@@ -627,7 +661,6 @@ function setupRoomListeners(room) {
             const hostGameLevel = document.getElementById('host-game-level');
             if (hostGameLevel) hostGameLevel.innerText = lvlText;
             
-            // Sync client game index to host level configuration node updates
             if(!isHost) {
                 currentLevelIndex = data.level - 1;
                 loadLevel();
@@ -692,35 +725,55 @@ function loadLevel() {
     level.eqs.forEach((eq, idx) => {
         const card = document.createElement("div");
         card.className = "eq-card";
-        card.innerHTML = `<div>${eq.h}</div><input type="number" id="ans-${idx}" placeholder="Answer">`;
+        card.innerHTML = `<div>${eq.h}</div><input type="number" id="ans-${idx}" placeholder="Answer" oninput="liveCheckAnswer(${idx})">`;
         container.appendChild(card);
     });
 }
 
+window.liveCheckAnswer = function(idx) {
+    const level = gameData[currentLevelIndex];
+    if (!level) return;
+
+    const input = document.getElementById(`ans-${idx}`);
+    const userAns = parseInt(input.value);
+
+    if (userAns === level.eqs[idx].a) {
+        if (!solvedIndices.includes(idx)) {
+            playCorrectBeep();
+            input.style.border = "2px solid green";
+            solvedIndices.push(idx);
+            updateCipherDisplay();
+        }
+    } else {
+        input.style.border = "2px solid #00BCD4"; // Reset to theme standard color during adjustment
+    }
+};
+
 window.checkAnswers = function() {
     const level = gameData[currentLevelIndex];
     let allCorrect = true;
-    let newCorrect = false;
 
     level.eqs.forEach((eq, idx) => {
         const input = document.getElementById(`ans-${idx}`);
         const userAns = parseInt(input.value);
 
         if (userAns !== eq.a) {
-            allCorrect = false; playErrorBeep(); input.style.border = "2px solid red";
+            allCorrect = false;
+            playErrorBeep();
+            input.style.border = "2px solid red";
         } else {
-            playCorrectBeep(); input.style.border = "2px solid green";
-            if (!solvedIndices.includes(idx)) { solvedIndices.push(idx); newCorrect = true; }
+            input.style.border = "2px solid green";
+            if (!solvedIndices.includes(idx)) {
+                solvedIndices.push(idx);
+            }
         }
     });
 
-    if (newCorrect) updateCipherDisplay();
+    updateCipherDisplay();
 
     if (allCorrect) {
         score += 100;
         playSuccessSound();
-        
-        // Update database with player score entry
         update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: score });
 
         setTimeout(() => {
@@ -753,18 +806,7 @@ function endGame() {
 
     if (isHost) {
         navigate("page-host-uploads");
-        const gallery = document.getElementById("gallery-container");
-        gallery.innerHTML = "";
-        if (Object.keys(uploads).length === 0) {
-            gallery.innerHTML = '<div class="no-uploads"><p>No submissions yet</p></div>';
-        } else {
-            Object.entries(uploads).forEach(([pName, imageData]) => {
-                const item = document.createElement("div");
-                item.className = "gallery-item";
-                item.innerHTML = `<img src="${imageData}"><div class="gallery-item-label">${pName}</div>`;
-                gallery.appendChild(item);
-            });
-        }
+        updateHostGalleryView(uploads);
     } else {
         document.getElementById("final-score").innerText = score;
         document.getElementById("final-time").innerText = `${mins}m ${secs}s`;
@@ -779,24 +821,23 @@ window.handleSolutionUpload = function() {
 
     const statusDiv = document.getElementById("upload-status");
     statusDiv.className = "upload-status";
-    statusDiv.innerText = "Processing image...";
+    statusDiv.innerText = "Processing & Compressing Image...";
 
     const reader = new FileReader();
     reader.onload = (e) => {
         const img = new Image();
         img.onload = function() {
-            // Downscale image to fit standard Firebase DB limits securely
             const canvas = document.createElement("canvas");
-            const MAX_WIDTH = 400;
+            const MAX_WIDTH = 500; 
             const scale = MAX_WIDTH / img.width;
+            
             canvas.width = MAX_WIDTH;
             canvas.height = img.height * scale;
 
-            const ctx = canvas.getContext("2m");
             const ctx2d = canvas.getContext("2d");
             ctx2d.drawImage(img, 0, 0, canvas.width, canvas.height);
             
-            const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+            const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
             
             set(ref(db, `rooms/${roomCode}/uploads/${playerName}`), compressedBase64)
                 .then(() => {
@@ -805,7 +846,7 @@ window.handleSolutionUpload = function() {
                 })
                 .catch((err) => {
                     statusDiv.className = "upload-status upload-error";
-                    statusDiv.innerText = "Upload failed. Image context payload too large.";
+                    statusDiv.innerText = "Upload failed. Database payload error.";
                 });
         };
         img.src = e.target.result;
@@ -818,7 +859,21 @@ window.backToLobby = function() {
     navigate("page-lobby");
 };
 
-// Auto fill room values from parameters if available
+window.navigate = function(pageId) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    const page = document.getElementById(pageId);
+    if (page) page.classList.add("active");
+};
+
+window.toggleFullScreen = function() {
+    const elem = document.documentElement;
+    if (!document.fullscreenElement) {
+        elem.requestFullscreen().catch(() => {});
+    } else {
+        document.exitFullscreen();
+    }
+};
+
 try {
     const params = new URLSearchParams(window.location.search);
     const room = params.get('room') || params.get('code');
