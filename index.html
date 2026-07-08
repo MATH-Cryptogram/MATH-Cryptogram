@@ -7,7 +7,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
 
         :root { 
             --primary: #0EA5E9;
@@ -121,24 +120,59 @@
             margin: 15px 0;
             align-items: center;
         }
-        /* Add to your existing <style> block */
-        .avatar-render {
-            width: 50px;
-            height: 50px;
-            background-image: url('avatar.png');
-            background-size: 1000% 500%; /* 10 columns, 5 rows */
-            background-repeat: no-repeat;
-            display: inline-block;
-            border-radius: 50%;
-            cursor: pointer;
+
+        /* Modernized Illustrated/Badged Avatar Matrix Grid Style [cite: 27, 28] */
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            border: 2px solid #00BCD4;
+            max-height: 260px;
+            overflow-y: auto;
         }
         .avatar-option {
-            display: inline-block;
-            margin: 5px;
-            border: 3px solid transparent;
+            font-size: 2.2rem;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 65px;
+            height: 65px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid rgba(0, 188, 212, 0.2);
+            background: linear-gradient(135deg, #FFFFFF, #E0F7FA);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.06);
         }
-        .avatar-option.selected { border-color: #06B6D4; 
+        .avatar-option:hover { transform: scale(1.15); box-shadow: 0 6px 12px rgba(0,188,212,0.3); }
+        .avatar-option.selected {
+            background: linear-gradient(135deg, #00BCD4, #0097A7);
+            border-color: #006064;
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 15px rgba(0,188,212,0.6);
         }
+.avatar-choice{
+    width:70px;
+    height:70px;
+    cursor:pointer;
+    border-radius:50%;
+    margin:6px;
+    border:3px solid transparent;
+    transition:.2s;
+}
+.avatar-choice:hover{
+    transform:scale(1.1);
+}
+.selected-avatar{
+    border:4px solid gold;
+}
         .lobby-users-display {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -231,6 +265,13 @@
 
         .revealed-letter { color: #4CAF50; font-weight: 900; }
         .hidden-letter { color: #9ECAE1; }
+
+       .player-avatar{
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    object-fit:cover;
+}
         
         .clue-box {
             background: rgba(76, 175, 80, 0.1);
@@ -337,12 +378,11 @@
         <button class="primary" onclick="startAsHost()">👑 CREATE ROOM</button>
     </div>
 
-    <div id="page-avatar-select" class="page">
-        <h1>CHOOSE YOUR IDENTITY</h1>
-        <p style="text-align: center; color: #004D73; margin-bottom: 15px;">Select an avatar to display in the game lobby</p>
-       
-        <div id="avatar-selector-grid"></div>
-        
+    <div class="avatar-page">
+    <h2>Select Your Avatar</h2>
+    <div id="avatar-selection"></div>
+    <button onclick="goToLobby()">Continue</button></div>
+
         <button class="primary" onclick="confirmAndJoinLobby()">⚡ ENTER THE LOBBY</button>
         <button style="background: #9E9E9E;" onclick="navigate('page-lobby')">⬅️ Back</button>
     </div>
@@ -417,10 +457,16 @@
             <input type="file" id="solution-upload" accept="image/*" onchange="handleSolutionUpload()">
             <div id="upload-status"></div>
         </div>
+        
 
         <button class="primary" onclick="backToLobby()">🏠 Back To Lobby</button>
     </div>
+<div class="avatar"style="background-image:url('avatar.png');background-position:
+       <img
+    src="${getAvatarPath(player.avatar)}"
+    class="player-avatar">
 
+</div>
     <div id="page-host-uploads" class="page">
         <h1>📸 Student Solutions</h1>
         
@@ -512,7 +558,9 @@ function playBackgroundMusic() {
         document.getElementById("musicToggle").textContent = "🎵";
     } catch(e) {}
 }
-
+function getAvatarPath(avatarId) {
+    return `avatars/avatar${avatarId}.png`;
+}
 function stopBackgroundMusic() {
     bgMusicPlaying = false;
     bgMusicOscillators.forEach(osc => { try { osc.stop(); } catch(e) {} });
@@ -531,8 +579,13 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const TOTAL_AVATARS = 50;
 
+let selectedAvatar = 1;
 
+function getAvatarPath(id){
+    return `avatars/avatar${id}.png`;
+}
 window.goToAvatarSelection = function() {
     const nameInput = document.getElementById("player-name").value.trim();
     const codeInput = document.getElementById("join-code").value.trim();
@@ -545,14 +598,39 @@ window.goToAvatarSelection = function() {
     navigate("page-avatar-select");
 };
 
+window.onload = function(){
+
+    createAvatarGallery();
+
+};
+function createAvatarGallery(){
+    const container =
+        document.getElementById("avatar-selection");
+    container.innerHTML="";
+    for(let i=1;i<=TOTAL_AVATARS;i++){
+        const img=document.createElement("img");
+        img.src=getAvatarPath(i);
+        img.className="avatar-choice";
+        img.onclick=()=>{
+            selectedAvatar=i;
+            document
+            .querySelectorAll(".avatar-choice")
+            .forEach(a=>a.classList.remove("selected-avatar"));
+            img.classList.add("selected-avatar");
+        };
+        container.appendChild(img);
+    }
+}
+   
+
 window.confirmAndJoinLobby = function() {
-    // Save the coordinate object instead of the string emoji
-    set(ref(db, `rooms/${roomCode}/players/${playerName}`), {
-    score: 0,
-    avatarIndex: selectedAvatarIndex
-});
+    await set(playerRef,{name:playerName,avatar:selectedAvatar,score:0});
     setupRoomListeners(roomCode);
     navigate("page-scoreboard");
+    onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
+        currentLobbyDataSnapshot = snapshot.val();
+        renderScoreboardData(snapshot, ["scoreboard-container"]);
+    });
 };
 
 const gameData = [
@@ -598,7 +676,6 @@ const gameData = [
 ];
 
 let roomCode = "", playerName = "", isHost = false, score = 0, currentLevelIndex = 0, timerInterval, startTime;
-let selectedAvatarIndex = 0;
 let uploads = {};
 let localGameStarted = false;
 let solvedIndices = [];
@@ -614,22 +691,7 @@ function renderScoreboardData(snapshot, containers) {
                 const card = document.createElement("div");
                 card.className = "lobby-user-card";
                 card.innerHTML = `
-                    const avatarIndex = info.avatarIndex ?? 0;
-const col = avatarIndex % 10;
-const row = Math.floor(avatarIndex / 10);
-
-card.innerHTML = `
-<div class="lobby-user-avatar">
-    <div class="avatar-render"
-        style="
-            background-position:${col*11.11}% ${row*25}%;
-            width:55px;
-            height:55px;
-        ">
-    </div>
-</div>
-<div class="lobby-user-name">${name}</div>
-`;
+                    <div class="lobby-user-avatar">${info.avatar || "👤"}</div>
                     <div class="lobby-user-name">${name}</div>
                 `;
                 visualGrid.appendChild(card);
@@ -646,22 +708,8 @@ card.innerHTML = `
                 sorted.forEach(([name, info], idx) => {
                     const div = document.createElement("div");
                     div.className = "score-row";
-                    const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '';
-                    div.innerHTML = <span>${medal} ${avatarHTML} ${name}</span> <b style='font-size:1.25rem;line-height:1;'>const avatarIndex = info.avatarIndex ?? 0;
-const col = avatarIndex % 10;
-const row = Math.floor(avatarIndex / 10);
-
-const avatarHTML = `
-<div class="avatar-render"
-style="
-background-position:${col*11.11}% ${row*25}%;
-width:35px;
-height:35px;
-display:inline-block;
-vertical-align:middle;
-">
-</div>`;
-    </b> ${name}</span><span>${info.score || 0} pts</span>`;
+                    const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '👤';
+                    div.innerHTML = `<span>${medal} <b style='font-size:1.25rem;line-height:1;'>${info.avatar || "👤"}</b> ${name}</span><span>${info.score || 0} pts</span>`;
                     el.appendChild(div);
                 });
             }
@@ -684,12 +732,7 @@ function constructWinnersPodium(podiumContainerId) {
     let html = '';
 
     // 2nd Place Column
-    if (second) {
-        html += `
-        <div class="podium-column" style="animation-delay: 0.2s">
-            <div class="podium-avatar">${second.avatar || "👤"}</div>
-            <div class="podium-name">${second.name}</div>
-            <div class="podium-block podium-2nd">
+    if (second) {html += `<div class="podium-column" style="animation-delay: 0.2s"><div class="podium-avatar">${second.avatar || "👤"}</div><div class="podium-name">${second.name}</div><div class="podium-block podium-2nd">
                 <span class="podium-rank">2</span>
                 <span class="podium-score">${second.score} pts</span>
             </div>
@@ -697,8 +740,7 @@ function constructWinnersPodium(podiumContainerId) {
     } else { html += '<div class="podium-column"></div>'; }
 
     // 1st Place Column
-    if (first) {
-        html += `
+    if (first) {html += `
         <div class="podium-column" style="animation-delay: 0s">
             <div class="podium-avatar">${first.avatar || "👤"}</div>
             <div class="podium-name" style="font-weight: 900; color: #B8860B;">👑 ${first.name}</div>
@@ -777,7 +819,7 @@ window.startAsHost = function() {
 
     isHost = true;
     roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-    set(ref(db, "rooms/" + roomCode), { gameStarted: false, level: 1 });
+    update(ref(db, `rooms/${roomCode}/players/${playerName}`), {score: score});
     document.getElementById("host-room-code").innerText = "🎮 Room Code: " + roomCode;
     document.getElementById("start-game-btn").style.display = "block";
     document.getElementById("waiting-msg").style.display = "none";
@@ -830,33 +872,6 @@ function setupRoomListeners(room) {
     });
 }
 
-function renderAvatarSelector() {
-    const grid = document.getElementById("avatar-selector-grid");
-    grid.innerHTML = ""; // Clear existing
-    
-    for (let i = 0; i < 50; i++) {
-        const col = i % 10;
-        const row = Math.floor(i / 10);
-        
-        const wrapper = document.createElement("div");
-        wrapper.className = "avatar-option";
-        // Calculate background position based on the 10x5 grid
-        wrapper.innerHTML = `<div class="avatar-render" 
-            style="background-position: ${col * 11.11}% ${row * 25}%"></div>`;
-        
-        wrapper.onclick = () => {
-            document.querySelectorAll(".avatar-option").forEach(el => el.classList.remove("selected"));
-            wrapper.classList.add("selected");
-            // Save this index or the col/row to your Firebase database
-            selectedAvatarIndex = i; 
-        };
-        grid.appendChild(wrapper);
-    }
-}
-
-// Call this when the page loads or when entering the avatar select screen
-renderAvatarSelector();    
-    
 function startGame() {
     score = 0;
     startTime = new Date();
@@ -1023,7 +1038,7 @@ window.handleSolutionUpload = function() {
             ctx2d.drawImage(img, 0, 0, canvas.width, canvas.height);
             
             const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
-            set(ref(db, `rooms/${roomCode}/uploads/${playerName}`), compressedBase64)
+            set(ref(db, `rooms/${roomCode}/uploads/${playerName}`), avatar: selectedAvatar)
                 .then(() => {
                     statusDiv.className = "upload-status upload-success";
                     statusDiv.innerText = "✓ Photo uploaded successfully!";
