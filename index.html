@@ -500,29 +500,32 @@
     </div>
 
 <script>
-// Firebase initialization
+// Firebase configuration - COMPLETE & VERIFIED
 const firebaseConfig = {
-    apiKey: "AIzaSyA_YOUR_KEY",
-    authDomain: "your-project.firebaseapp.com",
-    databaseURL: "https://your-project.firebaseio.com",
-    projectId: "your-project",
-    storageBucket: "your-project.appspot.com",
-    messagingSenderId: "YOUR_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyD7yJ0PJf3DfJR7zb8oPpUYvXT_lAXmo5I",
+  authDomain: "rae-cryptogram-puzzle.firebaseapp.com",
+  databaseURL: "https://rae-cryptogram-puzzle-default-rtdb.firebaseio.com",
+  projectId: "rae-cryptogram-puzzle",
+  storageBucket: "rae-cryptogram-puzzle.firebasestorage.app",
+  messagingSenderId: "13379041677",
+  appId: "1:13379041677:web:e6c34d01d19770bd55a5c4",
+  measurementId: "G-1T5KBVP0W3"
 };
 
 let db = null;
 
 // Initialize Firebase when scripts load
-Promise.all([
-    customElements.whenDefined('firebase-app') || Promise.resolve(),
-    new Promise(r => setTimeout(r, 100))
-]).then(() => {
-    if (typeof firebase !== 'undefined') {
-        const app = firebase.initializeApp(firebaseConfig);
-        db = firebase.database(app);
+setTimeout(() => {
+    if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length === 0) {
+        try {
+            const app = firebase.initializeApp(firebaseConfig);
+            db = firebase.database(app);
+            console.log('✅ Firebase initialized successfully');
+        } catch (e) {
+            console.error('❌ Firebase initialization failed:', e);
+        }
     }
-});
+}, 500);
 
 // Application State
 const APP = {
@@ -591,7 +594,7 @@ const APP = {
         if (!players) return;
         const sorted = Object.entries(players)
             .sort((a, b) => (b[1].score || 0) - (a[1].score || 0))
-            .slice(0, 50); // Limit to 50 for performance
+            .slice(0, 50);
 
         const render = (id) => {
             const el = document.getElementById(id);
@@ -609,7 +612,6 @@ const APP = {
     setupRoomListeners(room) {
         if (!room || !db) return;
 
-        // Room listener
         db.ref(`rooms/${room}`).on('value', snap => {
             const data = snap.val();
             if (!data) return;
@@ -623,7 +625,6 @@ const APP = {
             }
         });
 
-        // Players listener
         db.ref(`rooms/${room}/players`).on('value', snap => {
             this.renderScoreboard(snap.val());
         });
@@ -640,7 +641,7 @@ const APP = {
         }
 
         if (!db) {
-            alert("Firebase not initialized. Check your config.");
+            alert("Firebase not initialized. Refresh page and try again.");
             return;
         }
 
@@ -673,7 +674,7 @@ const APP = {
         }
 
         if (!db) {
-            alert("Firebase not initialized.");
+            alert("Firebase not initialized. Refresh page and try again.");
             return;
         }
 
@@ -786,8 +787,9 @@ const APP = {
     }
 };
 
-// Expose to window for onclick handlers
-window.APP = APP;
+function toggleMusic() {
+    APP.toggleMusic();
+}
 
 // Check for room code in URL
 document.addEventListener('DOMContentLoaded', () => {
