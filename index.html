@@ -590,6 +590,10 @@ function renderAvatarSelector() {
 
 window.confirmAndJoinLobby = function() {
     set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0, avatar: selectedAvatar });
+    // Save player session
+    localStorage.setItem("playerName", playerName);
+    localStorage.setItem("roomCode", roomCode);
+    localStorage.setItem("avatar", selectedAvatar);
     setupRoomListeners(roomCode);
     navigate("page-scoreboard");
     onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
@@ -640,7 +644,14 @@ const gameData = [
     }
 ];
 
-let roomCode = "", playerName = "", isHost = false, score = 0, currentLevelIndex = 0, timerInterval, startTime;
+let roomCode = "", 
+    playerName = "", 
+    isHost = false, 
+    score = 0, 
+    currentLevelIndex = 0, 
+    timerInterval, 
+    startTime;
+    
 let uploads = {};
 let localGameStarted = false;
 let solvedIndices = [];
@@ -1047,6 +1058,34 @@ try {
     const room = params.get('room') || params.get('code');
     if (room) { document.getElementById('join-code').value = room.toUpperCase(); }
 } catch(e) {}
+// ===============================
+// AUTO RECONNECT AFTER REFRESH
+// ===============================
+window.addEventListener("load", () => {
+
+    const savedRoom = localStorage.getItem("roomCode");
+    const savedPlayer = localStorage.getItem("playerName");
+    const savedAvatar = localStorage.getItem("avatar");
+
+    if (!savedRoom || !savedPlayer) return;
+
+    roomCode = savedRoom;
+    playerName = savedPlayer;
+    selectedAvatar = savedAvatar || "🦊";
+
+    document.getElementById("player-name").value = playerName;
+    document.getElementById("join-code").value = roomCode;
+
+    // Reconnect to Firebase room
+    setupRoomListeners(roomCode);
+
+    // Make sure the player still exists
+    update(ref(db, `rooms/${roomCode}/players/${playerName}`), {
+        avatar: selectedAvatar
+    });
+
+    navigate("page-scoreboard");
+});
 </script>
 </body>
 </html>
