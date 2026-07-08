@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>The Rational Algebraic Cryptogram</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js" defer></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -514,17 +514,37 @@ const firebaseConfig = {
 
 let db = null;
 
-// Initialize Firebase when scripts load
-setTimeout(() => {
-    if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length === 0) {
+// Initialize Firebase immediately (no defer, no timeout)
+function initFirebase() {
+    if (typeof firebase === 'undefined') {
+        console.error('❌ Firebase SDK not loaded');
+        setTimeout(initFirebase, 100);
+        return;
+    }
+
+    if (firebase.apps.length === 0) {
         try {
             const app = firebase.initializeApp(firebaseConfig);
             db = firebase.database(app);
             console.log('✅ Firebase initialized successfully');
+            return true;
         } catch (e) {
             console.error('❌ Firebase initialization failed:', e);
+            return false;
         }
     }
+}
+
+// Try to initialize as soon as possible
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFirebase);
+} else {
+    initFirebase();
+}
+
+// Retry initialization every 500ms if not initialized
+setInterval(() => {
+    if (!db) initFirebase();
 }, 500);
 
 // Application State
@@ -610,7 +630,10 @@ const APP = {
     },
 
     setupRoomListeners(room) {
-        if (!room || !db) return;
+        if (!room || !db) {
+            console.warn('setupRoomListeners: room or db missing', { room, db: !!db });
+            return;
+        }
 
         db.ref(`rooms/${room}`).on('value', snap => {
             const data = snap.val();
@@ -641,7 +664,8 @@ const APP = {
         }
 
         if (!db) {
-            alert("Firebase not initialized. Refresh page and try again.");
+            alert("Firebase is loading... Please try again in a moment.");
+            setTimeout(() => initFirebase(), 500);
             return;
         }
 
@@ -674,7 +698,8 @@ const APP = {
         }
 
         if (!db) {
-            alert("Firebase not initialized. Refresh page and try again.");
+            alert("Firebase is loading... Please try again in a moment.");
+            setTimeout(() => initFirebase(), 500);
             return;
         }
 
