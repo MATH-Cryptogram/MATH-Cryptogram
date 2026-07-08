@@ -121,7 +121,7 @@
             align-items: center;
         }
 
-        /* Modernized Illustrated/Badged Avatar Matrix Grid Style [cite: 27, 28] */
+        /* Responsive Matrix Selection Grid for 50 Illustrated Avatars */
         .avatar-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -131,7 +131,7 @@
             background: rgba(255, 255, 255, 0.85);
             border-radius: 15px;
             border: 2px solid #00BCD4;
-            max-height: 260px;
+            max-height: 280px;
             overflow-y: auto;
         }
         .avatar-option {
@@ -191,7 +191,7 @@
         }
         .lobby-user-name { font-size: 0.9rem; font-weight: bold; color: #004D73; word-break: break-all; }
 
-        /* 3D Winners Podium UI Styling [cite: 143] */
+        /* 3D Winners Podium UI Styling */
         .podium-wrapper {
             display: flex;
             justify-content: center;
@@ -310,7 +310,7 @@
             cursor: pointer; box-shadow: 0 4px 12px rgba(0, 150, 175, 0.4); z-index: 1000; display: flex; align-items: center; justify-content: center;
         }
 
-        /* Photo Lightbox Overlay for viewing student images [cite: 74, 75] */
+        /* Photo Lightbox Overlay for viewing student images */
         .zoom-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85); z-index: 2000;
@@ -343,36 +343,36 @@
         <p style="text-align: center; color: #004D73; margin-bottom: 25px;">Solve equations to Decode</p>
 
         <div class="join-section">
-            <p><b>👤 ENTER YOUR NAME</b></p>
+            <p><b>👤 Enter Your Name</b></p>
             <input type="text" id="player-name" placeholder="Your name" maxlength="20">
         </div>
 
         <div class="join-section">
-            <p><b>🎯 ENTER THE CODE</b></p>
+            <p><b>🎯 Game Room Code</b></p>
             <input type="text" id="join-code" placeholder="XXXXXX" maxlength="6" style="text-transform: uppercase;">
-            <button onclick="goToAvatarSelection()">🚪 JOIN ROOM</button>
+            <button onclick="goToAvatarSelection()">Next ➡️</button>
         </div>
 
         <div style="text-align: center; margin: 10px 0; color: #004D73;">— OR —</div>
-        <button class="primary" onclick="startAsHost()">👑 CREATE ROOM</button>
+        <button class="primary" onclick="startAsHost()">👑 Start As Host</button>
     </div>
 
     <div id="page-avatar-select" class="page">
-        <h1>🦊 CHOOSE YOUR AVATAR</h1>
+        <h1>🦊 CHOOSE YOUR IDENTITY</h1>
         <p style="text-align: center; color: #004D73; margin-bottom: 15px;">Select an avatar to display in the game lobby</p>
         
         <div class="avatar-grid" id="avatar-selector-grid"></div>
 
-        <button class="primary" onclick="confirmAndJoinLobby()">⚡ ENTER THE LOBBY</button>
+        <button class="primary" onclick="confirmAndJoinLobby()">⚡ Enter The Lobby</button>
         <button style="background: #9E9E9E;" onclick="navigate('page-lobby')">⬅️ Back</button>
     </div>
 
     <div id="page-scoreboard" class="page">
-        <h1>🏆 GAME LOBBY</h1>
+        <h1>🏆 Game Lobby</h1>
         <h2 id="host-room-code"></h2>
 
         <div style="text-align: center; margin: 15px 0;">
-            <p style="font-size: 0.85rem; color: #004D73; margin-bottom: 5px;"></p>
+            <p style="font-size: 0.85rem; color: #004D73; margin-bottom: 5px;">📱 Scan or Enter Code</p>
             <div id="qr-code" style="background: white; padding: 15px; display: inline-block; border-radius: 12px;"></div>
         </div>
 
@@ -380,7 +380,7 @@
         <div id="lobby-visual-grid" class="lobby-users-display"></div>
 
         <div id="scoreboard-container" style="margin: 15px 0; display: none;"></div>
-        <button class="primary" id="start-game-btn" onclick="hostStartGame()" style="margin-top: 20px; display: none;">🚀 START THE GAME</button>
+        <button class="primary" id="start-game-btn" onclick="hostStartGame()" style="margin-top: 20px; display: none;">🚀 Start Game</button>
         <p id="waiting-msg" style="text-align: center; color: #00838F; font-weight: bold; margin-top: 15px;">⏳ Waiting for host to start the game...</p>
     </div>
 
@@ -552,10 +552,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// Pool expanded to exactly 50 illustrated characters matching the graphics blueprint 
 const avatarPool = [
     "🦊", "🦁", "🐼", "🐯", "🐨", "🐸", "🦩", "🦉", "🐺", "🦥", "🐹", "🐰", "🦆", "🦌", "🐱", "🐶",
-    "🤖", "👽", "👻", "🦄", "🐉", "🦖", "🦅", "🐵", "🐧", "🐙", "🐬", "🧙‍♂️", "🥷", "🧑‍🚀", "🤠",
-    "💎", "👑", "🚀", "🌟", "🔥", "🔮", "🍕", "🎮", "🎯", "🍀", "🎨", "🎭"
+    "🤖", "👽", "👻", "🦄", "🐉", "Rex", "🦅", "🐵", "🐧", "🐙", "🐬", "🧙‍♂️", "🥷", "🧑‍🚀", "🤠",
+    "💎", "👑", "🚀", "🌟", "🔥", "🔮", "🍕", "🎮", "🎯", "🍀", "🎨", "🎭", "🐝", "🐞", "🐢", 
+    "🐡", "🦀", "🦖", "🦕"
 ];
 let selectedAvatar = "🦊";
 
@@ -682,7 +684,6 @@ function renderScoreboardData(snapshot, containers) {
     });
 }
 
-/* Beautiful Podium Generator logic for active winners view [cite: 143] */
 function constructWinnersPodium(podiumContainerId) {
     const targetElement = document.getElementById(podiumContainerId);
     if (!targetElement || !currentLobbyDataSnapshot) return;
@@ -696,7 +697,6 @@ function constructWinnersPodium(podiumContainerId) {
 
     let html = '';
 
-    // 2nd Place Column
     if (second) {
         html += `
         <div class="podium-column" style="animation-delay: 0.2s">
@@ -709,7 +709,6 @@ function constructWinnersPodium(podiumContainerId) {
         </div>`;
     } else { html += '<div class="podium-column"></div>'; }
 
-    // 1st Place Column
     if (first) {
         html += `
         <div class="podium-column" style="animation-delay: 0s">
@@ -722,7 +721,6 @@ function constructWinnersPodium(podiumContainerId) {
         </div>`;
     }
 
-    // 3rd Place Column
     if (third) {
         html += `
         <div class="podium-column" style="animation-delay: 0.4s">
