@@ -532,12 +532,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const avatarPool = [
-    "🦊", "🦁", "🐼", "🐯", "🐨", "🐸", "🦩", "🦉", "🐺", "🦥", "🐹", "🐰", "🦆", "🦌", "🐱", "🐶",
-    "🤖", "👽", "👻", "🦄", "🐉", "🦖", "🦅", "🐵", "🐧", "🐙", "🐬", "🧙‍♂️", "🥷", "🧑‍🚀", "🤠",
-    "💎", "👑", "🚀", "🌟", "🔥", "🔮", "🍕", "🎮", "🎯", "🍀", "🎨", "🎭"
-];
-let selectedAvatar = "🦊";
 
 window.goToAvatarSelection = function() {
     const nameInput = document.getElementById("player-name").value.trim();
@@ -554,28 +548,38 @@ window.goToAvatarSelection = function() {
 function renderAvatarSelector() {
     const grid = document.getElementById("avatar-selector-grid");
     if (!grid) return;
-    grid.innerHTML = "";
-    avatarPool.forEach((avatar) => {
-        const item = document.createElement("div");
-        item.className = "avatar-option" + (avatar === selectedAvatar ? " selected" : "");
-        item.innerText = avatar;
-        item.onclick = () => {
+    grid.innerHTML = ""; // Clear existing
+
+    // Loop for 50 avatars (10 columns x 5 rows)
+    for (let i = 0; i < 50; i++) {
+        const col = i % 10;
+        const row = Math.floor(i / 10);
+        
+        const wrapper = document.createElement("div");
+        wrapper.className = "avatar-option";
+        
+        // Use the CSS class for the sprite rendering
+        wrapper.innerHTML = `<div class="avatar-render" 
+            style="background-position: ${col * 11.11}% ${row * 25}%"></div>`;
+        
+        wrapper.onclick = () => {
             document.querySelectorAll(".avatar-option").forEach(el => el.classList.remove("selected"));
-            item.classList.add("selected");
-            selectedAvatar = avatar;
+            wrapper.classList.add("selected");
+            // Store coordinates as an object
+            selectedAvatar = { col, row }; 
         };
-        grid.appendChild(item);
-    });
+        grid.appendChild(wrapper);
+    }
 }
 
 window.confirmAndJoinLobby = function() {
-    set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0, avatar: selectedAvatar });
+    // Save the coordinate object instead of the string emoji
+    set(ref(db, `rooms/${roomCode}/players/${playerName}`), { 
+        score: 0, 
+        avatar: selectedAvatar 
+    });
     setupRoomListeners(roomCode);
     navigate("page-scoreboard");
-    onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
-        currentLobbyDataSnapshot = snapshot.val();
-        renderScoreboardData(snapshot, ["scoreboard-container"]);
-    });
 };
 
 const gameData = [
