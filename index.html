@@ -307,3 +307,329 @@
         .score-row span:last-child { color: #00838F; font-size: 1.2rem; }
 
         .solution-box { background: rgba(76, 175, 80, 0.1); padding: 15px; border-left: 4px solid #4CAF50; border-radius: 8px; margin: 15px 0; color: #004D73; line-height: 1.6; }
+        .upload-section { background: rgba(0, 188, 212, 0.1); padding: 20px; border: 2px dashed #00BCD4; border-radius: 12px; margin: 20px 0; text-align: center; }
+        .upload-section p { color: #0097A7; margin-bottom: 10px; font-size: 0.9rem; }
+        #solution-upload { padding: 10px !important; margin: 0 !important; }
+        
+        .upload-status { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 0.9rem; }
+        .upload-success { background: rgba(76, 175, 80, 0.2); border: 1px solid #4CAF50; color: #2E7D32; }
+        .upload-error { background: rgba(244, 67, 54, 0.2); border: 1px solid #F44336; color: #C62828; }
+
+        .gallery-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .gallery-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 2px solid #00BCD4; background: rgba(0, 188, 212, 0.1); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+        .gallery-item-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0, 97, 110, 0.9); color: #FFFFFF; padding: 8px; font-size: 0.75rem; text-align: center; }
+        .no-uploads { text-align: center; padding: 30px; color: #004D73; font-size: 0.9rem; }
+
+        .leaderboard-container { max-height: 150px; overflow-y: auto; margin: 10px 0; padding: 5px; background: rgba(255,255,255,0.5); border-radius: 8px; }
+
+        @media (max-width: 480px) {
+            .phrase-display { font-size: 1.8rem; letter-spacing: 10px; }
+            .eq-card { padding: 12px; }
+            .gallery-container { grid-template-columns: 1fr; }
+        }
+
+        .music-toggle {
+            position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%;
+            background: linear-gradient(135deg, #00BCD4, #4CAF50); border: none; color: white; font-size: 1.5rem;
+            cursor: pointer; box-shadow: 0 4px 12px rgba(0, 150, 175, 0.4); z-index: 1000; display: flex; align-items: center; justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="music-toggle" id="musicToggle" onclick="toggleMusic()">🎵</button>
+
+    <div id="page-lobby" class="page active">
+        <h1>🎮 THE RATIONAL CRYPTOGRAM</h1>
+        <p style="text-align: center; color: #004D73; margin-bottom: 25px;">Solve equations to Decode</p>
+
+        <div class="join-section">
+            <p>👤 Enter Your Name</p>
+            <input type="text" id="player-name" placeholder="Your name" maxlength="20">
+        </div>
+
+        <div class="join-section" style="margin: 5px 0;">
+            <p>🦊 Choose Your Character Avatar</p>
+            <div class="avatar-grid" id="avatar-selector-grid"></div>
+        </div>
+
+        <div class="join-section">
+            <p>🎯 Join a Game</p>
+            <input type="text" id="join-code" placeholder="XXXXXX" maxlength="6" style="text-transform: uppercase;">
+            <button onclick="joinRoom()">⚡ Enter The Game</button>
+        </div>
+
+        <div style="text-align: center; margin: 10px 0; color: #004D73;">— OR —</div>
+        <button class="primary" onclick="startAsHost()">👑 Start As Host</button>
+    </div>
+
+    <div id="page-game" class="page">
+        <div class="top-bar">
+            <button class="small-btn" onclick="toggleFullScreen()">⛶ FULLSCREEN</button>
+            <span id="lvl-indicator">LEVEL 1</span>
+            <span id="timer">03:00</span>
+        </div>
+
+        <div class="phrase-display" id="cipher-output">_ _ _ _</div>
+        <div id="clue-text" class="clue-box"></div>
+        <div id="problems-container"></div>
+        <button onclick="checkAnswers()">🔓 Decode Cryptogram</button>
+
+        <p style="font-size:0.8rem; font-weight:bold; margin-top:15px; color:#0097A7;">📈 LIVE RANKINGS:</p>
+        <div id="player-live-leaderboard" class="leaderboard-container"></div>
+    </div>
+
+    <div id="page-trivia" class="page">
+        <h1 style="color: #4CAF50; font-size: 2.5rem;">🎉 Success!</h1>
+        <p id="trivia-content" style="font-size: 1.1rem; line-height: 1.8; margin: 20px 0;"></p>
+        <p id="trivia-author" style="font-style: italic; color: #0097A7; font-size: 0.9rem;"></p>
+
+        <div class="solution-box">
+            <strong style="color: #004D73;">📝 Solution Steps:</strong>
+            <p id="step-by-step" style="margin-top: 10px;"></p>
+        </div>
+
+        <button onclick="nextLevel()">⏭️ Next Level</button>
+    </div>
+
+    <div id="page-scoreboard" class="page">
+        <h1>🏆 Game Lobby</h1>
+        <h2 id="host-room-code"></h2>
+
+        <div style="text-align: center; margin: 15px 0;">
+            <p style="font-size: 0.85rem; color: #004D73; margin-bottom: 5px;">📱 Scan or Enter Code</p>
+            <div id="qr-code" style="background: white; padding: 15px; display: inline-block; border-radius: 12px;"></div>
+        </div>
+
+        <p style="font-size: 0.9rem; font-weight: bold; color: #0097A7; text-align: center; margin-top: 10px;">👥 PLAYERS IN LOBBY:</p>
+        <div id="lobby-visual-grid" class="lobby-users-display"></div>
+
+        <div id="scoreboard-container" style="margin: 15px 0; display: none;"></div>
+        <button class="primary" id="start-game-btn" onclick="hostStartGame()" style="margin-top: 20px; display: none;">🚀 Start Game</button>
+        <p id="waiting-msg" style="text-align: center; color: #00838F; font-weight: bold; margin-top: 15px;">⏳ Waiting for host to start the game...</p>
+    </div>
+
+    <div id="page-host-game" class="page">
+        <h1>🎮 Game In Progress</h1>
+        <h2 id="host-game-level">LEVEL 1</h2>
+        <p style="text-align: center; color: #004D73; margin: 15px 0;">
+            Time Left: <span id="host-timer" style="color: #0097A7; font-weight: bold;">03:00</span>
+        </p>
+
+        <div id="host-scoreboard-container" style="margin: 20px 0;"></div>
+        <p style="text-align: center; color: #004D73; font-size: 0.85rem; margin-top: 20px;">Players are solving...</p>
+    </div>
+
+    <div id="page-end-game" class="page">
+        <h1 style="color: #4CAF50;">🏆 Game Complete!</h1>
+
+        <div style="background: rgba(0, 188, 212, 0.1); padding: 15px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #00BCD4;">
+            <p style="margin: 5px 0;"><strong>Final Score:</strong> <span id="final-score" style="color: #00838F; font-size: 1.3rem;">0</span></p>
+            <p style="margin: 5px 0;"><strong>Time:</strong> <span id="final-time" style="color: #004D73;">0m 0s</span></p>
+        </div>
+
+        <div class="upload-section">
+            <p>📸 <strong>Show Your Work!</strong></p>
+            <p style="font-size: 0.8rem; color: #004D73;">Upload a photo of your solution (optional)</p>
+            <input type="file" id="solution-upload" accept="image/*" onchange="handleSolutionUpload()">
+            <div id="upload-status"></div>
+        </div>
+
+        <button class="primary" onclick="backToLobby()">🏠 Back To Lobby</button>
+    </div>
+
+    <div id="page-host-uploads" class="page">
+        <h1>📸 Student Solutions</h1>
+        <p style="text-align: center; color: #004D73; margin: 15px 0;">
+            Total: <span id="upload-count" style="color: #0097A7; font-weight: bold;">0</span> submissions
+        </p>
+
+        <div id="gallery-container" class="gallery-container"></div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="primary" onclick="backToLobby()">🏠 Return To Lobby</button>
+        </div>
+    </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+let audioContext;
+let bgMusicPlaying = false;
+let bgMusicOscillators = [];
+
+function initAudio() {
+    try { if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+}
+
+function playSound(freq, dur) {
+    try {
+        initAudio();
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain); gain.connect(audioContext.destination);
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + dur);
+        osc.start(audioContext.currentTime); osc.stop(audioContext.currentTime + dur);
+    } catch(e) {}
+}
+
+function playCorrectBeep() { playSound(880, 0.1); }
+function playErrorBeep() { playSound(262, 0.15); }
+function playSuccessSound() {
+    playSound(523, 0.15);
+    setTimeout(() => playSound(659, 0.15), 100);
+    setTimeout(() => playSound(784, 0.3), 200);
+}
+
+function playBackgroundMusic() {
+    try {
+        initAudio();
+        if (bgMusicPlaying) stopBackgroundMusic();
+        bgMusicPlaying = true;
+
+        const createNote = (freq, startTime, duration, type = 'sine', volume = 0.03) => {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = type; osc.connect(gain); gain.connect(audioContext.destination);
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0, startTime);
+            gain.gain.linearRampToValueAtTime(volume, startTime + 0.02);
+            gain.gain.linearRampToValueAtTime(0, startTime + duration);
+            osc.start(startTime); osc.stop(startTime + duration + 0.05);
+            bgMusicOscillators.push(osc);
+        };
+
+        const loop = () => {
+            if (!bgMusicPlaying) return;
+            const t = audioContext.currentTime;
+            [196.00, 246.94, 293.66].forEach((f) => createNote(f, t, 2.8, 'sine', 0.02));
+            createNote(392.00, t + 0.25, 0.6, 'triangle', 0.04);
+            createNote(329.63, t + 0.7, 0.6, 'triangle', 0.035);
+            setTimeout(loop, 2800);
+        };
+        loop();
+        document.getElementById("musicToggle").textContent = "🎵";
+    } catch(e) {}
+}
+
+function stopBackgroundMusic() {
+    bgMusicPlaying = false;
+    bgMusicOscillators.forEach(osc => { try { osc.stop(); } catch(e) {} });
+    bgMusicOscillators = [];
+    document.getElementById("musicToggle").textContent = "🔇";
+}
+
+window.toggleMusic = function() { bgMusicPlaying ? stopBackgroundMusic() : playBackgroundMusic(); };
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCkoqlW8Fb1yhmvrAv7bBM50CyeCUjZKyA",
+    authDomain: "rational-cryptogram-game.firebaseapp.com",
+    projectId: "rational-cryptogram-game",
+    storageBucket: "rational-cryptogram-game.firebasestorage.app",
+    messagingSenderId: "654271677921",
+    appId: "1:654271677921:web:ac7245dfd3b376a55e3ea0"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const avatarPool = ["🦊", "🦁", "🐼", "🐯", "🐨", "🐸", "🦩", "🦉", "🐺", "🦥", "🐹", "🐰", "🦆", "🦌", "🐱"];
+let selectedAvatar = "🦊";
+
+function renderAvatarSelector() {
+    const grid = document.getElementById("avatar-selector-grid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    avatarPool.forEach((avatar) => {
+        const item = document.createElement("div");
+        item.className = "avatar-option" + (avatar === selectedAvatar ? " selected" : "");
+        item.innerText = avatar;
+        item.onclick = () => {
+            document.querySelectorAll(".avatar-option").forEach(el => el.classList.remove("selected"));
+            item.classList.add("selected");
+            selectedAvatar = avatar;
+        };
+        grid.appendChild(item);
+    });
+}
+renderAvatarSelector();
+
+const gameData = [
+    {
+        lvl: 1, phrase: "GAUSS", clue: "💡 Use cross multiplication.",
+        eqs: [
+            { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> = 2`, a: 8 },
+            { h: `<div class="frac"><span class="numb">48</span><span>3x</span></div> = 4`, a: 4 },
+            { h: `<div class="frac"><span class="numb">8x</span><span>64</span></div> = 1`, a: 8 },
+            { h: `<div class="frac"><span class="numb">2x</span><span>3</span></div> = 6`, a: 9 },
+            { h: `<div class="frac"><span class="numb">5x</span><span>4</span></div> = 5`, a: 4 }
+        ],
+        trivia: "Carl Friedrich Gauss, the 'Prince of Mathematicians,' made groundbreaking contributions to statistics, algebra, and number theory.",
+        author: "Carl Friedrich Gauss (1777–1855)",
+        steps: "1. Clear denominators by cross-multiplying\n2. Isolate x\n3. Solve for the variable"
+    },
+    {
+        lvl: 2, phrase: "INDIA", clue: "🎯 Clear the denominator first.",
+        eqs: [
+            { h: `<div class="frac"><span class="numb">(x+4)</span><span>2</span></div> = 10`, a: 16 },
+            { h: `<div class="frac"><span class="numb">(x+17)</span><span>3</span></div> = 9`, a: 10 },
+            { h: `<div class="frac"><span class="numb">(x+1)</span><span>3</span></div> = 5`, a: 14 },
+            { h: `<div class="frac"><span class="numb">8</span><span>(x-2)</span></div> = 4`, a: 4 },
+            { h: `<div class="frac"><span class="numb">4</span><span>(x-1)</span></div> = 2`, a: 3 }
+        ],
+        trivia: "Ancient India developed the concept of zero as a number, not just a placeholder. This was revolutionary for mathematics!",
+        author: "Brahmagupta (598–668 CE)",
+        steps: "1. Multiply both sides by the denominator\n2. Expand binomials if needed\n3. Solve for x"
+    },
+    {
+        lvl: 3, phrase: "EULER", clue: "🚀 Apply all your algebra skills.",
+        eqs: [
+            { h: `<div class="frac"><span class="numb">x</span><span>5</span></div> + 2 = 7`, a: 25 },
+            { h: `<div class="frac"><span class="numb">30</span><span>x</span></div> - 1 = 2`, a: 10 },
+            { h: `<div class="frac"><span class="numb">x</span><span>3</span></div> + 4 = 14`, a: 30 },
+            { h: `<div class="frac"><span class="numb">45</span><span>x</span></div> - 3 = 2`, a: 9 },
+            { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> + 1 = 6`, a: 20 }
+        ],
+        trivia: "Leonhard Euler invented many mathematical notations we use today, including f(x) and the number e.",
+        author: "Leonhard Euler (1707–1783)",
+        steps: "1. Isolate the fraction\n2. Clear the denominator\n3. Solve the resulting equation"
+    }
+];
+
+let roomCode = "", playerName = "", isHost = false, score = 0, currentLevelIndex = 0, timerInterval, startTime;
+let uploads = {};
+let localGameStarted = false;
+let solvedIndices = [];
+
+function renderScoreboardData(snapshot, containers) {
+    const data = snapshot.val();
+    
+    const visualGrid = document.getElementById("lobby-visual-grid");
+    if (visualGrid) {
+        visualGrid.innerHTML = "";
+        if (data) {
+            Object.entries(data).forEach(([name, info]) => {
+                const card = document.createElement("div");
+                card.className = "lobby-user-card";
+                card.innerHTML = `
+                    <div class="lobby-user-avatar">${info.avatar || "👤"}</div>
+                    <div class="lobby-user-name">${name}</div>
+                `;
+                visualGrid.appendChild(card);
+            });
+        }
+    }
+
+    containers.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.innerHTML = "";
+            if (data) {
+                const sorted = Object.entries(data).sort((a, b) => (b[1].score || 0) - (a[1].score || 0));
+                sorted.forEach(([name, info], idx) => {
+                    const div = document.createElement("div");
+                    div.className = "score-row";
+                    const medal = idx ===
