@@ -1,229 +1,944 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Rational Cryptogram</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #E0F4FF, #81D4FA);
-      display: flex; justify-content: center; align-items: center;
-      min-height: 100vh; padding: 20px;
-    }
-    .page { display: none; width: 100%; max-width: 500px; }
-    .page.active { display: block; }
-    .container {
-      background: rgba(255,255,255,0.95);
-      border-radius: 20px; padding: 25px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    }
-    h1 { text-align: center; color: #004D73; margin-bottom: 20px; }
-    input, button {
-      width: 100%; padding: 12px; margin: 8px 0;
-      border-radius: 10px; border: 2px solid #00BCD4;
-      font-size: 16px;
-    }
-    button {
-      background: linear-gradient(135deg, #00BCD4, #009688);
-      color: white; font-weight: bold; cursor: pointer; border: none;
-    }
-    button.primary { background: linear-gradient(135deg, #4CAF50, #66BB6A); }
-    .timer { font-size: 1.3rem; font-weight: bold; color: #00838F; text-align: center; margin: 10px 0; }
-    .timer.warning { color: #D32F2F; animation: pulse 0.8s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
-    .phrase { font-size: 2rem; text-align: center; letter-spacing: 10px; margin: 15px 0; }
-    .eq-card { background: #E0F7FA; padding: 12px; margin: 8px 0; border-radius: 10px; }
-    .players { display: flex; flex-wrap: wrap; gap: 8px; margin: 15px 0; }
-    .player-badge { background: #B2EBF2; padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; }
-    .transition-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,188,212,0.3); display: none;
-      justify-content: center; align-items: center; z-index: 1000;
-      font-size: 2rem; color: white; font-weight: bold;
-    }
-    .transition-overlay.show { display: flex; animation: fadeIn 0.3s; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>The Rational Algebraic Cryptogram</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root { 
+            --primary: #0EA5E9;
+            --secondary: #06B6D4;
+            --accent: #10B981;
+            --light: #F0F9FF;
+            --dark: #0369A1;
+        }
+
+        html, body {position: fixed;overflow: hidden;width: 100%;height: 100%;-webkit-text-size-adjust: 100%;touch-action: manipulation;}
+
+        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;color: Black; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #E0F4FF 0%, #B3E5FC 25%, #81D4FA 50%, #4FC3F7 75%, #B3E5FC 100%);background-attachment: fixed;margin: 0;animation: gradientShift 20s ease infinite;}
+
+        @keyframes gradientShift {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.05); }
+        }
+
+        #page-lobby, #page-avatar-select, #page-scoreboard, #page-end-game { background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 25%, #80DEEA 50%, #4DD0E1 75%, #26C6DA 100%) !important; border: 3px solid #00838F !important; box-shadow: 0 0 40px rgba(0, 188, 212, 0.5), 0 0 80px rgba(76, 175, 80, 0.3) !important;}
+
+        h1 {font-size: 1.5rem; margin-bottom: 20px; text-align: center !important; letter-spacing: 2px; text-transform: uppercase; color: #004D73 !important; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6);}
+        h2 { font-size: 1.3rem; margin: 20px 0; color: #00838F; text-align: center !important; } p { color: #004D73; }
+
+        .page { width: 92%; max-width: 500px; max-height: 85vh; overflow-y: auto;  -webkit-overflow-scrolling: touch; padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)) 20px; background: rgba(224, 247, 250, 0.98); border-radius: 20px; border: 3px solid #0097A7; box-shadow: 0 0 30px rgba(0, 188, 212, 0.4); display: none;}
+        .page.active { display: block; } input[type="text"], input[type="number"], input[type="file"] { width: 100%; padding: 12px 15px; margin: 10px 0; font-size: 16px !important; border: 2px solid #00BCD4; border-radius: 10px; background: rgba(255, 255, 255, 0.95); color: #004D73; outline: none;}
+        button { width: 100%; padding: 14px; margin: 12px 0; font-size: 1rem; font-weight: bold; border: none; border-radius: 10px; background: linear-gradient(135deg, #00BCD4, #009688); color: White; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(0, 150, 175, 0.3);}
+        button.primary { background: linear-gradient(135deg, #4CAF50, #66BB6A); color: White; }
+
+        .join-section { display: flex; flex-direction: column; gap: 10px; margin: 15px 0; align-items: center;}
+
+        /* Modernized Illustrated/Badged Avatar Matrix Grid Style [cite: 27, 28] */
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            border: 2px solid #00BCD4;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+        .avatar-option {
+            font-size: 2.2rem;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 65px;
+            height: 65px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid rgba(0, 188, 212, 0.2);
+            background: linear-gradient(135deg, #FFFFFF, #E0F7FA);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+        }
+        .avatar-option:hover { transform: scale(1.15); box-shadow: 0 6px 12px rgba(0,188,212,0.3); }
+        .avatar-option.selected {
+            background: linear-gradient(135deg, #00BCD4, #0097A7);
+            border-color: #006064;
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 15px rgba(0,188,212,0.6);
+        }
+
+        .lobby-users-display {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+            padding: 10px;
+        }
+        .lobby-user-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px;
+            border-radius: 14px;
+            border: 2px solid #0097A7;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .lobby-user-avatar { 
+            font-size: 2.4rem; 
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #E0F7FA, #B2EBF2);
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #00BCD4;
+        }
+        .lobby-user-name { font-size: 0.9rem; font-weight: bold; color: #004D73; word-break: break-all; }
+
+        /* 3D Winners Podium UI Styling [cite: 143] */
+        .podium-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 12px;
+            margin: 30px auto 15px auto;
+            height: 180px;
+            width: 100%;
+            max-width: 400px;
+            padding-bottom: 5px;
+        }
+        .podium-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+            animation: growPodium 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+        }
+        @keyframes growPodium { from { transform: scaleY(0); transform-origin: bottom; } to { transform: scaleY(1); } }
+        .podium-avatar { font-size: 2.3rem; margin-bottom: 6px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); }
+        .podium-name { font-size: 0.85rem; font-weight: bold; color: #004D73; margin-bottom: 6px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
+        .podium-block {
+            width: 100%;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            position: relative;
+        }
+        .podium-rank { font-size: 1.6rem; font-weight: 900; color: rgba(255,255,255,0.9); text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .podium-score { font-size: 0.75rem; font-weight: bold; color: rgba(255,255,255,0.85); }
+        .podium-1st { height: 110px; background: linear-gradient(to top, #D4AF37, #FFD700); border: 2px solid #B8860B; }
+        .podium-2nd { height: 80px; background: linear-gradient(to top, #AAA, #E6E6E6); border: 2px solid #888; }
+        .podium-3rd { height: 55px; background: linear-gradient(to top, #CD7F32, #D2691E); border: 2px solid #8B4513; }
+
+        .phrase-display {
+            font-size: 2.2rem;
+            font-weight: bold;
+            letter-spacing: 15px;
+            text-align: center;
+            margin: 25px 0;
+            padding: 20px;
+            background: rgba(0, 188, 212, 0.1);
+            border: 2px solid #00BCD4;
+            border-radius: 15px;
+            color: #0097A7;
+            text-transform: uppercase;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .revealed-letter { color: #4CAF50; font-weight: 900; }
+        .hidden-letter { color: #9ECAE1; }
+        
+        .clue-box {
+            background: rgba(76, 175, 80, 0.1);
+            padding: 15px;
+            border-left: 4px solid #4CAF50;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-style: italic;
+            color: #004D73;
+        }
+
+        .eq-card {
+            background: rgba(0, 188, 212, 0.08);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 188, 212, 0.3);
+        }
+
+        .eq-card div { font-size: 1.1rem; margin-bottom: 10px; color: #0097A7; }
+        .eq-card input { width: 100px; padding: 10px; text-align: center; font-weight: bold; margin: 10px auto; display: block; }
+
+        .frac { display: inline-block; position: relative; vertical-align: middle; margin: 0 2px; }
+        .frac .numb, .frac span:last-child { display: block; padding: 4px 6px; text-align: center; font-size: 0.9em; }
+        .frac .numb { border-bottom: 1px solid currentColor; }
+
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(0, 188, 212, 0.3); gap: 10px; }
+        .top-bar span { font-weight: bold; color: #0097A7; font-size: 1.1rem; }
+        #timer { font-size: 1.3rem; color: #00838F; }
+        #timer.warning { color: #D32F2F; animation: pulse-warning 1s infinite; }
+
+        @keyframes pulse-warning { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        .small-btn { width: auto !important; padding: 8px 12px !important; font-size: 0.8rem !important; background: rgba(0, 188, 212, 0.2) !important; color: #0097A7 !important; border: 1px solid #0097A7 !important; margin: 0 !important; box-shadow: none !important; }
+        .score-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 15px; margin: 8px 0; background: rgba(0, 188, 212, 0.15); border-radius: 8px; border-left: 4px solid #00BCD4; font-weight: bold; }
+        .score-row span:first-child { color: #0097A7; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        .score-row span:last-child { color: #00838F; font-size: 1.2rem; }
+
+        .solution-box { background: rgba(76, 175, 80, 0.1); padding: 15px; border-left: 4px solid #4CAF50; border-radius: 8px; margin: 15px 0; color: #004D73; line-height: 1.6; }
+        .upload-section { background: rgba(0, 188, 212, 0.1); padding: 20px; border: 2px dashed #00BCD4; border-radius: 12px; margin: 20px 0; text-align: center; }
+        .upload-section p { color: #0097A7; margin-bottom: 10px; font-size: 0.9rem; }
+        
+        .upload-status { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 0.9rem; }
+        .upload-success { background: rgba(76, 175, 80, 0.2); border: 1px solid #4CAF50; color: #2E7D32; }
+        .upload-error { background: rgba(244, 67, 54, 0.2); border: 1px solid #F44336; color: #C62828; }
+
+        .gallery-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .gallery-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 2px solid #00BCD4; background: rgba(0, 188, 212, 0.1); transition: transform 0.2s ease; }
+        .gallery-item:hover { transform: scale(1.03); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+        .gallery-item-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0, 97, 110, 0.9); color: #FFFFFF; padding: 8px; font-size: 0.75rem; text-align: center; }
+        .no-uploads { text-align: center; padding: 30px; color: #004D73; font-size: 0.9rem; }
+
+        .music-toggle {
+            position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%;
+            background: linear-gradient(135deg, #00BCD4, #4CAF50); border: none; color: white; font-size: 1.5rem;
+            cursor: pointer; box-shadow: 0 4px 12px rgba(0, 150, 175, 0.4); z-index: 1000; display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Photo Lightbox Overlay for viewing student images [cite: 74, 75] */
+        .zoom-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); z-index: 2000;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            touch-action: none;
+        }
+        .zoom-modal-content {
+            width: 90%; height: 65%; display: flex; justify-content: center; align-items: center;
+            overflow: hidden; position: relative; border-radius: 12px; background: rgba(255,255,255,0.05);
+        }
+        .zoom-modal-content img {
+            max-width: 100%; max-height: 100%; object-fit: contain;
+            transition: transform 0.15s ease-out; transform-origin: center center;
+        }
+        .zoom-controls-wrapper { display: flex; gap: 15px; margin-top: 20px; z-index: 2100; }
+        .zoom-btn { width: auto !important; padding: 10px 20px !important; margin: 0 !important; font-size: 0.9rem !important; border-radius: 8px !important; }
+        .zoom-close-btn {
+            position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.6);
+            color: #fff; border: 2px solid #fff; border-radius: 50%; width: 44px; height: 44px;
+            font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2200;
+        }
+    </style>
 </head>
 <body>
 
-<div class="transition-overlay" id="transitionOverlay">LOADING NEXT LEVEL...</div>
+    <button class="music-toggle" id="musicToggle" onclick="toggleMusic()">🎵</button>
 
-<div id="lobby" class="page active">
-  <div class="container">
-    <h1>🔐 RATIONAL CRYPTOGRAM</h1>
-    <input type="text" id="nameInput" placeholder="Your name" maxlength="20">
-    <input type="text" id="codeInput" placeholder="Room code" maxlength="8" style="text-transform:uppercase;">
-    <button onclick="joinRoom()">JOIN ROOM</button>
-    <button class="primary" onclick="createRoom()">CREATE ROOM</button>
-  </div>
-</div>
+    <div id="page-lobby" class="page active">
+        <h1>🎮 THE RATIONAL CRYPTOGRAM</h1>
+        <p style="text-align: center; color: #004D73; margin-bottom: 25px;">Solve equations to Decode</p>
 
-<div id="room" class="page">
-  <div class="container">
-    <h1>🏠 GAME LOBBY</h1>
-    <h2 id="roomCodeDisplay" style="text-align:center; color:#0097A7;"></h2>
-    <div id="qrContainer" style="text-align:center; margin:10px 0;"></div>
-    <div class="players" id="playerList"></div>
-    <button id="startBtn" class="primary" onclick="startGame()" style="display:none;">START GAME</button>
-    <p id="waitMsg" style="text-align:center;">Waiting for host...</p>
-  </div>
-</div>
+        <div class="join-section">
+            <p><b>👤 ENTER YOUR NAME</b></p>
+            <input type="text" id="player-name" placeholder="Your name" maxlength="20">
+        </div>
 
-<div id="game" class="page">
-  <div class="container">
-    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-      <span id="levelText">LEVEL 1</span>
-      <span class="timer" id="timer">03:00</span>
+        <div class="join-section">
+            <p><b>🎯 ENTER THE CODE</b></p>
+            <input type="text" id="join-code" placeholder="XXXXXX" maxlength="6" style="text-transform: uppercase;">
+            <button onclick="goToAvatarSelection()">🚪 JOIN ROOM</button>
+        </div>
+
+        <div style="text-align: center; margin: 10px 0; color: #004D73;">— OR —</div>
+        <button class="primary" onclick="startAsHost()">👑 CREATE ROOM</button>
     </div>
-    <div class="phrase" id="cipherDisplay">_ _ _ _ _</div>
-    <div id="equations"></div>
-    <button onclick="checkAnswers()">SUBMIT ANSWERS</button>
-  </div>
-</div>
 
-<div id="end" class="page">
-  <div class="container">
-    <h1>🎉 GAME COMPLETE</h1>
-    <p style="text-align:center; font-size:1.2rem;">Score: <strong id="finalScore">0</strong></p>
-    <button onclick="backToLobby()">BACK TO LOBBY</button>
-  </div>
-</div>
+    <div id="page-avatar-select" class="page">
+        <h1>🦊 CHOOSE YOUR AVATAR</h1>
+        <p style="text-align: center; color: #004D73; margin-bottom: 15px;">Select an avatar to display in the game lobby</p>
+        
+        <div class="avatar-grid" id="avatar-selector-grid"></div>
+
+        <button class="primary" onclick="confirmAndJoinLobby()">⚡ ENTER THE LOBBY</button>
+        <button style="background: #9E9E9E;" onclick="navigate('page-lobby')">⬅️ Back</button>
+    </div>
+
+    <div id="page-scoreboard" class="page">
+        <h1>🏆 GAME LOBBY</h1>
+        <h2 id="host-room-code"></h2>
+
+        <div style="text-align: center; margin: 15px 0;">
+            <p style="font-size: 0.85rem; color: #004D73; margin-bottom: 5px;"></p>
+            <div id="qr-code" style="background: white; padding: 15px; display: inline-block; border-radius: 12px;"></div>
+        </div>
+
+        <p style="font-size: 0.9rem; font-weight: bold; color: #0097A7; text-align: center; margin-top: 10px;">👥 PLAYERS IN LOBBY:</p>
+        <div id="lobby-visual-grid" class="lobby-users-display"></div>
+
+        <div id="scoreboard-container" style="margin: 15px 0; display: none;"></div>
+        <button class="primary" id="start-game-btn" onclick="hostStartGame()" style="margin-top: 20px; display: none;">🚀 START THE GAME</button>
+        <p id="waiting-msg" style="text-align: center; color: #00838F; font-weight: bold; margin-top: 15px;">⏳ Waiting for host to start the game...</p>
+    </div>
+
+    <div id="page-game" class="page">
+        <div class="top-bar">
+            <button class="small-btn" onclick="toggleFullScreen()">⛶ FULLSCREEN</button>
+            <span id="lvl-indicator">LEVEL 1</span>
+            <span id="timer">03:00</span>
+        </div>
+
+        <div class="phrase-display" id="cipher-output">_ _ _ _</div>
+        <div id="clue-text" class="clue-box"></div>
+        <div id="problems-container"></div>
+        <button onclick="checkAnswers()">🔓 Decode Cryptogram</button>
+    </div>
+
+    <div id="page-trivia" class="page">
+        <h1 style="color: #4CAF50; font-size: 2.5rem;">🎉 Success!</h1>
+        <p id="trivia-content" style="font-size: 1.1rem; line-height: 1.8; margin: 20px 0;"></p>
+        <p id="trivia-author" style="font-style: italic; color: #0097A7; font-size: 0.9rem;"></p>
+
+        <div class="solution-box">
+            <strong style="color: #004D73;">📝 Solution Steps:</strong>
+            <p id="step-by-step" style="margin-top: 10px;"></p>
+        </div>
+
+        <button onclick="nextLevel()">⏭️ Next Level</button>
+    </div>
+
+    <div id="page-host-game" class="page">
+        <h1>🎮 Game In Progress</h1>
+        <h2 id="host-game-level">LEVEL 1</h2>
+        <p style="text-align: center; color: #004D73; margin: 15px 0;">
+            Time Left: <span id="host-timer" style="color: #0097A7; font-weight: bold;">03:00</span>
+        </p>
+
+        <div id="host-scoreboard-container" style="margin: 20px 0;"></div>
+        <p style="text-align: center; color: #004D73; font-size: 0.85rem; margin-top: 20px;">Players are solving...</p>
+    </div>
+
+    <div id="page-end-game" class="page">
+        <h1>🏆 Game Complete!</h1>
+
+        <div id="game-winners-podium" class="podium-wrapper"></div>
+
+        <div style="background: rgba(0, 188, 212, 0.1); padding: 15px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #00BCD4;">
+            <p style="margin: 5px 0;"><strong>Final Score:</strong> <span id="final-score" style="color: #00838F; font-size: 1.3rem;">0</span></p>
+            <p style="margin: 5px 0;"><strong>Time:</strong> <span id="final-time" style="color: #004D73;">0m 0s</span></p>
+        </div>
+
+        <div class="upload-section">
+            <p>📸 <strong>Show Your Work!</strong></p>
+            <p style="font-size: 0.8rem; color: #004D73;">Upload a photo of your solution (optional)</p>
+            <input type="file" id="solution-upload" accept="image/*" onchange="handleSolutionUpload()">
+            <div id="upload-status"></div>
+        </div>
+
+        <button class="primary" onclick="backToLobby()">🏠 Back To Lobby</button>
+    </div>
+
+    <div id="page-host-uploads" class="page">
+        <h1>📸 Student Solutions</h1>
+        
+        <div id="host-winners-podium" class="podium-wrapper"></div>
+
+        <p style="text-align: center; color: #004D73; margin: 15px 0;">
+            Total: <span id="upload-count" style="color: #0097A7; font-weight: bold;">0</span> submissions
+        </p>
+
+        <div id="gallery-container" class="gallery-container"></div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="primary" onclick="backToLobby()">🏠 Return To Lobby</button>
+        </div>
+    </div>
+
+    <div id="teacher-zoom-modal" class="zoom-modal-overlay">
+        <div class="zoom-close-btn" onclick="closeZoomModal()">&times;</div>
+        <div class="zoom-modal-content">
+            <img id="zoom-target-image" src="" alt="Submission Preview">
+        </div>
+        <div class="zoom-controls-wrapper">
+            <button class="zoom-btn" onclick="applyZoomAdjustment(0.25)">🔍+ Zoom In</button>
+            <button class="zoom-btn" onclick="applyZoomAdjustment(-0.25)">🔍- Zoom Out</button>
+            <button class="zoom-btn primary" onclick="resetZoomScale()">🔄 Reset</button>
+        </div>
+    </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, update, onValue, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
+let audioContext;
+let bgMusicPlaying = false;
+let bgMusicOscillators = [];
+let targetImageScale = 1;
+let currentLobbyDataSnapshot = null;
+
+function initAudio() {
+    try { if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+}
+
+function playSound(freq, dur) {
+    try {
+        initAudio();
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain); gain.connect(audioContext.destination);
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + dur);
+        osc.start(audioContext.currentTime); osc.stop(audioContext.currentTime + dur);
+    } catch(e) {}
+}
+
+function playCorrectBeep() { playSound(880, 0.1); }
+function playErrorBeep() { playSound(262, 0.15); }
+function playSuccessSound() {
+    playSound(523, 0.15);
+    setTimeout(() => playSound(659, 0.15), 100);
+    setTimeout(() => playSound(784, 0.3), 200);
+}
+
+function playBackgroundMusic() {
+    try {
+        initAudio();
+        if (bgMusicPlaying) stopBackgroundMusic();
+        bgMusicPlaying = true;
+
+        const createNote = (freq, startTime, duration, type = 'sine', volume = 0.03) => {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = type; osc.connect(gain); gain.connect(audioContext.destination);
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0, startTime);
+            gain.gain.linearRampToValueAtTime(volume, startTime + 0.02);
+            gain.gain.linearRampToValueAtTime(0, startTime + duration);
+            osc.start(startTime); osc.stop(startTime + duration + 0.05);
+            bgMusicOscillators.push(osc);
+        };
+        const loop = () => {
+            if (!bgMusicPlaying) return;
+            const t = audioContext.currentTime;
+            [196.00, 246.94, 293.66].forEach((f) => createNote(f, t, 2.8, 'sine', 0.02));
+            createNote(392.00, t + 0.25, 0.6, 'triangle', 0.04);
+            createNote(329.63, t + 0.7, 0.6, 'triangle', 0.035);
+            setTimeout(loop, 2800);
+        };
+        loop();
+        document.getElementById("musicToggle").textContent = "🎵";
+    } catch(e) {}
+}
+
+function stopBackgroundMusic() {
+    bgMusicPlaying = false;
+    bgMusicOscillators.forEach(osc => { try { osc.stop(); } catch(e) {} });
+    bgMusicOscillators = [];
+    document.getElementById("musicToggle").textContent = "🔇";
+}
+
+window.toggleMusic = function() { bgMusicPlaying ? stopBackgroundMusic() : playBackgroundMusic(); };
 const firebaseConfig = {
-  apiKey: "AIzaSyCkoqlW8Fb1yhmvrAv7bBM50CyeCUjZKyA",
-  authDomain: "rational-cryptogram-game.firebaseapp.com",
-  projectId: "rational-cryptogram-game",
-  storageBucket: "rational-cryptogram-game.firebasestorage.app",
-  messagingSenderId: "654271677921",
-  appId: "1:654271677921:web:ac7245dfd3b376a55e3ea0"
+    apiKey: "AIzaSyCkoqlW8Fb1yhmvrAv7bBM50CyeCUjZKyA",
+    authDomain: "rational-cryptogram-game.firebaseapp.com",
+    projectId: "rational-cryptogram-game",
+    storageBucket: "rational-cryptogram-game.firebasestorage.app",
+    messagingSenderId: "654271677921",
+    appId: "1:654271677921:web:ac7245dfd3b376a55e3ea0"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const LEVELS = [
-  { phrase: "GAUSS", eqs: [
-    { q: "x/4 = 2", a: 8 }, { q: "48/3x = 4", a: 4 }, { q: "8x/64 = 1", a: 8 },
-    { q: "2x/3 = 6", a: 9 }, { q: "5x/4 = 5", a: 4 }
-  ]},
-  { phrase: "INDIA", eqs: [
-    { q: "(x+4)/2 = 10", a: 16 }, { q: "(x+17)/3 = 9", a: 10 }, { q: "(x+1)/3 = 5", a: 14 },
-    { q: "8/(x-2) = 4", a: 4 }, { q: "4/(x-1) = 2", a: 3 }
-  ]},
-  { phrase: "EULER", eqs: [
-    { q: "x/5 + 2 = 7", a: 25 }, { q: "30/x - 1 = 2", a: 10 }, { q: "x/3 + 4 = 14", a: 30 },
-    { q: "45/x - 3 = 2", a: 9 }, { q: "x/4 + 1 = 6", a: 20 }
-  ]}
+const avatarPool = [
+    "🦊", "🦁", "🐼", "🐯", "🐨", "🐸", "🦩", "🦉", "🐺", "🦥", "🐹", "🐰", "🦆", "🦌", "🐱", "🐶",
+    "🤖", "👽", "👻", "🦄", "🐉", "🦖", "🦅", "🐵", "🐧", "🐙", "🐬", "🧙‍♂️", "🥷", "🧑‍🚀", "🤠",
+    "💎", "👑", "🚀", "🌟", "🔥", "🔮", "🍕", "🎮", "🎯", "🍀", "🎨", "🎭"
+];
+let selectedAvatar = "🦊";
+
+window.goToAvatarSelection = function() {
+    const nameInput = document.getElementById("player-name").value.trim();
+    const codeInput = document.getElementById("join-code").value.trim();
+    if (!nameInput || !codeInput) { alert("Please fill up both your Name and the Room Code first!"); return; }
+    
+    playerName = nameInput;
+    roomCode = codeInput.toUpperCase();
+    
+    renderAvatarSelector();
+    navigate("page-avatar-select");
+};
+
+function renderAvatarSelector() {
+    const grid = document.getElementById("avatar-selector-grid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    avatarPool.forEach((avatar) => {
+        const item = document.createElement("div");
+        item.className = "avatar-option" + (avatar === selectedAvatar ? " selected" : "");
+        item.innerText = avatar;
+        item.onclick = () => {
+            document.querySelectorAll(".avatar-option").forEach(el => el.classList.remove("selected"));
+            item.classList.add("selected");
+            selectedAvatar = avatar;
+        };
+        grid.appendChild(item);
+    });
+}
+
+window.confirmAndJoinLobby = function() {
+    set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0, avatar: selectedAvatar });
+    setupRoomListeners(roomCode);
+    navigate("page-scoreboard");
+    onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
+        currentLobbyDataSnapshot = snapshot.val();
+        renderScoreboardData(snapshot, ["scoreboard-container"]);
+    });
+};
+
+const gameData = [
+    {
+        lvl: 1, phrase: "GAUSS", clue: "💡 Use cross multiplication.",
+        eqs: [
+            { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> = 2`, a: 8 },
+            { h: `<div class="frac"><span class="numb">48</span><span>3x</span></div> = 4`, a: 4 },
+            { h: `<div class="frac"><span class="numb">8x</span><span>64</span></div> = 1`, a: 8 },
+            { h: `<div class="frac"><span class="numb">2x</span><span>3</span></div> = 6`, a: 9 },
+            { h: `<div class="frac"><span class="numb">5x</span><span>4</span></div> = 5`, a: 4 }
+        ],
+        trivia: "Carl Friedrich Gauss, the 'Prince of Mathematicians,' made groundbreaking contributions to statistics, algebra, and number theory.",
+        author: "Carl Friedrich Gauss (1777–1855)",
+        steps: "1. Clear denominators by cross-multiplying\n2. Isolate x\n3. Solve for the variable"
+    },
+    {
+        lvl: 2, phrase: "INDIA", clue: "🎯 Clear the denominator first.",
+        eqs: [
+            { h: `<div class="frac"><span class="numb">(x+4)</span><span>2</span></div> = 10`, a: 16 },
+            { h: `<div class="frac"><span class="numb">(x+17)</span><span>3</span></div> = 9`, a: 10 },
+            { h: `<div class="frac"><span class="numb">(x+1)</span><span>3</span></div> = 5`, a: 14 },
+            { h: `<div class="frac"><span class="numb">8</span><span>(x-2)</span></div> = 4`, a: 4 },
+            { h: `<div class="frac"><span class="numb">4</span><span>(x-1)</span></div> = 2`, a: 3 }
+        ],
+        trivia: "Ancient India developed the concept of zero as a number, not just a placeholder. This was revolutionary for mathematics!",
+        author: "Brahmagupta (598–668 CE)",
+        steps: "1. Multiply both sides by the denominator\n2. Expand binomials if needed\n3. Solve for x"
+    },
+    {
+        lvl: 3, phrase: "EULER", clue: "🚀 Apply all your algebra skills.",
+        eqs: [
+            { h: `<div class="frac"><span class="numb">x</span><span>5</span></div> + 2 = 7`, a: 25 },
+            { h: `<div class="frac"><span class="numb">30</span><span>x</span></div> - 1 = 2`, a: 10 },
+            { h: `<div class="frac"><span class="numb">x</span><span>3</span></div> + 4 = 14`, a: 30 },
+            { h: `<div class="frac"><span class="numb">45</span><span>x</span></div> - 3 = 2`, a: 9 },
+            { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> + 1 = 6`, a: 20 }
+        ],
+        trivia: "Leonhard Euler invented many mathematical notations we use today, including f(x) and the number e.",
+        author: "Leonhard Euler (1707–1783)",
+        steps: "1. Isolate the fraction\n2. Clear the denominator\n3. Solve the resulting equation"
+    }
 ];
 
-let roomCode, playerName, isHost = false;
-let currentLevel = 0, score = 0, gameEndTime = null;
-let timerInterval = null;
-const MAX_PLAYERS = 40;
+let roomCode = "", playerName = "", isHost = false, score = 0, currentLevelIndex = 0, timerInterval, startTime;
+let uploads = {};
+let localGameStarted = false;
+let solvedIndices = [];
 
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-// ✅ PERSISTENT SESSION - survives reloads and back button
-function saveSession() {
-  if (playerName && roomCode) {
-    const sessionData = {
-      name: playerName,
-      room: roomCode,
-      host: isHost,
-      score: score,
-      level: currentLevel
-    };
-    localStorage.setItem('crypto_session', JSON.stringify(sessionData));
-    sessionStorage.setItem('crypto_session', JSON.stringify(sessionData));
-  }
-}
-
-function getSession() {
-  // Try sessionStorage first (survives back button), then localStorage (survives reload)
-  const session = sessionStorage.getItem('crypto_session') || localStorage.getItem('crypto_session');
-  return session ? JSON.parse(session) : null;
-}
-
-// ✅ RECONNECT HANDLER - restores player state at correct level
-async function tryReconnect() {
-  const saved = getSession();
-  if (!saved) return false;
-  
-  const snap = await new Promise(res => {
-    onValue(ref(db, `rooms/${saved.room}`), res, { onlyOnce: true });
-  });
-  
-  if (!snap.exists()) {
-    clearSession();
-    return false;
-  }
-  
-  const roomData = snap.val();
-  
-  // Restore player identity
-  playerName = saved.name;
-  roomCode = saved.room;
-  isHost = saved.host;
-  score = saved.score || 0;
-  currentLevel = saved.level || 0;
-  
-  // Re-register presence
-  const playerRef = ref(db, `rooms/${roomCode}/players/${playerName}`);
-  await set(playerRef, { 
-    score: score, 
-    lastSeen: serverTimestamp(),
-    reconnected: true 
-  });
-  onDisconnect(playerRef).update({ lastSeen: serverTimestamp() });
-  
-  // Always update session on reconnect
-  saveSession();
-  
-  // ✅ Check if game is active and restore to correct state
-  if (roomData.gameStarted) {
-    gameEndTime = roomData.gameEndTime;
-    const serverLevel = roomData.currentLevel || 0;
+function renderScoreboardData(snapshot, containers) {
+    const data = snapshot.val();
     
-    // Always sync to server level (prevents falling behind or ahead)
-    currentLevel = serverLevel;
-    saveSession();
-    
-    if (gameEndTime && Date.now() < gameEndTime) {
-      showPage('game');
-      loadLevel();
-      startTimer();
-    } else if (gameEndTime && Date.now() >= gameEndTime) {
-      showPage('end');
-      document.getElementById('finalScore').innerText = score;
+    const visualGrid = document.getElementById("lobby-visual-grid");
+    if (visualGrid) {
+        visualGrid.innerHTML = "";
+        if (data) {
+            Object.entries(data).forEach(([name, info]) => {
+                const card = document.createElement("div");
+                card.className = "lobby-user-card";
+                card.innerHTML = `
+                    <div class="lobby-user-avatar">${info.avatar || "👤"}</div>
+                    <div class="lobby-user-name">${name}</div>
+                `;
+                visualGrid.appendChild(card);
+            });
+        }
     }
-  } else {
-    showPage('room');
+
+    containers.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.innerHTML = "";
+            if (data) {
+                const sorted = Object.entries(data).sort((a, b) => (b[1].score || 0) - (a[1].score || 0));
+                sorted.forEach(([name, info], idx) => {
+                    const div = document.createElement("div");
+                    div.className = "score-row";
+                    const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '👤';
+                    div.innerHTML = `<span>${medal} <b style='font-size:1.25rem;line-height:1;'>${info.avatar || "👤"}</b> ${name}</span><span>${info.score || 0} pts</span>`;
+                    el.appendChild(div);
+                });
+            }
+        }
+    });
+}
+
+/* Beautiful Podium Generator logic for active winners view [cite: 143] */
+function constructWinnersPodium(podiumContainerId) {
+    const targetElement = document.getElementById(podiumContainerId);
+    if (!targetElement || !currentLobbyDataSnapshot) return;
+
+    const sortedPlayers = Object.entries(currentLobbyDataSnapshot)
+        .sort((a, b) => (b[1].score || 0) - (a[1].score || 0));
+
+    const first = sortedPlayers[0] ? { name: sortedPlayers[0][0], ...sortedPlayers[0][1] } : null;
+    const second = sortedPlayers[1] ? { name: sortedPlayers[1][0], ...sortedPlayers[1][1] } : null;
+    const third = sortedPlayers[2] ? { name: sortedPlayers[2][0], ...sortedPlayers[2][1] } : null;
+
+    let html = '';
+
+    // 2nd Place Column
+    if (second) {
+        html += `
+        <div class="podium-column" style="animation-delay: 0.2s">
+            <div class="podium-avatar">${second.avatar || "👤"}</div>
+            <div class="podium-name">${second.name}</div>
+            <div class="podium-block podium-2nd">
+                <span class="podium-rank">2</span>
+                <span class="podium-score">${second.score} pts</span>
+            </div>
+        </div>`;
+    } else { html += '<div class="podium-column"></div>'; }
+
+    // 1st Place Column
+    if (first) {
+        html += `
+        <div class="podium-column" style="animation-delay: 0s">
+            <div class="podium-avatar">${first.avatar || "👤"}</div>
+            <div class="podium-name" style="font-weight: 900; color: #B8860B;">👑 ${first.name}</div>
+            <div class="podium-block podium-1st">
+                <span class="podium-rank">1</span>
+                <span class="podium-score">${first.score} pts</span>
+            </div>
+        </div>`;
+    }
+
+    // 3rd Place Column
+    if (third) {
+        html += `
+        <div class="podium-column" style="animation-delay: 0.4s">
+            <div class="podium-avatar">${third.avatar || "👤"}</div>
+            <div class="podium-name">${third.name}</div>
+            <div class="podium-block podium-3rd">
+                <span class="podium-rank">3</span>
+                <span class="podium-score">${third.score} pts</span>
+            </div>
+        </div>`;
+    } else { html += '<div class="podium-column"></div>'; }
+
+    targetElement.innerHTML = html;
+}
+
+function updateHostGalleryView(uploadsData) {
+    const gallery = document.getElementById("gallery-container");
+    if (!gallery) return;
+    
+    gallery.innerHTML = "";
+    const keys = Object.keys(uploadsData);
+    const countEl = document.getElementById("upload-count");
+    if (countEl) countEl.innerText = keys.length;
+
+    if (keys.length === 0) {
+        gallery.innerHTML = '<div class="no-uploads"><p>No submissions yet</p></div>';
+    } else {
+        Object.entries(uploadsData).forEach(([pName, imageData]) => {
+            const item = document.createElement("div");
+            item.className = "gallery-item";
+            item.style.cursor = "pointer";
+            item.innerHTML = `<img src="${imageData}"><div class="gallery-item-label">${pName}</div>`;
+            item.onclick = () => window.launchTeacherZoomModal(imageData);
+            gallery.appendChild(item);
+        });
+    }
+}
+
+window.launchTeacherZoomModal = function(imgSrc) {
+    const modal = document.getElementById("teacher-zoom-modal");
+    const targetImg = document.getElementById("zoom-target-image");
+    targetImg.src = imgSrc;
+    targetImg.style.transform = "scale(1)";
+    targetImageScale = 1;
+    modal.style.display = "flex";
+};
+
+window.closeZoomModal = function() {
+    document.getElementById("teacher-zoom-modal").style.display = "none";
+};
+
+window.applyZoomAdjustment = function(amount) {
+    targetImageScale = Math.max(0.5, Math.min(4.0, targetImageScale + amount));
+    document.getElementById("zoom-target-image").style.transform = `scale(${targetImageScale})`;
+};
+
+window.resetZoomScale = function() {
+    targetImageScale = 1;
+    document.getElementById("zoom-target-image").style.transform = "scale(1)";
+};
+
+window.startAsHost = function() {
+    playerName = document.getElementById("player-name").value.trim();
+    if (!playerName) { alert("Enter host name!"); return; }
+
+    isHost = true;
+    roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    set(ref(db, "rooms/" + roomCode), { gameStarted: false, level: 1 });
+    document.getElementById("host-room-code").innerText = "🎮 Room Code: " + roomCode;
+    document.getElementById("start-game-btn").style.display = "block";
+    document.getElementById("waiting-msg").style.display = "none";
+
+    const qrContainer = document.getElementById("qr-code");
+    qrContainer.innerHTML = "";
+    const joinURL = window.location.origin + window.location.pathname + "?room=" + roomCode;
+    try { new QRCode(qrContainer, { text: joinURL, width: 128, height: 128 }); } catch(e) {}
+
+    setupRoomListeners(roomCode);
+    navigate("page-scoreboard");
+    onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
+        currentLobbyDataSnapshot = snapshot.val();
+        renderScoreboardData(snapshot, ["scoreboard-container", "host-scoreboard-container"]);
+    });
+    onValue(ref(db, `rooms/${roomCode}/uploads`), (snapshot) => {
+        uploads = snapshot.val() || {};
+        updateHostGalleryView(uploads);
+    });
+};
+
+window.hostStartGame = function() {
+    update(ref(db, "rooms/" + roomCode), { gameStarted: true, level: 1 });
+    localGameStarted = true;
+    startGame();
+};
+
+function setupRoomListeners(room) {
+    if (!room) return;
+    onValue(ref(db, `rooms/${room}`), (snapshot) => {
+        const data = snapshot.val();
+        if (!data) return;
+
+        if (data.gameStarted === true && !isHost && !localGameStarted) {
+            localGameStarted = true;
+            startGame();
+        }
+        if (data.level) {
+            const lvlText = 'LEVEL ' + data.level;
+            const lvlIndicator = document.getElementById('lvl-indicator');
+            if (lvlIndicator) lvlIndicator.innerText = lvlText;
+            const hostGameLevel = document.getElementById('host-game-level');
+            if (hostGameLevel) hostGameLevel.innerText = lvlText;
+            
+            if(!isHost) {
+                currentLevelIndex = data.level - 1;
+                loadLevel();
+            }
+        }
+    });
+}
+
+function startGame() {
+    score = 0;
+    startTime = new Date();
+    let timeLeft = 180;
+    playBackgroundMusic();
+    const timerDisplay = document.getElementById("timer");
+    const hostTimerDisplay = document.getElementById("host-timer");
+
+    function updateTimer() {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        const timeStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        if (timerDisplay) timerDisplay.innerText = timeStr;
+        if (hostTimerDisplay) hostTimerDisplay.innerText = timeStr;
+
+        if (timeLeft <= 30 && timerDisplay) timerDisplay.classList.add("warning");
+        if (timeLeft <= 0) { clearInterval(timerInterval); timeUp(); }
+        timeLeft--;
+    }
+
+    timerInterval = setInterval(updateTimer, 1000);
+    updateTimer();
+    if (isHost) { navigate("page-host-game"); } else { navigate("page-game"); loadLevel(); }
+}
+
+function updateCipherDisplay() {
+    const level = gameData[currentLevelIndex];
+    if (!level) return;
+    const phrase = level.phrase;
+    let display = "";
+    for (let i = 0; i < phrase.length; i++) {
+        if (solvedIndices.includes(i)) {
+            display += `<span class="revealed-letter">${phrase[i]}</span>`;
+        } else {
+            display += `<span class="hidden-letter">_</span>`;
+        }
+        if (i < phrase.length - 1) display += " ";
+    }
+    document.getElementById("cipher-output").innerHTML = display;
+}
+
+function loadLevel() {
+    if (currentLevelIndex >= gameData.length) { endGame(); return; }
+
+    solvedIndices = [];
+    const level = gameData[currentLevelIndex];
+    document.getElementById("clue-text").innerText = level.clue;
+    updateCipherDisplay();
+
+    const container = document.getElementById("problems-container");
+    container.innerHTML = "";
+    level.eqs.forEach((eq, idx) => {
+        const card = document.createElement("div");
+        card.className = "eq-card";
+        card.innerHTML = `<div>${eq.h}</div><input type="number" id="ans-${idx}" placeholder="Answer" oninput="liveCheckAnswer(${idx})">`;
+        container.appendChild(card);
+    });
+}
+
+window.liveCheckAnswer = function(idx) {
+    const level = gameData[currentLevelIndex];
+    if (!level) return;
+
+    const input = document.getElementById(`ans-${idx}`);
+    const userAns = parseInt(input.value);
+
+    if (userAns === level.eqs[idx].a) {
+        if (!solvedIndices.includes(idx)) {
+            playCorrectBeep();
+            input.style.border = "2px solid green";
+            solvedIndices.push(idx);
+            updateCipherDisplay();
+        }
+    } else {
+        input.style.border = "2px solid #00BCD4";
+    }
+};
+
+window.checkAnswers = function() {
+    const level = gameData[currentLevelIndex];
+    let allCorrect = true;
+    level.eqs.forEach((eq, idx) => {
+        const input = document.getElementById(`ans-${idx}`);
+        const userAns = parseInt(input.value);
+
+        if (userAns !== eq.a) {
+            allCorrect = false;
+            playErrorBeep();
+            input.style.border = "2px solid red";
+        } else {
+            input.style.border = "2px solid green";
+            if (!solvedIndices.includes(idx)) {
+                solvedIndices.push(idx);
+            }
+        }
+    });
+    updateCipherDisplay();
+
+    if (allCorrect) {
+        score += 100;
+        playSuccessSound();
+        update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: score });
+
+        setTimeout(() => {
+            document.getElementById("trivia-content").innerText = level.trivia;
+            document.getElementById("trivia-author").innerText = `— ${level.author}`;
+            document.getElementById("step-by-step").innerText = level.steps;
+            navigate("page-trivia");
+        }, 500);
+    }
+};
+
+window.nextLevel = function() {
+    currentLevelIndex++;
+    if (currentLevelIndex >= gameData.length) {
+        endGame();
+    } else {
+        if (isHost) update(ref(db, `rooms/${roomCode}`), { level: currentLevelIndex + 1 });
+        loadLevel();
+        navigate("page-game");
+    }
+};
+
+function timeUp() { endGame(); }
+
+function endGame() {
+    clearInterval(timerInterval);
+    stopBackgroundMusic();
+    const elapsed = Math.floor((new Date() - startTime) / 1000);
+    const mins = Math.floor(elapsed / 60);
+    const secs = elapsed % 60;
+
     if (isHost) {
-      document.getElementById('startBtn').style.display = 'block';
-      document.getElementById('waitMsg').style.display = 'none';
+        navigate("page-host-uploads");
+        constructWinnersPodium("host-winners-podium");
+        updateHostGalleryView(uploads);
+    } else {
+        document.getElementById("final-score").innerText = score;
+        document.getElementById("final-time").innerText = `${mins}m ${secs}s`;
+        navigate("page-end-game");
+        constructWinnersPodium("game-winners-podium");
     }
-  }
-  
-  setupListeners(roomCode);
-  updatePlayerList(roomCode);
-  return true;
 }
 
-function clearSession() {
-  localStorage.removeItem('crypto_session');
-  sessionStorage.removeItem('crypto_session');
-}
+window.handleSolutionUpload = function() {
+    const fileInput = document.getElementById("solution-upload");
+    const file = fileInput.files[0];
+    if (!file) return;
+    const statusDiv = document.getElementById("upload-status");
+    statusDiv.className = "upload-status";
+    statusDiv.innerText = "Processing & Compressing Image...";
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement("canvas");
+            const MAX_WIDTH = 500; 
+            const scale = MAX_WIDTH / img.width;
+            
+            canvas.width = MAX_WIDTH;
+            canvas.height = img.height * scale;
+            const ctx2d = canvas.getContext("2d");
+            ctx2d.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
+            set(ref(db, `rooms/${roomCode}/uploads/${playerName}`), compressedBase64)
+                .then(() => {
+                    statusDiv.className = "upload-status upload-success";
+                    statusDiv.innerText = "✓ Photo uploaded successfully!";
+                })
+                .catch((err) => {
+                    statusDiv.className = "upload-status upload-error";
+                    statusDiv.innerText = "Upload failed. Database payload error.";
+                });
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+};
 
 // ✅ Feature 1: Max 40 players
 window.joinRoom = async function() {
@@ -239,7 +954,7 @@ window.joinRoom = async function() {
   if (Object.keys(players).length >= MAX_PLAYERS && !players[name]) {
     return alert(`Room full! Maximum ${MAX_PLAYERS} players allowed.`);
   }
-  
+
   playerName = name;
   roomCode = code;
   isHost = false;
@@ -256,243 +971,29 @@ window.joinRoom = async function() {
   updatePlayerList(code);
 };
 
-window.createRoom = async function() {
-  const name = document.getElementById('nameInput').value.trim();
-  if (!name) return alert('Enter your name');
-  
-  playerName = name;
-  isHost = true;
-  roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-  score = 0;
-  currentLevel = 0;
-  
-  await set(ref(db, `rooms/${roomCode}`), {
-    host: name,
-    gameStarted: false,
-    currentLevel: 0,
-    gameEndTime: null,
-    createdAt: serverTimestamp()
-  });
-  
-  const playerRef = ref(db, `rooms/${roomCode}/players/${name}`);
-  await set(playerRef, { score: 0, lastSeen: serverTimestamp() });
-  onDisconnect(playerRef).update({ lastSeen: serverTimestamp() });
-  
-  saveSession();
-  setupListeners(roomCode);
-  showPage('room');
-  document.getElementById('roomCodeDisplay').innerText = `Room: ${roomCode}`;
-  document.getElementById('startBtn').style.display = 'block';
-  document.getElementById('waitMsg').style.display = 'none';
-  
-  const qrDiv = document.getElementById('qrContainer');
-  qrDiv.innerHTML = '';
-  new QRCode(qrDiv, {
-    text: window.location.href.split('?')[0] + '?room=' + roomCode,
-    width: 100, height: 100
-  });
-  
-  updatePlayerList(roomCode);
-};
-
-function updatePlayerList(code) {
-  onValue(ref(db, `rooms/${code}/players`), snap => {
-    const players = snap.val() || {};
-    const list = document.getElementById('playerList');
-    list.innerHTML = Object.entries(players).map(([name, data]) => 
-      `<span class="player-badge">👤 ${name} ${data.reconnected ? '🔄' : ''}</span>`
-    ).join('');
-  });
-}
-
-function setupListeners(code) {
-  onValue(ref(db, `rooms/${code}`), snap => {
-    const data = snap.val();
-    if (!data) return;
-    
-    // ✅ Timer keeps running even when disconnected
-    if (data.gameEndTime) {
-      gameEndTime = data.gameEndTime;
-    }
-    
-    if (data.gameStarted && document.getElementById('game').classList.contains('active') === false) {
-      currentLevel = data.currentLevel || 0;
-      saveSession();
-      startGameClient();
-    }
-    
-    // ✅ Sync level changes in real-time
-    if (data.currentLevel !== undefined && data.currentLevel !== currentLevel) {
-      currentLevel = data.currentLevel;
-      saveSession();
-      if (document.getElementById('game').classList.contains('active')) {
-        loadLevel();
-      }
-    }
-  });
-}
-
-// ✅ Feature 3: Synchronized timer across all devices
-window.startGame = async function() {
-  if (!isHost) return;
-  const duration = 180; // 3 minutes
-  const endTime = Date.now() + duration * 1000;
-  
-  await update(ref(db, `rooms/${roomCode}`), {
-    gameStarted: true,
-    currentLevel: 0,
-    gameEndTime: endTime
-  });
-};
-
-function startGameClient() {
-  showPage('game');
-  loadLevel();
-  startTimer();
-}
-
-function startTimer() {
-  if (timerInterval) clearInterval(timerInterval);
-  const timerEl = document.getElementById('timer');
-  
-  timerInterval = setInterval(() => {
-    if (!gameEndTime) return;
-    
-    // ✅ All devices calculate from same endTime
-    const now = Date.now();
-    const remaining = Math.max(0, Math.floor((gameEndTime - now) / 1000));
-    const mins = Math.floor(remaining / 60);
-    const secs = remaining % 60;
-    timerEl.innerText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    
-    if (remaining <= 30) timerEl.classList.add('warning');
-    else timerEl.classList.remove('warning');
-    
-    if (remaining <= 0) {
-      clearInterval(timerInterval);
-      endGame();
-    }
-  }, 200);
-}
-
-function loadLevel() {
-  if (currentLevel >= LEVELS.length) {
-    endGame();
-    return;
-  }
-  
-  const level = LEVELS[currentLevel];
-  document.getElementById('levelText').innerText = `LEVEL ${currentLevel + 1}`;
-  document.getElementById('cipherDisplay').innerText = level.phrase.split('').map(() => '_').join(' ');
-  
-  const eqContainer = document.getElementById('equations');
-  eqContainer.innerHTML = level.eqs.map((eq, i) => `
-    <div class="eq-card">
-      <strong>${eq.q}</strong>
-      <input type="number" id="eq${i}" placeholder="x = ?" style="width:80px; margin-left:10px;">
-    </div>
-  `).join('');
-}
-
-// ✅ Feature 4: Smooth level transitions
-window.checkAnswers = async function() {
-  const level = LEVELS[currentLevel];
-  if (!level) return;
-  
-  let allCorrect = true;
-  
-  level.eqs.forEach((eq, i) => {
-    const input = document.getElementById(`eq${i}`);
-    if (!input || parseInt(input.value) !== eq.a) {
-      allCorrect = false;
-      if (input) input.style.border = '2px solid red';
-    } else {
-      if (input) input.style.border = '2px solid green';
-    }
-  });
-  
-  if (allCorrect) {
-    score += 100;
-    saveSession();
-    
-    await update(ref(db, `rooms/${roomCode}/players/${playerName}`), { 
-      score: score,
-      lastSeen: serverTimestamp()
-    });
-    
-    if (currentLevel + 1 < LEVELS.length) {
-      // ✅ Smooth transition
-      const overlay = document.getElementById('transitionOverlay');
-      overlay.classList.add('show');
-      
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      if (isHost) {
-        await update(ref(db, `rooms/${roomCode}`), { 
-          currentLevel: currentLevel + 1 
-        });
-      }
-      
-      currentLevel++;
-      saveSession();
-      loadLevel();
-      
-      await new Promise(resolve => setTimeout(resolve, 200));
-      overlay.classList.remove('show');
-    } else {
-      endGame();
-    }
-  }
-};
-
-function endGame() {
-  if (timerInterval) clearInterval(timerInterval);
-  showPage('end');
-  document.getElementById('finalScore').innerText = score;
-}
-
 window.backToLobby = function() {
-  clearSession();
-  roomCode = null; 
-  playerName = null; 
-  isHost = false;
-  currentLevel = 0;
-  score = 0;
-  showPage('lobby');
+    roomCode = ""; playerName = "";
+    isHost = false; score = 0; currentLevelIndex = 0; localGameStarted = false; solvedIndices = [];
+    navigate("page-lobby");
 };
-
-// ✅ Handle page visibility (back button, tab switch)
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && playerName && roomCode) {
-    // Re-sync timer and level when user returns
-    saveSession();
-    if (gameEndTime && document.getElementById('game').classList.contains('active')) {
-      startTimer(); // Restart timer display
+window.navigate = function(pageId) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    const page = document.getElementById(pageId);
+    if (page) page.classList.add("active");
+};
+window.toggleFullScreen = function() {
+    const elem = document.documentElement;
+    if (!document.fullscreenElement) {
+        elem.requestFullscreen().catch(() => {});
+    } else {
+        document.exitFullscreen();
     }
-  }
-});
-
-// ✅ Handle back button
-window.addEventListener('popstate', (event) => {
-  if (playerName && roomCode) {
-    saveSession();
-  }
-});
-
-// Auto-reconnect on load
-window.addEventListener('load', async () => {
-  const reconnected = await tryReconnect();
-  if (!reconnected) showPage('lobby');
-  
-  const params = new URLSearchParams(window.location.search);
-  const room = params.get('room');
-  if (room) document.getElementById('codeInput').value = room.toUpperCase();
-});
-
-// Save session before unload
-window.addEventListener('beforeunload', () => {
-  saveSession();
-});
+};
+try {
+    const params = new URLSearchParams(window.location.search);
+    const room = params.get('room') || params.get('code');
+    if (room) { document.getElementById('join-code').value = room.toUpperCase(); }
+} catch(e) {}
 </script>
 </body>
 </html>
