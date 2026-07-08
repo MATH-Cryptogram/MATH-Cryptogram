@@ -800,6 +800,10 @@ window.startAsHost = function() {
     if (!playerName) { alert("Enter host name!"); return; }
 
     isHost = true;
+    // Host should never reconnect using an old student session
+    localStorage.removeItem("roomCode");
+    localStorage.removeItem("playerName");
+    localStorage.removeItem("avatar");
     roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
     set(ref(db, "rooms/" + roomCode), { gameStarted: false, level: 1 });
     document.getElementById("host-room-code").innerText = "🎮 Room Code: " + roomCode;
@@ -840,31 +844,33 @@ function setupRoomListeners(room) {
     if (!room) return;
     onValue(ref(db, `rooms/${room}`), (snapshot) => {
         const data = snapshot.val();
+        gameStartTime = data.startTime || 0;
+        gameDuration = data.duration || 180;
+        let gameStartTime = 0;
+        let gameDuration = 180;
         if (!data) return;
 
-        if (data.gameStarted === true && !isHost && !localGameStarted) {
-            localGameStarted = true;
-            startGame();
-        }
+       if (data.gameStarted === true && !isHost) {
+    // keep synchronized with the host
+    currentLevelIndex = (data.level || 1) - 1;
+    if (!localGameStarted) {
+localGameStarted = true; 
+        startGame();} else {loadLevel();}}
         if (data.level) {
             const lvlText = 'LEVEL ' + data.level;
             const lvlIndicator = document.getElementById('lvl-indicator');
             if (lvlIndicator) lvlIndicator.innerText = lvlText;
             const hostGameLevel = document.getElementById('host-game-level');
             if (hostGameLevel) hostGameLevel.innerText = lvlText;
-            
-            if(!isHost) {
-                currentLevelIndex = data.level - 1;
-                loadLevel();
-            }
         }
     });
 }
 
 function startGame() {
-    score = 0;
+   if (!localGameStarted) {score = 0;}
     startTime = new Date();
-    let timeLeft = 180;
+    const elapsed = Math.floor((Date.now() - data.startTime) / 1000);
+    const timeLeft = Math.max(0, data.duration - elapsed);
     playBackgroundMusic();
     const timerDisplay = document.getElementById("timer");
     const hostTimerDisplay = document.getElementById("host-timer");
