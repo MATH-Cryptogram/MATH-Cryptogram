@@ -827,18 +827,15 @@ window.startAsHost = function() {
     });
 };
 
-window.hostStartGame = function() {
-   update(ref(db, "rooms/" + roomCode), {
-    gameStarted: true,
-    level: 1,
-
-    // NEW
-    startTime: Date.now(),
-    duration: 180
-});
-    localGameStarted = true;
-    startGame();
-};
+function hostStartGame() {
+    // This is the trigger that tells everyone the game has officially begun
+    update(ref(db, `rooms/${room}`), {
+        gameStarted: true,
+        level: 1, // Start at level 1
+        startTime: Date.now(), // THE MISSING PIECE: The exact moment the host clicks start
+        duration: 180           // Set the total duration in seconds
+    });
+}
 
 function setupRoomListeners(room) {
     if (!room) return;
@@ -877,13 +874,32 @@ function setupRoomListeners(room) {
 }
 
 function startGame() {
-   if (!localGameStarted) {score = 0;}
-    startTime = new Date();
-    const elapsed = Math.floor((Date.now() - data.startTime) / 1000);
-    const timeLeft = Math.max(0, data.duration - elapsed);
-    playBackgroundMusic();
-    const timerDisplay = document.getElementById("timer");
-    const hostTimerDisplay = document.getElementById("host-timer");
+    // ... existing setup code ...
+
+    // The synchronized timer
+    const timerInterval = setInterval(() => {
+        if (!localGameStarted) {
+            clearInterval(timerInterval);
+            return;
+        }
+
+        // Calculate time based on Firebase's gameStartTime
+        const elapsed = Math.floor((Date.now() - gameStartTime) / 1000);
+        let timeLeft = Math.max(0, gameDuration - elapsed);
+
+        // Update your UI
+        const timerElement = document.getElementById('timer-display'); // Use your actual element ID
+        if (timerElement) {
+            timerElement.innerText = timeLeft;
+        }
+
+        // End the game when time hits 0
+        if (timeLeft === 0) {
+            clearInterval(timerInterval);
+            endGame(); 
+        }
+    }, 1000);
+}
 
     function updateTimer() {
         const mins = Math.floor(timeLeft / 60);
@@ -897,7 +913,25 @@ function startGame() {
         timeLeft--;
     }
 
-    timerInterval = setInterval(updateTimer, 1000);
+    setInterval(() => {
+    // Only run the timer if the game has actually started
+    if (localGameStarted && gameStartTime > 0) {
+        
+        // 1. Calculate the exact time left based on the server's start time
+        const elapsed = Math.floor((Date.now() - gameStartTime) / 1000);
+        let timeLeft = Math.max(0, gameDuration - elapsed);
+
+        // 2. Update your UI with this synchronized timeLeft
+        // Make sure you have a function named 'updateTimerDisplay' 
+        // or just put your UI logic here (e.g., document.getElementById('timer').innerText = timeLeft)
+        updateTimerDisplay(timeLeft);
+
+        // 3. Optional: Trigger game over if time is up
+        if (timeLeft === 0) {
+            endGame(); 
+        }
+    }
+}, 1000); // Runs every 1 second
     updateTimer();
     if (isHost) { navigate("page-host-game"); } else { navigate("page-game"); loadLevel(); }
 }
@@ -916,6 +950,13 @@ function updateCipherDisplay() {
         if (i < phrase.length - 1) display += " ";
     }
     document.getElementById("cipher-output").innerHTML = display;
+}
+    
+function updateTimerDisplay(time) {
+    const timerElement = document.getElementById('timer'); // Replace 'timer' with your actual element ID
+    if (timerElement) {
+        timerElement.innerText = time;
+    }
 }
 
 function loadLevel() {
