@@ -44,11 +44,29 @@
             50% { filter: brightness(1.05); }
         }
 
+        .page {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .page.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Lobby Page */
         #page-lobby {
             background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 25%, #80DEEA 50%, #4DD0E1 75%, #26C6DA 100%) !important;
             border: 3px solid #00838F !important;
             box-shadow: 0 0 40px rgba(0, 188, 212, 0.5), 0 0 80px rgba(76, 175, 80, 0.3) !important;
             animation: lobbyGlow 3s ease-in-out infinite;
+            padding: 40px 20px;
         }
 
         @keyframes lobbyGlow {
@@ -63,19 +81,393 @@
         #page-lobby h1 {
             color: #004D73 !important;
             text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.7), 0 0 15px rgba(0, 150, 175, 0.3) !important;
-            font-size: 2rem !important;
+            font-size: 2.5rem !important;
             letter-spacing: 3px;
             font-weight: 800;
+            margin-bottom: 10px;
+            text-align: center;
         }
 
-        #page-lobby p {
+        #page-lobby > p:first-of-type {
             color: #00695C !important;
-            font-size: 1.1rem !important;
+            font-size: 1.2rem !important;
             font-weight: 600 !important;
             text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6) !important;
+            margin-bottom: 30px;
+            text-align: center;
         }
 
-        /* ... rest of styles omitted here for brevity in this commit message ... */
+        .join-section {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 12px;
+            min-width: 280px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .join-section p {
+            color: #004D73;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .join-section input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 2px solid #00838F;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .join-section input:focus {
+            outline: none;
+            border-color: #0EA5E9;
+            box-shadow: 0 0 8px rgba(14, 165, 233, 0.3);
+        }
+
+        .join-section button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #0EA5E9, #06B6D4);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+
+        .join-section button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.5);
+        }
+
+        .join-section button:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            color: #00838F;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        button.primary {
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+            margin-top: 10px;
+        }
+
+        button.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+        }
+
+        button.primary:active {
+            transform: translateY(-1px);
+        }
+
+        /* Music toggle button */
+        .music-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #0EA5E9;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .music-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Scoreboard Page */
+        #page-scoreboard {
+            background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 50%, #81D4FA 100%);
+            padding: 30px 20px;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        #page-scoreboard h2 {
+            color: #004D73;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .scoreboard-container, .host-scoreboard-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 500px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px solid #E0F0FF;
+            align-items: center;
+        }
+
+        .score-row:last-child {
+            border-bottom: none;
+        }
+
+        .score-row span:first-child {
+            font-weight: 600;
+            color: #004D73;
+        }
+
+        .score-row span:last-child {
+            font-weight: 700;
+            color: #0EA5E9;
+            font-size: 1.1rem;
+        }
+
+        /* Game Page */
+        #page-game {
+            background: linear-gradient(135deg, #E0F4FF 0%, #B3E5FC 100%);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .top-bar {
+            position: absolute;
+            top: 15px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .small-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #0EA5E9;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .small-btn:hover {
+            background: #0EA5E9;
+            color: white;
+        }
+
+        #lvl-indicator, #timer {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            color: #004D73;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .phrase-display {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            color: #004D73;
+            margin: 30px 0;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+
+        .clue-box {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 600px;
+            text-align: center;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #problems-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+            max-width: 900px;
+        }
+
+        .problem-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .problem-card input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #0EA5E9;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        button[onclick="checkAnswers()"] {
+            padding: 14px 40px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        button[onclick="checkAnswers()"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+        }
+
+        /* Trivia/Results Page */
+        #page-trivia {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            padding: 30px 20px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .trivia-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .trivia-content h2 {
+            color: #004D73;
+            margin-bottom: 15px;
+        }
+
+        .step-by-step {
+            background: #F3F4F6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: left;
+            color: #1F2937;
+        }
+
+        .trivia-author {
+            color: #6B7280;
+            font-style: italic;
+            margin-top: 15px;
+        }
+
+        /* Host Control Page */
+        #page-host {
+            background: linear-gradient(135deg, #DDD6FE 0%, #C7D2FE 100%);
+            padding: 30px 20px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .host-controls {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .host-controls h2 {
+            color: #4C1D95;
+            margin-bottom: 20px;
+        }
+
+        #qr-code {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        #host-room-code {
+            background: #F3F4F6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 700;
+            color: #4C1D95;
+        }
+
+        .host-controls button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #0EA5E9, #06B6D4);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .host-controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #page-lobby h1 {
+                font-size: 2rem;
+            }
+
+            .join-section {
+                min-width: 100%;
+                max-width: 90vw;
+            }
+
+            .phrase-display {
+                font-size: 2rem;
+            }
+
+            #problems-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -85,7 +477,7 @@
     <!-- Lobby Page -->
     <div id="page-lobby" class="page active">
         <h1>🎮 THE RATIONAL CRYPTOGRAM</h1>
-        <p style="text-align: center; color: var(--light); margin-bottom: 25px;">Solve equations to Decode</p>
+        <p>Solve equations to Decode</p>
         
         <div class="join-section">
             <p>👤 Enter Your Name</p>
@@ -98,9 +490,16 @@
             <button onclick="joinRoom()">⚡ Enter The Game</button>
         </div>
 
-        <div style="text-align: center; margin: 20px 0; color: var(--secondary);">— OR —</div>
+        <div class="divider">— OR —</div>
 
         <button class="primary" onclick="startAsHost()">👑 Start As Host</button>
+    </div>
+
+    <!-- Scoreboard Page -->
+    <div id="page-scoreboard" class="page">
+        <h2>📊 Scoreboard</h2>
+        <div id="scoreboard-container" class="scoreboard-container"></div>
+        <button class="primary" style="margin-top: 30px;" onclick="startGame()">▶️ Start Game</button>
     </div>
 
     <!-- Game Page -->
@@ -117,20 +516,105 @@
         <button onclick="checkAnswers()">🔓 Decode Cryptogram</button>
     </div>
 
-    <!-- ... rest of HTML unchanged ... -->
+    <!-- Trivia Page -->
+    <div id="page-trivia" class="page">
+        <div class="trivia-content">
+            <h2>✨ Great Job! ✨</h2>
+            <div id="trivia-content"></div>
+            <div class="step-by-step" id="step-by-step"></div>
+            <div class="trivia-author" id="trivia-author"></div>
+            <button class="primary" style="margin-top: 20px;" onclick="nextLevel()">➡️ Next Level</button>
+        </div>
+    </div>
+
+    <!-- Host Control Page -->
+    <div id="page-host" class="page">
+        <div class="host-controls">
+            <h2>🎮 HOST CONTROL PANEL</h2>
+            <div id="host-room-code">🎮 Room Code: ------</div>
+            <div id="qr-code"></div>
+            <p>Players: <span id="player-count">0</span></p>
+            <button onclick="startGame()">▶️ Start Game</button>
+            <button onclick="backToLobby()">🚪 End Game</button>
+        </div>
+        <div id="host-scoreboard-container" class="scoreboard-container" style="margin-top: 30px; max-width: 400px;"></div>
+    </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-/* ORIGINAL SCRIPT CONTINUES... */
+// Firebase config - UPDATE THIS WITH YOUR CONFIG
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+    projectId: "YOUR_PROJECT",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
 
-/* For compatibility, we'll append a small override script (non-module) to patch listeners and uploads. */
+const app = initializeApp(firebaseConfig);
+window.db = getDatabase(app);
+
+// Global variables
+window.playerName = "";
+window.roomCode = "";
+window.isHost = false;
+window.score = 0;
+window.solvedIndices = [];
+window.currentLevelIndex = 0;
+window.localGameStarted = false;
+
+// Sample game data
+window.gameData = [
+    {
+        eqs: [
+            { q: "2x + 3 = 11", a: 4 },
+            { q: "3x - 2 = 10", a: 4 },
+            { q: "x/2 = 5", a: 10 }
+        ],
+        phrase: "GOOD",
+        trivia: "Did you know that solving equations is fundamental to algebra?",
+        author: "Math Master",
+        steps: "Step 1: Identify the variable. Step 2: Isolate it. Step 3: Solve!"
+    },
+    {
+        eqs: [
+            { q: "x + 5 = 12", a: 7 },
+            { q: "2x = 14", a: 7 }
+        ],
+        phrase: "MATH",
+        trivia: "Algebra comes from the Arabic word 'al-jabr'.",
+        author: "Math Expert",
+        steps: "Use inverse operations to solve."
+    }
+];
+
 </script>
 
-<!-- Patch script: overrides and fixes (appended) -->
+<!-- Patch script: overrides and fixes (non-module) -->
 <script>
-/* Render scoreboard for host and players */
+
+function navigate(pageId) {
+    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+    const targetPage = document.getElementById(pageId);
+    if (targetPage) targetPage.classList.add('active');
+}
+
+function toggleMusic() {
+    alert("🎵 Music feature coming soon!");
+}
+
+function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => console.log(err));
+    } else {
+        document.exitFullscreen();
+    }
+}
+
 function renderScoreboard(playersObj) {
     const players = playersObj || {};
     const entries = Object.entries(players);
@@ -163,38 +647,10 @@ function renderScoreboard(playersObj) {
     }
 }
 
-/* Render uploads gallery (host view) */
-function renderUploads() {
-    const gallery = document.getElementById("gallery-container");
-    const countEl = document.getElementById("upload-count");
-    if (!gallery || !countEl) return;
-
-    const items = uploads || {};
-    gallery.innerHTML = "";
-    const list = Object.entries(items);
-    countEl.innerText = list.length;
-
-    list.forEach(([key, info]) => {
-        const item = document.createElement("div");
-        item.className = "gallery-item";
-        const img = document.createElement("img");
-        img.src = info.data || "";
-        img.alt = info.name || (info.player || "submission");
-        const label = document.createElement("div");
-        label.className = "gallery-item-label";
-        const time = info.time ? new Date(info.time).toLocaleString() : "";
-        label.innerText = `${info.player || "player"} • ${info.name || ""} ${time ? " • " + time : ""}`;
-        item.appendChild(img);
-        item.appendChild(label);
-        gallery.appendChild(item);
-    });
-}
-
-/* Centralized listeners so every client stays in sync */
 function setupRoomListeners(room) {
-    if (!room) return;
+    if (!room || !window.db) return;
     try {
-        const roomRef = ref(db, `rooms/${room}`);
+        const roomRef = ref(window.db, `rooms/${room}`);
         onValue(roomRef, (snapshot) => {
             const data = snapshot.val();
             if (!data) return;
@@ -208,19 +664,12 @@ function setupRoomListeners(room) {
                 const lvlText = 'LEVEL ' + data.level;
                 const lvlIndicator = document.getElementById('lvl-indicator');
                 if (lvlIndicator) lvlIndicator.innerText = lvlText;
-                const hostGameLevel = document.getElementById('host-game-level');
-                if (hostGameLevel) hostGameLevel.innerText = lvlText;
             }
         });
 
-        onValue(ref(db, `rooms/${room}/players`), (snapshot) => {
+        onValue(ref(window.db, `rooms/${room}/players`), (snapshot) => {
             const playersData = snapshot.val() || {};
             renderScoreboard(playersData);
-        });
-
-        onValue(ref(db, `rooms/${room}/uploads`), (snapshot) => {
-            uploads = snapshot.val() || {};
-            renderUploads();
         });
 
         const hostRoomEl = document.getElementById("host-room-code");
@@ -228,7 +677,6 @@ function setupRoomListeners(room) {
     } catch(e) { console.warn('Room listener setup failed', e); }
 }
 
-/* Ensure host entry is created and listeners attached */
 window.startAsHost = function() {
     playerName = document.getElementById("player-name").value.trim();
     if (!playerName) { 
@@ -239,8 +687,8 @@ window.startAsHost = function() {
     isHost = true;
     roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
     
-    set(ref(db, "rooms/" + roomCode), { gameStarted: false, level: 1 });
-    document.getElementById("host-room-code").innerText = "🎮 Room Code: " + roomCode;
+    set(ref(window.db, "rooms/" + roomCode), { gameStarted: false, level: 1 });
+    set(ref(window.db, `rooms/${roomCode}/players/${playerName}`), { score: 0 });
 
     const qrContainer = document.getElementById("qr-code");
     qrContainer.innerHTML = "";
@@ -249,14 +697,10 @@ window.startAsHost = function() {
         new QRCode(qrContainer, { text: joinURL, width: 128, height: 128 });
     } catch(e) {}
 
-    // Add host to players list so they appear on scoreboard
-    set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0 });
-
     setupRoomListeners(roomCode);
-    navigate("page-scoreboard");
+    navigate("page-host");
 };
 
-/* Join room and ensure listeners are attached */
 window.joinRoom = function() {
     playerName = document.getElementById("player-name").value.trim();
     roomCode = document.getElementById("join-code").value.trim().toUpperCase();
@@ -266,19 +710,69 @@ window.joinRoom = function() {
         return;
     }
 
-    set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0 });
+    set(ref(window.db, `rooms/${roomCode}/players/${playerName}`), { score: 0 });
     setupRoomListeners(roomCode);
     navigate("page-scoreboard");
 };
 
-/* Award points per equation/letter solved and update DB immediately */
+window.startGame = function() {
+    if (isHost && roomCode) {
+        update(ref(window.db, `rooms/${roomCode}`), { gameStarted: true, level: 1 });
+    }
+    currentLevelIndex = 0;
+    solvedIndices = [];
+    navigate("page-game");
+    renderGameProblems();
+};
+
+function renderGameProblems() {
+    const level = gameData[currentLevelIndex];
+    if (!level) return;
+
+    const container = document.getElementById("problems-container");
+    container.innerHTML = "";
+    
+    level.eqs.forEach((eq, idx) => {
+        const card = document.createElement("div");
+        card.className = "problem-card";
+        card.innerHTML = `
+            <div><strong>Problem ${idx + 1}:</strong></div>
+            <div style="font-size: 1.1rem; margin: 10px 0;">${eq.q}</div>
+            <input type="number" id="ans-${idx}" placeholder="Answer">
+        `;
+        container.appendChild(card);
+    });
+
+    const clue = document.getElementById("clue-text");
+    clue.innerText = "Solve the equations to decode the message!";
+    
+    updateCipherDisplay();
+}
+
+function updateCipherDisplay() {
+    const level = gameData[currentLevelIndex];
+    if (!level) return;
+
+    let display = "";
+    for (let i = 0; i < level.phrase.length; i++) {
+        if (solvedIndices.includes(i)) {
+            display += level.phrase[i];
+        } else {
+            display += "_";
+        }
+        if (i < level.phrase.length - 1) display += " ";
+    }
+    
+    document.getElementById("cipher-output").innerText = display;
+}
+
 window.checkAnswers = function() {
     const level = gameData[currentLevelIndex];
     if (!level) return;
 
     let allCorrect = true;
     let newCorrect = false;
-    const pointsPerLetter = 20; // changeable
+    const pointsPerLetter = 20;
 
     level.eqs.forEach((eq, idx) => {
         const input = document.getElementById(`ans-${idx}`);
@@ -288,21 +782,16 @@ window.checkAnswers = function() {
         if (isNaN(userAns) || userAns !== eq.a) {
             allCorrect = false;
             if (input) input.style.border = "2px solid red";
-            playErrorBeep();
         } else {
             if (input) input.style.border = "2px solid green";
             if (!solvedIndices.includes(idx)) {
                 solvedIndices.push(idx);
                 newCorrect = true;
 
-                // award points locally & persist
                 score += pointsPerLetter;
                 if (roomCode && playerName) {
-                    update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: score });
+                    update(ref(window.db, `rooms/${roomCode}/players/${playerName}`), { score: score });
                 }
-                playCorrectBeep();
-            } else {
-                playCorrectBeep();
             }
         }
     });
@@ -310,10 +799,10 @@ window.checkAnswers = function() {
     if (newCorrect) updateCipherDisplay();
 
     if (allCorrect) {
-        const fullBonus = 50;
-        score += fullBonus;
-        if (roomCode && playerName) update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: score });
-        playSuccessSound();
+        score += 50;
+        if (roomCode && playerName) {
+            update(ref(window.db, `rooms/${roomCode}/players/${playerName}`), { score: score });
+        }
 
         setTimeout(() => {
             const level = gameData[currentLevelIndex];
@@ -322,51 +811,29 @@ window.checkAnswers = function() {
             document.getElementById("step-by-step").innerText = level.steps;
             navigate("page-trivia");
         }, 500);
-
-        if (isHost) {
-            update(ref(db, `rooms/${roomCode}`), { level: currentLevelIndex + 2, gameStarted: true });
-        }
     }
 };
 
-/* Implement missing upload handler to store images into the DB (dataURL). For production use Firebase Storage. */
-window.handleSolutionUpload = function() {
-    const fileInput = document.getElementById("solution-upload");
-    const statusEl = document.getElementById("upload-status");
-    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-        if (statusEl) { statusEl.className = "upload-status upload-error"; statusEl.innerText = "No file selected."; }
-        return;
+window.nextLevel = function() {
+    currentLevelIndex++;
+    if (currentLevelIndex >= gameData.length) {
+        alert("🎉 You completed all levels!");
+        backToLobby();
+    } else {
+        solvedIndices = [];
+        navigate("page-game");
+        renderGameProblems();
     }
-    const file = fileInput.files[0];
-    if (!roomCode || !playerName) {
-        if (statusEl) { statusEl.className = "upload-status upload-error"; statusEl.innerText = "You're not in a room. Join a room before uploading."; }
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const dataURL = e.target.result;
-        const key = `u_${Date.now()}`;
-        const payload = { name: file.name, data: dataURL, player: playerName, time: Date.now() };
-        set(ref(db, `rooms/${roomCode}/uploads/${key}`), payload)
-            .then(() => {
-                if (statusEl) { statusEl.className = "upload-status upload-success"; statusEl.innerText = "Upload submitted! It will appear in the host gallery."; }
-            })
-            .catch((err) => {
-                if (statusEl) { statusEl.className = "upload-status upload-error"; statusEl.innerText = "Upload failed: " + (err.message || err); }
-            });
-    };
-    reader.onerror = function() {
-        if (statusEl) { statusEl.className = "upload-status upload-error"; statusEl.innerText = "Failed to read file."; }
-    };
-    reader.readAsDataURL(file);
 };
 
-/* Return to lobby and clear timers */
 window.backToLobby = function() {
-    try { clearInterval(timerInterval); clearInterval(hostTimerInterval); } catch(e){}
-    localGameStarted = false; solvedIndices = []; score = 0; navigate("page-lobby");
+    localGameStarted = false;
+    solvedIndices = [];
+    score = 0;
+    currentLevelIndex = 0;
+    navigate("page-lobby");
 };
+
 </script>
 </body>
 </html>
