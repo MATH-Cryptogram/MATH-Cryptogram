@@ -8,303 +8,878 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
     <style>
-        :root { --primary: #00d2ff; --bg: #0b0e14; --accent: #f1c40f; --success: #00ff88; --card-bg: rgba(23, 32, 42, 0.95); }
-         body {
-    font-family: 'Segoe UI', sans-serif;
-    color: white;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    
-    /* Layout fixes for mobile & responsiveness */
-    overflow: hidden; 
-    touch-action: manipulation;
-    
-    /* 8-Bit Brick Pattern */
-    background-color: #5c5c5c;
-    background-image: 
-        linear-gradient(30deg, #474747 12%, transparent 12.5%, transparent 87%, #474747 87.5%, #474747),
-        linear-gradient(150deg, #474747 12%, transparent 12.5%, transparent 87%, #474747 87.5%, #474747),
-        linear-gradient(30deg, #474747 12%, transparent 12.5%, transparent 87%, #474747 87.5%, #474747),
-        linear-gradient(150deg, #474747 12%, transparent 12.5%, transparent 87%, #474747 87.5%, #474747),
-        linear-gradient(60deg, #7a7a7a 25%, transparent 25.5%, transparent 75%, #7a7a7a 75.5%, #7a7a7a),
-        linear-gradient(60deg, #7a7a7a 25%, transparent 25.5%, transparent 75%, #7a7a7a 75.5%, #7a7a7a);
-    background-size: 40px 70px;
-    background-position: 0 0, 0 0, 20px 35px, 20px 35px, 0 0, 20px 35px;
-}
-/* Animation for page switching */
-@keyframes slideUpFade {
-    from { opacity: 0; transform: translateY(20px); filter: blur(5px); }
-    to { opacity: 1; transform: translateY(0); filter: blur(0); }
-}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-@keyframes successPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); box-shadow: 0 0 30px var(--success); }
-    100% { transform: scale(1); }
-}
+        :root { 
+            --primary: #0EA5E9;
+            --secondary: #06B6D4;
+            --accent: #10B981;
+            --light: #F0F9FF;
+            --dark: #0369A1;
+        }
 
-.page.active {
-    display: block;
-    animation: slideUpFade 0.6s ease-out forwards;
-}
+        html, body {
+            position: fixed;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            -webkit-text-size-adjust: 100%;
+            touch-action: manipulation;
+        }
 
-/* Visual feedback for the phrase when completed */
-.phrase-complete {
-    animation: successPulse 0.8s ease-in-out;
-    color: var(--success) !important;
-}
+        body { 
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: Black; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background: linear-gradient(135deg, #E0F4FF 0%, #B3E5FC 25%, #81D4FA 50%, #4FC3F7 75%, #B3E5FC 100%);
+            background-attachment: fixed;
+            margin: 0;
+            animation: gradientShift 20s ease infinite;
+        }
 
-/* Fix for the main container to prevent overflow and force fit */
-body {
-    overflow-x: hidden; /* Prevent horizontal scrolling */
-    touch-action: manipulation; /* Improves mobile responsiveness */
-}
+        @keyframes gradientShift {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.05); }
+        }
 
-.page {
-    width: 95%; /* Use more of the screen width */
-    max-width: 500px;
-    max-height: 90vh; /* Ensure it doesn't go off-screen vertically */
-    overflow-y: auto; /* Allow scrolling inside the card if content is long */
-    padding: 20px;
-    box-sizing: border-box; /* Includes padding in width calculation */
-}
+        #page-lobby {
+            background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 25%, #80DEEA 50%, #4DD0E1 75%, #26C6DA 100%) !important;
+            border: 3px solid #00838F !important;
+            box-shadow: 0 0 40px rgba(0, 188, 212, 0.5), 0 0 80px rgba(76, 175, 80, 0.3) !important;
+            animation: lobbyGlow 3s ease-in-out infinite;
+        }
 
-/* Make equations and inputs smaller on mobile so they stay on one line */
-@media (max-width: 480px) {
-    .phrase-display { font-size: 1.5rem; letter-spacing: 5px; }
-    .eq-card { padding: 10px; font-size: 0.9rem; }
-    input { width: 60px; padding: 8px; font-size: 1rem; }
-    .frac .numb { padding: 0 2px; }
-}
+        @keyframes lobbyGlow {
+            0%, 100% { 
+                box-shadow: 0 0 40px rgba(0, 188, 212, 0.5), 0 0 80px rgba(76, 175, 80, 0.3);
+            }
+            50% { 
+                box-shadow: 0 0 60px rgba(0, 188, 212, 0.7), 0 0 100px rgba(76, 175, 80, 0.5);
+            }
+        }
 
-/* Prevent system-level zooming and scrolling issues */
-html, body {
-    position: fixed; /* Prevents "rubber-banding" on iOS */
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-    -webkit-text-size-adjust: 100%; /* Prevents iOS from changing font sizes */
-    touch-action: none; /* Disables double-tap to zoom */
-}
+        #page-lobby h1 {
+            color: #004D73 !important;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.7), 0 0 15px rgba(0, 150, 175, 0.3) !important;
+            font-size: 2rem !important;
+            letter-spacing: 3px;
+            font-weight: 800;
+        }
 
-.page {
-    /* Safe Area Insets for iPhone notches */
-    padding-top: calc(20px + env(safe-area-inset-top));
-    padding-bottom: calc(20px + env(safe-area-inset-bottom));
-    
-    width: 92%;
-    max-width: 450px;
-    max-height: 85vh;
-    overflow-y: auto; /* Allows scrolling only inside the game card */
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
-}
+        #page-lobby p {
+            color: #00695C !important;
+            font-size: 1.1rem !important;
+            font-weight: 600 !important;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6) !important;
+        }
 
-/* Fix for Android/iOS Input Boxes */
-input {
-    font-size: 16px !important; /* Minimum 16px prevents iOS auto-zoom on focus */
-    appearance: none;
-    -webkit-appearance: none;
-    outline: none;
-}
+        #page-lobby .join-section p {
+            color: #004D73 !important;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5) !important;
+            font-weight: 700 !important;
+        }
 
-/* Responsive adjustment for small phones */
-@media (max-width: 380px) {
-    .phrase-display { font-size: 1.2rem !important; letter-spacing: 3px !important; }
-    .eq-card { padding: 8px; font-size: 0.85rem; }
-    .frac .numb { padding: 0 1px; }
-    button { padding: 12px; font-size: 0.9rem; }
-}
+        #page-lobby input[type="text"] {
+            background: rgba(255, 255, 255, 0.98) !important;
+            border: 2px solid #0097A7 !important;
+            color: #004D73 !important;
+            font-weight: 600;
+        }
 
-/* Prevent the background from bouncing on iOS */
-html, body {
-    position: fixed; 
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-    -webkit-overflow-scrolling: touch;
-}
+        #page-lobby input[type="text"]:focus {
+            border-color: #00838F !important;
+            background: rgba(255, 255, 255, 1) !important;
+            box-shadow: 0 0 15px rgba(0, 188, 212, 0.6), inset 0 0 5px rgba(76, 175, 80, 0.2) !important;
+        }
 
-/* Force inputs to be at least 16px to stop the auto-zoom */
-input {
-    font-size: 16px !important; 
-    appearance: none;
-    -webkit-appearance: none; /* Removes default iOS inner shadows */
-}
+        #page-lobby button {
+            background: linear-gradient(135deg, #00BCD4, #009688) !important;
+            color: #FFFFFF !important;
+            border: 2px solid #00897B !important;
+            font-weight: 700;
+            box-shadow: 0 6px 20px rgba(0, 188, 212, 0.4) !important;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
 
-/* Adjust for the iPhone Notch */
-.page {
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-}
+        #page-lobby button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 188, 212, 0.6) !important;
+        }
 
+        #page-lobby button.primary {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A) !important;
+            border: 2px solid #388E3C !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4) !important;
+            font-size: 1.1rem !important;
+        }
+
+        #page-lobby button.primary:hover {
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.6) !important;
+        }
+
+        #page-lobby div[style*="text-align: center; margin: 20px 0; color: var(--secondary)"] {
+            color: #004D73 !important;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6);
+        }
+
+        .page {
+            width: 92%;
+            max-width: 500px;
+            max-height: 85vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)) 20px;
+            background: rgba(224, 247, 250, 0.98);
+            border-radius: 20px;
+            border: 3px solid #0097A7;
+            box-shadow: 0 0 30px rgba(0, 188, 212, 0.4);
+            display: none;
+        }
+
+        .page.active { display: block; }
+
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes successPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        @keyframes revealLetter {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center !important;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #0097A7;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            margin: 20px 0;
+            color: #00838F;
+            text-align: center !important;
+        }
+
+        p {
+            color: #004D73;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="file"] {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 10px 0;
+            font-size: 16px !important;
+            border: 2px solid #00BCD4;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #004D73;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="file"]:focus {
+            border-color: #0097A7;
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 10px rgba(0, 188, 212, 0.4);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin: 12px 0;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #00BCD4, #009688);
+            color: White;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(0, 150, 175, 0.3);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button.primary {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: White;
+        }
+
+        .join-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+            align-items: center;
+        }
+
+        .join-section p {
+            font-size: 0.9rem;
+            color: #0097A7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            align-self: center;
+        }
+
+        .join-section input {
+            max-width: 280px;
+        }
+
+        .phrase-display {
+            font-size: 2.2rem;
+            font-weight: bold;
+            letter-spacing: 15px;
+            text-align: center;
+            margin: 25px 0;
+            padding: 20px;
+            background: rgba(0, 188, 212, 0.1);
+            border: 2px solid #00BCD4;
+            border-radius: 15px;
+            color: #0097A7;
+            text-transform: uppercase;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .phrase-complete {
+            animation: successPulse 0.8s ease-in-out;
+            color: #4CAF50 !important;
+        }
+
+        .revealed-letter {
+            animation: revealLetter 0.4s ease-out;
+            color: #4CAF50;
+            font-weight: 900;
+        }
+
+        .hidden-letter {
+            color: #9ECAE1;
+        }
+
+        .clue-box {
+            background: rgba(76, 175, 80, 0.1);
+            padding: 15px;
+            border-left: 4px solid #4CAF50;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-style: italic;
+            color: #004D73;
+        }
+
+        .eq-card {
+            background: rgba(0, 188, 212, 0.08);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 188, 212, 0.3);
+        }
+
+        .eq-card div {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #0097A7;
+        }
+
+        .eq-card input {
+            width: 100px;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            margin: 10px auto;
+            display: block;
+        }
+
+        .frac {
+            display: inline-block;
+            position: relative;
+            vertical-align: middle;
+            margin: 0 2px;
+        }
+
+        .frac .numb, .frac span:last-child {
+            display: block;
+            padding: 4px 6px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .frac .numb { border-bottom: 1px solid currentColor; }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(0, 188, 212, 0.3);
+            gap: 10px;
+        }
+
+        .top-bar span {
+            font-weight: bold;
+            color: #0097A7;
+            font-size: 1.1rem;
+        }
+
+        #timer {
+            color: #00838F;
+            font-size: 1.3rem;
+        }
+
+        #timer.warning {
+            color: #D32F2F;
+            animation: pulse-warning 1s infinite;
+        }
+
+        @keyframes pulse-warning {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .small-btn {
+            width: auto !important;
+            padding: 8px 12px !important;
+            font-size: 0.8rem !important;
+            background: rgba(0, 188, 212, 0.2) !important;
+            color: #0097A7 !important;
+            border: 1px solid #0097A7 !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 15px;
+            margin: 8px 0;
+            background: rgba(0, 188, 212, 0.15);
+            border-radius: 8px;
+            border-left: 4px solid #00BCD4;
+            font-weight: bold;
+        }
+
+        .score-row span:first-child {
+            color: #0097A7;
+            font-size: 1.1rem;
+        }
+
+        .score-row span:last-child {
+            color: #00838F;
+            font-size: 1.2rem;
+        }
+
+        .solution-box {
+            background: rgba(76, 175, 80, 0.1);
+            padding: 15px;
+            border-left: 4px solid #4CAF50;
+            border-radius: 8px;
+            margin: 15px 0;
+            color: #004D73;
+            line-height: 1.6;
+        }
+
+        .upload-section {
+            background: rgba(0, 188, 212, 0.1);
+            padding: 20px;
+            border: 2px dashed #00BCD4;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .upload-section p {
+            color: #0097A7;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        #solution-upload {
+            padding: 10px !important;
+            margin: 0 !important;
+        }
+
+        .upload-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .upload-success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
+            color: #2E7D32;
+        }
+
+        .upload-error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #F44336;
+            color: #C62828;
+        }
+
+        .gallery-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .gallery-item {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #00BCD4;
+            background: rgba(0, 188, 212, 0.1);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-item-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 97, 110, 0.9);
+            color: #FFFFFF;
+            padding: 8px;
+            font-size: 0.75rem;
+            text-align: center;
+        }
+
+        .no-uploads {
+            text-align: center;
+            padding: 30px;
+            color: #004D73;
+            font-size: 0.9rem;
+        }
+
+        .no-uploads p {
+            margin: 10px 0;
+        }
+
+        @media (max-width: 480px) {
+            .phrase-display { 
+                font-size: 1.8rem; 
+                letter-spacing: 10px; 
+            }
+            .eq-card { padding: 12px; }
+            h1 { font-size: 1.5rem; }
+            .gallery-container { grid-template-columns: 1fr; }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #0097A7;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .music-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00BCD4, #4CAF50);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 150, 175, 0.4);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .music-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .music-toggle:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body>
+    <!-- Music Toggle Button -->
+    <button class="music-toggle" id="musicToggle" onclick="toggleMusic()">🎵</button>
+
+    <!-- Lobby Page -->
     <div id="page-lobby" class="page active">
-        <h1 style="color: var(--primary);">THE RATIONAL CRYPTOGRAM</h1>
+        <h1>🎮 THE RATIONAL CRYPTOGRAM</h1>
+        <p style="text-align: center; color: var(--light); margin-bottom: 25px;">Solve equations to Decode</p>
+
         <div class="join-section">
-            <input type="text" id="player-name" placeholder="ENTER YOUR NAME" style="width: 200px;">
+            <p>👤 Enter Your Name</p>
+            <input type="text" id="player-name" placeholder="Your name" maxlength="20">
         </div>
+
         <div class="join-section">
-            <p>ENTER SESSION CODE</p>
-            <input type="text" id="join-code" placeholder="XXXXXX" maxlength="6" style="width: 150px; text-transform: uppercase;">
-            <button onclick="joinRoom()">ENTER THE GAME</button>
-            <button onclick="startAsHost()" style="background: var(--accent); margin-top:10px;">ENTER AS HOST</button>
+            <p>🎯 Join a Game</p>
+            <input type="text" id="join-code" placeholder="XXXXXX" maxlength="6" style="text-transform: uppercase;">
+            <button onclick="joinRoom()">⚡ Enter The Game</button>
         </div>
+
+        <div style="text-align: center; margin: 20px 0; color: var(--secondary);">— OR —</div>
+
+        <button class="primary" onclick="startAsHost()">👑 Start As Host</button>
     </div>
 
+    <!-- Game Page -->
     <div id="page-game" class="page">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-         <button onclick="toggleFullScreen()" style="width: auto; padding: 5px 15px; font-size: 0.8rem; margin-bottom: 10px; background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--primary); border-radius: 5px; cursor: pointer;">⛶</button>
-            <span id="lvl-indicator" style="color: var(--primary); font-weight: bold;">LEVEL 1</span>
+        <div class="top-bar">
+            <button class="small-btn" onclick="toggleFullScreen()">⛶ FULLSCREEN</button>
+            <span id="lvl-indicator">LEVEL 1</span>
             <span id="timer">03:00</span>
         </div>
-        
+
         <div class="phrase-display" id="cipher-output">_ _ _ _</div>
         <div id="clue-text" class="clue-box"></div>
         <div id="problems-container"></div>
-        <button onclick="checkAnswers()">DECODE CRYPTOGRAM</button>
+        <button onclick="checkAnswers()">🔓 Decode Cryptogram</button>
     </div>
 
+    <!-- Success/Trivia Page -->
     <div id="page-trivia" class="page">
-        <h1 style="color: var(--success);">SUCCESS!</h1>
-        <p id="trivia-content" style="font-size: 1.1rem; line-height: 1.6;"></p>
-        <p id="trivia-author" style="font-style: italic; color: var(--accent);"></p>
-        <div id="step-by-step" class="solution-box"></div>
-        <button onclick="nextLevel()" id="next-btn">CONTINUE TO NEXT LEVEL ➔</button>
+        <h1 style="color: #4CAF50; font-size: 2.5rem;">🎉 Success!</h1>
+        <p id="trivia-content" style="font-size: 1.1rem; line-height: 1.8; margin: 20px 0;"></p>
+        <p id="trivia-author" style="font-style: italic; color: #0097A7; font-size: 0.9rem;"></p>
+
+        <div class="solution-box">
+            <strong style="color: #004D73;">📝 Solution Steps:</strong>
+            <p id="step-by-step" style="margin-top: 10px;"></p>
+        </div>
+
+        <button onclick="nextLevel()">⏭️ Next Level</button>
     </div>
-     
+
+    <!-- Scoreboard Page (Host) -->
     <div id="page-scoreboard" class="page">
-        <h1 style="color: var(--primary);">LIVE RANKING BOARD</h1>
-        <h2 id="host-room-code" style="color:var(--accent);"></h2>
-        <div id="qr-code" style="background: white; padding: 10px; display: inline-block; border-radius: 10px; margin: 10px 0;"></div>
-        <p style="font-size: 0.8rem; color: #888;">Players can scan to join or enter code manually</p>
-        <div id="scoreboard-container"></div>
-        <button onclick="hostStartGame()" style="margin-top: 20px;">START GAME</button>
+        <h1>🏆 Live Ranking Board</h1>
+        <h2 id="host-room-code" style="color: #0097A7; text-align: center;"></h2>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <p style="font-size: 0.85rem; color: #004D73; margin-bottom: 10px;">📱 Scan or Enter Code</p>
+            <div id="qr-code" style="background: white; padding: 15px; display: inline-block; border-radius: 12px;"></div>
+        </div>
+
+        <div id="scoreboard-container" style="margin: 20px 0;"></div>
+        <button class="primary" onclick="hostStartGame()" style="margin-top: 20px;">🚀 Start Game</button>
+    </div>
+
+    <!-- Host Live Game Page -->
+    <div id="page-host-game" class="page">
+        <h1>🎮 Game In Progress</h1>
+        <h2 id="host-game-level" style="color: #0097A7; text-align: center;">LEVEL 1</h2>
+        <p style="text-align: center; color: #004D73; margin: 15px 0;">
+            Time Left: <span id="host-timer" style="color: #0097A7; font-weight: bold;">03:00</span>
+        </p>
+
+        <div id="host-scoreboard-container" style="margin: 20px 0;"></div>
+
+        <p style="text-align: center; color: #004D73; font-size: 0.85rem; margin-top: 20px;">
+            Players are solving... 
+        </p>
+    </div>
+
+    <!-- End Game - Solution Upload Page -->
+    <div id="page-end-game" class="page">
+        <h1 style="color: #4CAF50;">🏆 Game Complete!</h1>
+
+        <div style="background: rgba(0, 188, 212, 0.1); padding: 15px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #00BCD4;">
+            <p style="margin: 5px 0;"><strong>Final Score:</strong> <span id="final-score" style="color: #00838F; font-size: 1.3rem;">0</span></p>
+            <p style="margin: 5px 0;"><strong>Time:</strong> <span id="final-time" style="color: #004D73;">0m 0s</span></p>
+        </div>
+
+        <div class="upload-section">
+            <p>📸 <strong>Show Your Work!</strong></p>
+            <p style="font-size: 0.8rem; color: #004D73;">Upload a photo of your solution (optional)</p>
+            <input type="file" id="solution-upload" accept="image/*" onchange="handleSolutionUpload()">
+            <div id="upload-status"></div>
+        </div>
+
+        <button class="primary" onclick="backToLobby()">🏠 Back To Lobby</button>
+    </div>
+
+    <!-- Host View Uploads Page -->
+    <div id="page-host-uploads" class="page">
+        <h1>📸 Student Solutions</h1>
+        <p style="text-align: center; color: #004D73; margin: 15px 0;">
+            Total: <span id="upload-count" style="color: #0097A7; font-weight: bold;">0</span> submissions
+        </p>
+
+        <div id="gallery-container" class="gallery-container"></div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="primary" onclick="backToLobby()">🏠 Return To Lobby</button>
+        </div>
     </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, update, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-// Ensure buttons feel 'snappy' on mobile
-document.querySelectorAll('button').forEach(btn => {
-    btn.addEventListener('touchstart', function() {
-        this.style.opacity = "0.7";
-    });
-    btn.addEventListener('touchend', function() {
-        this.style.opacity = "1";
-    });
-});
+let audioContext;
+let bgMusicPlaying = false;
+let bgMusicOscillators = [];
 
-// Fullscreen helper for Android (iOS Safari does not support Element.requestFullscreen)
-window.toggleFullScreen = function() {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(() => {
-            // iOS doesn't support fullscreen, which is OK
-        });
-    } else {
-        document.exitFullscreen();
+function initAudio() {
+    try {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    } catch(e) {
+        console.log("Audio unavailable");
     }
 }
 
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyD7yJ0PJf3DfJR7zb8oPpUYvXT_lAXmo5I",
-  authDomain: "rae-cryptogram-puzzle.firebaseapp.com",
-  databaseURL: "https://rae-cryptogram-puzzle-default-rtdb.firebaseio.com",
-  projectId: "rae-cryptogram-puzzle",
-  storageBucket: "rae-cryptogram-puzzle.firebasestorage.app",
-  messagingSenderId: "13379041677",
-  appId: "1:13379041677:web:e6c34d01d19770bd55a5c4",
-  measurementId: "G-1T5KBVP0W3"
+function playSound(freq, dur) {
+    try {
+        if (!audioContext) initAudio();
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + dur);
+        osc.start(audioContext.currentTime);
+        osc.stop(audioContext.currentTime + dur);
+    } catch(e) {}
+}
+
+function playCorrectBeep() { playSound(880, 0.1); }
+function playErrorBeep() { playSound(262, 0.15); }
+function playSuccessSound() {
+    playSound(523, 0.15);
+    setTimeout(() => playSound(659, 0.15), 100);
+    setTimeout(() => playSound(784, 0.3), 200);
+}
+
+function playBackgroundMusic() {
+    try {
+        if (!audioContext) initAudio();
+        if (bgMusicPlaying) stopBackgroundMusic();
+
+        bgMusicPlaying = true;
+
+        function createNote(freq, startTime, duration, type = 'sine', volume = 0.03) {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = type;
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0, startTime);
+            gain.gain.linearRampToValueAtTime(volume, startTime + 0.02);
+            gain.gain.linearRampToValueAtTime(0, startTime + duration);
+            osc.start(startTime);
+            osc.stop(startTime + duration + 0.05);
+            bgMusicOscillators.push(osc);
+        }
+
+        const loop = () => {
+            if (!bgMusicPlaying) return;
+            const t = audioContext.currentTime;
+
+            [196.00, 246.94, 293.66].forEach((f, i) => createNote(f, t, 2.8, 'sine', 0.02));
+            createNote(392.00, t + 0.25, 0.6, 'triangle', 0.04);
+            createNote(329.63, t + 0.7, 0.6, 'triangle', 0.035);
+            createNote(440.00, t + 1.15, 0.6, 'triangle', 0.035);
+            createNote(659.25, t + 1.75, 0.35, 'sine', 0.02);
+            createNote(98.00, t + 0.0, 1.6, 'sine', 0.015);
+
+            setTimeout(loop, 2800);
+        };
+        loop();
+
+        document.getElementById("musicToggle").textContent = "🎵";
+    } catch(e) {
+        console.log("Background music unavailable");
+    }
+}
+
+function stopBackgroundMusic() {
+    bgMusicPlaying = false;
+    bgMusicOscillators.forEach(osc => {
+        try { osc.stop(); } catch(e) {}
+    });
+    bgMusicOscillators = [];
+    document.getElementById("musicToggle").textContent = "🔇";
+}
+
+window.toggleMusic = function() {
+    if (bgMusicPlaying) {
+        stopBackgroundMusic();
+    } else {
+        playBackgroundMusic();
+    }
 };
 
-// Initialize Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyCkoqlW8Fb1yhmvrAv7bBM50CyeCUjZKyA",
+    authDomain: "rational-cryptogram-game.firebaseapp.com",
+    projectId: "rational-cryptogram-game",
+    storageBucket: "rational-cryptogram-game.firebasestorage.app",
+    messagingSenderId: "654271677921",
+    appId: "1:654271677921:web:ac7245dfd3b376a55e3ea0"
+};
+
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Game data
 const gameData = [
     {
+        lvl: 1,
+        phrase: "GAUSS",
+        clue: "💡 Use cross multiplication.",
         eqs: [
-            { q: "2x + 3 = 11", a: 4 },
-            { q: "3x - 2 = 10", a: 4 },
-            { q: "x/2 = 5", a: 10 }
+            { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> = 2`, a: 8 },
+            { h: `<div class="frac"><span class="numb">48</span><span>3x</span></div> = 4`, a: 4 },
+            { h: `<div class="frac"><span class="numb">8x</span><span>64</span></div> = 1`, a: 8 },
+            { h: `<div class="frac"><span class="numb">2x</span><span>3</span></div> = 6`, a: 9 },
+            { h: `<div class="frac"><span class="numb">5x</span><span>4</span></div> = 5`, a: 4 }
         ],
-        phrase: "GOOD",
-        trivia: "Did you know that solving equations is fundamental to all of mathematics?",
-        author: "- Math Master",
-        steps: "1. Identify the variable\n2. Use inverse operations\n3. Isolate the variable\n4. Simplify and solve!"
+        trivia: "Carl Friedrich Gauss, the 'Prince of Mathematicians,' made groundbreaking contributions to statistics, algebra, and number theory.",
+        author: "Carl Friedrich Gauss (1777–1855)",
+        steps: "1. Clear denominators by cross-multiplying\n2. Isolate x\n3. Solve for the variable"
     },
     {
+        lvl: 2,
+        phrase: "INDIA",
+        clue: "🎯 Clear the denominator first.",
         eqs: [
-            { q: "5x = 25", a: 5 },
-            { q: "x + 7 = 14", a: 7 }
+            { h: `<div class="frac"><span class="numb">(x+4)</span><span>2</span></div> = 10`, a: 16 },
+            { h: `<div class="frac"><span class="numb">(x+17)</span><span>3</span></div> = 9`, a: 10 },
+            { h: `<div class="frac"><span class="numb">(x+1)</span><span>3</span></div> = 5`, a: 14 },
+            { h: `<div class="frac"><span class="numb">8</span><span>(x-2)</span></div> = 4`, a: 4 },
+            { h: `<div class="frac"><span class="numb">4</span><span>(x-1)</span></div> = 2`, a: 3 }
         ],
-        phrase: "MATH",
-        trivia: "The word 'algebra' comes from the Arabic word 'al-jabr', meaning restoration or completion.",
-        author: "- Mathematician",
-        steps: "Follow the order of operations: PEMDAS"
+        trivia: "Ancient India developed the concept of zero as a number, not just a placeholder. This was revolutionary for mathematics!",
+        author: "Brahmagupta (598–668 CE)",
+        steps: "1. Multiply both sides by the denominator\n2. Expand binomials if needed\n3. Solve for x"
     },
     {
+        lvl: 3,
+        phrase: "EULER",
+        clue: "🚀 Apply all your algebra skills.",
         eqs: [
-            { q: "4x - 5 = 11", a: 4 },
-            { q: "x/3 = 2", a: 6 }
+            { h: `<div class="frac"><span class="numb">x</span><span>5</span></div> + 2 = 7`, a: 25 },
+            { h: `<div class="frac"><span class="numb">30</span><span>x</span></div> - 1 = 2`, a: 10 },
+            { h: `<div class="frac"><span class="numb">x</span><span>3</span></div> + 4 = 14`, a: 30 },
+            { h: `<div class="frac"><span class="numb">45</span><span>x</span></div> - 3 = 2`, a: 9 },
+            { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> + 1 = 6`, a: 20 }
         ],
-        phrase: "RULES",
-        trivia: "Mathematical equations help us understand the world around us!",
-        author: "- Professor",
-        steps: "Practice makes perfect. Keep solving!"
+        trivia: "Leonhard Euler invented many mathematical notations we use today, including f(x) and the number e.",
+        author: "Leonhard Euler (1707–1783)",
+        steps: "1. Isolate the fraction\n2. Clear the denominator\n3. Solve the resulting equation"
+    },
+    {
+        lvl: 4,
+        phrase: "EUCLID",
+        clue: "⚙️ Move constants before multiplying.",
+        eqs: [
+            { h: `<div class="frac"><span class="numb">x</span><span>64</span></div> = <div class="frac"><span class="numb">1</span><span>2</span></div>`, a: 32 },
+            { h: `<div class="frac"><span class="numb">3x</span><span>36</span></div> = <div class="frac"><span class="numb">4</span><span>3</span></div>`, a: 16 },
+            { h: `<div class="frac"><span class="numb">4x</span><span>10</span></div> = <div class="frac"><span class="numb">6</span><span>5</span></div>`, a: 3 },
+            { h: `<div class="frac"><span class="numb">2</span><span>x</span></div> = <div class="frac"><span class="numb">3</span><span>(x+1)</span></div>`, a: 1 },
+            { h: `<div class="frac"><span class="numb">4</span><span>(x-1)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: -1 },
+            { h: `<div class="frac"><span class="numb">3</span><span>(x+2)</span></div> = <div class="frac"><span class="numb">5</span><span>(x-2)</span></div>`, a: -8 }
+        ],
+        trivia: "Euclid's 'Elements' is one of the most influential mathematical texts ever written, used for over 2000 years.",
+        author: "Euclid (300 BCE)",
+        steps: "1. Cross-multiply both sides\n2. Expand binomials\n3. Collect x terms\n4. Solve for x"
+    },
+    {
+        lvl: 5,
+        phrase: "GREECE",
+        clue: "🧮 Multiply denominators to isolate x.",
+        eqs: [
+            { h: `<div class="frac"><span class="numb">6</span><span>(x+4)</span></div> = <div class="frac"><span class="numb">3</span><span>(x+1)</span></div>`, a: 2 },
+            { h: `<div class="frac"><span class="numb">4</span><span>(x-2)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: -2 },
+            { h: `<div class="frac"><span class="numb">3</span><span>(x+2)</span></div> = <div class="frac"><span class="numb">2</span><span>(x-2)</span></div>`, a: 10 },
+            { h: `<div class="frac"><span class="numb">3</span><span>x</span></div> = <div class="frac"><span class="numb">2</span><span>(x-4)</span></div>`, a: -2 },
+            { h: `<div class="frac"><span class="numb">4</span><span>(x-2)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: 7 },
+            { h: `<div class="frac"><span class="numb">6</span><span>(x-3)</span></div> = <div class="frac"><span class="numb">3</span><span>x</span></div>`, a: -3 }
+        ],
+        trivia: "Ancient Greece revolutionized mathematics with logic and proof. Philosophers explored mathematical reasoning as a path to truth!",
+        author: "Aristotle (384–322 BCE)",
+        steps: "1. Cross-multiply\n2. Expand all expressions\n3. Collect like terms\n4. Solve"
     }
 ];
 
-let playerName = "";
-let roomCode = "";
-let isHost = false;
-let score = 0;
-let solvedIndices = [];
-let currentLevelIndex = 0;
-let localGameStarted = false;
-let timerInterval;
+let roomCode = "", playerName = "", isHost = false, score = 0, currentLevelIndex = 0, timerInterval, startTime;
 let hostTimerInterval;
+let uploads = {};
+let localGameStarted = false;
+let solvedIndices = []; // Track which equations have been solved
 
-// Navigation
-function navigate(pageId) {
-    document.querySelectorAll('.page').forEach(p => {
-        p.classList.remove('active');
-    });
-    document.getElementById(pageId).classList.add('active');
-}
+(function autoFillRoomFromURL(){
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const room = params.get('room') || params.get('code');
+        if (room) {
+            const joinInput = document.getElementById('join-code');
+            if (joinInput) {
+                joinInput.value = room.toUpperCase();
+                joinInput.focus();
+            }
+            const name = params.get('name');
+            if (name) {
+                const nameInput = document.getElementById('player-name');
+                if (nameInput) nameInput.value = decodeURIComponent(name);
+            }
+        }
+    } catch(e) {}
+})();
 
-// Render scoreboard
-function renderScoreboard(playersObj) {
-    const players = playersObj || {};
-    const entries = Object.entries(players);
-    const sorted = entries.sort((a, b) => (b[1].score || 0) - (a[1].score || 0));
-
-    const sb = document.getElementById("scoreboard-container");
-    if (sb) {
-        sb.innerHTML = "";
-        sorted.forEach(([name, info], idx) => {
-            const div = document.createElement("div");
-            div.className = "score-row";
-            const medals = ['🥇', '🥈', '🥉'];
-            const medal = idx < 3 ? medals[idx] : '👤';
-            div.innerHTML = `<span>${medal} ${name}</span><span>${info.score || 0}</span>`;
-            sb.appendChild(div);
-        });
-    }
-}
-
-// Setup room listeners
 function setupRoomListeners(room) {
     if (!room) return;
     try {
-        onValue(ref(db, `rooms/${room}`), (snapshot) => {
+        const roomRef = ref(db, `rooms/${room}`);
+        onValue(roomRef, (snapshot) => {
             const data = snapshot.val();
             if (!data) return;
 
@@ -317,34 +892,48 @@ function setupRoomListeners(room) {
                 const lvlText = 'LEVEL ' + data.level;
                 const lvlIndicator = document.getElementById('lvl-indicator');
                 if (lvlIndicator) lvlIndicator.innerText = lvlText;
+                const hostGameLevel = document.getElementById('host-game-level');
+                if (hostGameLevel) hostGameLevel.innerText = lvlText;
             }
         });
-
-        onValue(ref(db, `rooms/${room}/players`), (snapshot) => {
-            const playersData = snapshot.val() || {};
-            renderScoreboard(playersData);
-        });
-
-        const hostRoomEl = document.getElementById("host-room-code");
-        if (hostRoomEl) hostRoomEl.innerText = "🎮 Room Code: " + room;
-    } catch(e) { 
-        console.error('Error setting up listeners:', e);
-    }
+    } catch(e) { console.warn('Room listener setup failed', e); }
 }
 
-// Start as host
+window.navigate = function(pageId) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    const page = document.getElementById(pageId);
+    if (page) page.classList.add("active");
+};
+
+window.toggleFullScreen = function() {
+    const elem = document.documentElement;
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen().catch(() => {});
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        }
+    }
+};
+
 window.startAsHost = function() {
     playerName = document.getElementById("player-name").value.trim();
     if (!playerName) { 
         alert("Enter your name!"); 
         return; 
     }
-    
+
     isHost = true;
     roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-    
+
     set(ref(db, "rooms/" + roomCode), { gameStarted: false, level: 1 });
-    set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0 });
+    document.getElementById("host-room-code").innerText = "🎮 Room Code: " + roomCode;
 
     const qrContainer = document.getElementById("qr-code");
     qrContainer.innerHTML = "";
@@ -355,13 +944,33 @@ window.startAsHost = function() {
 
     setupRoomListeners(roomCode);
     navigate("page-scoreboard");
+
+    onValue(ref(db, "rooms/" + roomCode + "/players"), (snapshot) => {
+        const sb = document.getElementById("scoreboard-container");
+        sb.innerHTML = "";
+        const data = snapshot.val();
+        if (data) {
+            const sorted = Object.entries(data).sort((a, b) => (b[1].score || 0) - (a[1].score || 0));
+            sorted.forEach(([name, info], idx) => {
+                const div = document.createElement("div");
+                div.className = "score-row";
+                const medals = ['🥇', '🥈', '🥉'];
+                const medal = idx < 3 ? medals[idx] : '👤';
+                div.innerHTML = `<span>${medal} ${name}</span><span>${info.score || 0}</span>`;
+                sb.appendChild(div);
+            });
+        }
+    });
+
+    onValue(ref(db, "rooms/" + roomCode + "/uploads"), (snapshot) => {
+        uploads = snapshot.val() || {};
+    });
 };
 
-// Join room
 window.joinRoom = function() {
     playerName = document.getElementById("player-name").value.trim();
     roomCode = document.getElementById("join-code").value.trim().toUpperCase();
-    
+
     if (!playerName || !roomCode) {
         alert("Enter name and code!");
         return;
@@ -372,140 +981,227 @@ window.joinRoom = function() {
     navigate("page-scoreboard");
 };
 
-// Start game
 window.hostStartGame = function() {
-    if (isHost && roomCode) {
-        update(ref(db, `rooms/${roomCode}`), { gameStarted: true, level: 1 });
-    }
+    update(ref(db, "rooms/" + roomCode), { gameStarted: true, level: 1 });
+    localGameStarted = true;
     startGame();
-}
+};
 
 function startGame() {
+    if (!localGameStarted) localGameStarted = true;
+    score = 0;
     currentLevelIndex = 0;
-    solvedIndices = [];
-    navigate("page-game");
-    renderGameProblems();
-    startTimer();
-}
+    startTime = new Date();
+    let timeLeft = 180;
 
-function renderGameProblems() {
-    const level = gameData[currentLevelIndex];
-    if (!level) return;
+    playBackgroundMusic();
 
-    const container = document.getElementById("problems-container");
-    container.innerHTML = "";
-    level.eqs.forEach((eq, idx) => {
-        const card = document.createElement("div");
-        card.className = "eq-card";
-        card.style.cssText = "background: var(--card-bg); padding: 12px; border-radius: 8px; border-left: 3px solid var(--primary); margin-bottom: 10px; color: white;";
-        card.innerHTML = `
-            <strong>Eq ${idx + 1}:</strong> ${eq.q}<br>
-            <input type="number" id="ans-${idx}" placeholder="Answer" style="margin-top: 8px; padding: 8px; border-radius: 4px; border: 1px solid var(--primary); color: black; width: 100%; box-sizing: border-box;">
-        `;
-        container.appendChild(card);
-    });
+    const timerDisplay = document.getElementById("timer");
+    const hostTimerDisplay = document.getElementById("host-timer");
 
-    document.getElementById("clue-text").innerText = "Solve each equation to reveal the cryptogram!";
-    updateCipherDisplay();
+    function updateTimer() {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        const timeStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        if (timerDisplay) timerDisplay.innerText = timeStr;
+        if (hostTimerDisplay) hostTimerDisplay.innerText = timeStr;
+
+        if (timeLeft <= 30 && timerDisplay) {
+            timerDisplay.classList.add("warning");
+        }
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            timeUp();
+        } else {
+            timeLeft--;
+        }
+    }
+
+    timerInterval = setInterval(updateTimer, 1000);
+    updateTimer();
+
+    if (!isHost) {
+        navigate("page-game");
+    } else {
+        navigate("page-host-game");
+    }
+
+    loadLevel();
 }
 
 function updateCipherDisplay() {
     const level = gameData[currentLevelIndex];
-    if (!level) return;
-
+    const phrase = level.phrase;
     let display = "";
-    for (let i = 0; i < level.phrase.length; i++) {
-        display += (solvedIndices.includes(i) ? level.phrase[i] : "_") + " ";
+    
+    for (let i = 0; i < phrase.length; i++) {
+        if (solvedIndices.includes(i)) {
+            display += `<span class="revealed-letter">${phrase[i]}</span>`;
+        } else {
+            display += `<span class="hidden-letter">_</span>`;
+        }
+        if (i < phrase.length - 1) display += " ";
     }
-    document.getElementById("cipher-output").innerText = display.trim();
+    
+    document.getElementById("cipher-output").innerHTML = display;
 }
 
-// Check answers
+function loadLevel() {
+    if (currentLevelIndex >= gameData.length) {
+        endGame();
+        return;
+    }
+
+    solvedIndices = []; // Reset solved indices for new level
+    const level = gameData[currentLevelIndex];
+    document.getElementById("clue-text").innerText = level.clue;
+    document.getElementById("cipher-output").innerText = level.phrase.split('').join(' ');
+    updateCipherDisplay();
+
+    const container = document.getElementById("problems-container");
+    container.innerHTML = "";
+
+    level.eqs.forEach((eq, idx) => {
+        const card = document.createElement("div");
+        card.className = "eq-card";
+        card.innerHTML = `
+            <div>${eq.h}</div>
+            <input type="number" id="ans-${idx}" placeholder="Answer" class="answer-input">
+        `;
+        container.appendChild(card);
+    });
+}
+
 window.checkAnswers = function() {
     const level = gameData[currentLevelIndex];
-    if (!level) return;
-
     let allCorrect = true;
     let newCorrect = false;
 
     level.eqs.forEach((eq, idx) => {
         const input = document.getElementById(`ans-${idx}`);
-        const val = input ? parseInt(input.value) : NaN;
+        const userAns = parseInt(input.value);
 
-        if (isNaN(val) || val !== eq.a) {
+        if (userAns !== eq.a) {
             allCorrect = false;
-            if (input) input.style.borderColor = "red";
+            playErrorBeep();
+            input.style.border = "2px solid red";
         } else {
-            if (input) input.style.borderColor = "green";
+            playCorrectBeep();
+            input.style.border = "2px solid green";
+            
+            // Add this equation index to solved if not already there
             if (!solvedIndices.includes(idx)) {
                 solvedIndices.push(idx);
                 newCorrect = true;
-                score += 20;
-                if (roomCode && playerName) {
-                    update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: score });
-                }
             }
         }
     });
 
-    if (newCorrect) updateCipherDisplay();
+    // Update cipher display to reveal newly solved letters
+    if (newCorrect) {
+        updateCipherDisplay();
+    }
 
     if (allCorrect) {
-        score += 50;
-        if (roomCode && playerName) {
+        score += 100;
+        playSuccessSound();
+
+        if (isHost) {
+            update(ref(db, `rooms/${roomCode}`), { level: currentLevelIndex + 2 });
+        } else {
             update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: score });
         }
 
         setTimeout(() => {
             const level = gameData[currentLevelIndex];
             document.getElementById("trivia-content").innerText = level.trivia;
-            document.getElementById("trivia-author").innerText = level.author;
+            document.getElementById("trivia-author").innerText = `— ${level.author}`;
             document.getElementById("step-by-step").innerText = level.steps;
             navigate("page-trivia");
-        }, 400);
+        }, 500);
     }
 };
 
-// Next level
 window.nextLevel = function() {
     currentLevelIndex++;
     if (currentLevelIndex >= gameData.length) {
-        alert("🎉 Congratulations! You've completed all levels!");
-        navigate("page-lobby");
+        endGame();
     } else {
-        solvedIndices = [];
+        loadLevel();
         navigate("page-game");
-        renderGameProblems();
-        startTimer();
     }
 };
 
-// Timer
-function startTimer() {
-    let time = 180;
-    clearInterval(timerInterval);
-    
-    timerInterval = setInterval(() => {
-        const mins = Math.floor(time / 60);
-        const secs = time % 60;
-        document.getElementById("timer").innerText = 
-            (mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs;
-        
-        if (time <= 0) {
-            clearInterval(timerInterval);
-            alert("Time's up!");
-            nextLevel();
-        }
-        time--;
-    }, 1000);
+function timeUp() {
+    endGame();
 }
 
-// Check for room code in URL
-const urlParams = new URLSearchParams(window.location.search);
-const room = urlParams.get("room");
-if (room) {
-    document.getElementById("join-code").value = room;
+function endGame() {
+    clearInterval(timerInterval);
+    clearInterval(hostTimerInterval);
+    stopBackgroundMusic();
+
+    const elapsed = Math.floor((new Date() - startTime) / 1000);
+    const mins = Math.floor(elapsed / 60);
+    const secs = elapsed % 60;
+
+    if (isHost) {
+        navigate("page-host-uploads");
+        document.getElementById("upload-count").innerText = Object.keys(uploads).length;
+
+        const gallery = document.getElementById("gallery-container");
+        gallery.innerHTML = "";
+
+        if (Object.keys(uploads).length === 0) {
+            gallery.innerHTML = '<div class="no-uploads"><p>No submissions yet</p></div>';
+        } else {
+            Object.entries(uploads).forEach(([playerName, imageData]) => {
+                const item = document.createElement("div");
+                item.className = "gallery-item";
+                item.innerHTML = `
+                    <img src="${imageData}" alt="${playerName}">
+                    <div class="gallery-item-label">${playerName}</div>
+                `;
+                gallery.appendChild(item);
+            });
+        }
+    } else {
+        document.getElementById("final-score").innerText = score;
+        document.getElementById("final-time").innerText = `${mins}m ${secs}s`;
+        navigate("page-end-game");
+    }
 }
+
+window.handleSolutionUpload = function() {
+    const fileInput = document.getElementById("solution-upload");
+    const file = fileInput.files[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const imageData = e.target.result;
+        set(ref(db, `rooms/${roomCode}/uploads/${playerName}`), imageData);
+
+        const statusDiv = document.getElementById("upload-status");
+        statusDiv.className = "upload-status upload-success";
+        statusDiv.innerText = "✓ Photo uploaded successfully!";
+    };
+    reader.readAsDataURL(file);
+};
+
+window.backToLobby = function() {
+    roomCode = "";
+    playerName = "";
+    isHost = false;
+    score = 0;
+    currentLevelIndex = 0;
+    localGameStarted = false;
+    solvedIndices = [];
+    navigate("page-lobby");
+};
+
 </script>
 </body>
 </html>
