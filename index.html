@@ -824,7 +824,14 @@ window.startAsHost = function() {
 };
 
 window.hostStartGame = function() {
-    update(ref(db, "rooms/" + roomCode), { gameStarted: true, level: 1 });
+   update(ref(db, "rooms/" + roomCode), {
+    gameStarted: true,
+    level: 1,
+
+    // NEW
+    startTime: Date.now(),
+    duration: 180
+});
     localGameStarted = true;
     startGame();
 };
@@ -955,7 +962,7 @@ window.checkAnswers = function() {
     if (allCorrect) {
         score += 100;
         playSuccessSound();
-        update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: score });
+       update(ref(db, `rooms/${roomCode}/players/${playerName}`), {score: score,currentLevel: currentLevelIndex,avatar: selectedAvatar});
 
         setTimeout(() => {
             document.getElementById("trivia-content").innerText = level.trivia;
@@ -971,7 +978,15 @@ window.nextLevel = function() {
     if (currentLevelIndex >= gameData.length) {
         endGame();
     } else {
-        if (isHost) update(ref(db, `rooms/${roomCode}`), { level: currentLevelIndex + 1 });
+if (isHost)
+    update(ref(db, `rooms/${roomCode}`), {
+
+        level: currentLevelIndex + 1,
+
+        // keep these values
+        gameStarted: true
+
+    });
         loadLevel();
         navigate("page-game");
     }
