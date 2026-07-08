@@ -2,479 +2,361 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=yes">
-  <title>The Rational Algebraic Cryptogram • 40‑Player Reconnect</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Rational Cryptogram</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --primary: #0EA5E9;
-      --secondary: #06B6D4;
-      --accent: #10B981;
-      --light: #F0F9FF;
-      --dark: #0369A1;
-      --glass: rgba(255, 255, 255, 0.9);
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #E0F4FF, #81D4FA);
+      display: flex; justify-content: center; align-items: center;
+      min-height: 100vh; padding: 20px;
     }
-    html, body {
-      width: 100%; height: 100%; overflow: hidden;
-      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: linear-gradient(135deg, #E0F4FF 0%, #B3E5FC 40%, #81D4FA 80%);
-      display: flex; align-items: center; justify-content: center;
-      touch-action: manipulation;
+    .page { display: none; width: 100%; max-width: 500px; }
+    .page.active { display: block; }
+    .container {
+      background: rgba(255,255,255,0.95);
+      border-radius: 20px; padding: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     }
-    .page {
-      width: 92%; max-width: 520px; max-height: 88vh;
-      overflow-y: auto; padding: 22px 18px;
-      background: rgba(224, 247, 250, 0.96);
-      border-radius: 28px;
-      border: 2px solid #0097A7;
-      box-shadow: 0 25px 50px rgba(0, 150, 175, 0.25);
-      display: none;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-      backdrop-filter: blur(10px);
-    }
-    .page.active { display: block; opacity: 1; transform: translateY(0); }
-    h1 { font-size: 1.6rem; margin-bottom: 18px; text-align: center; letter-spacing: 1px; color: #004D73; }
-    h2 { font-size: 1.2rem; margin: 18px 0; color: #00838F; text-align: center; }
+    h1 { text-align: center; color: #004D73; margin-bottom: 20px; }
     input, button {
-      width: 100%; padding: 14px; margin: 10px 0;
-      font-size: 16px; border-radius: 14px; border: 2px solid #00BCD4;
-      background: white; color: #004D73; outline: none;
+      width: 100%; padding: 12px; margin: 8px 0;
+      border-radius: 10px; border: 2px solid #00BCD4;
+      font-size: 16px;
     }
     button {
-      font-weight: bold; text-transform: uppercase; letter-spacing: 1px;
       background: linear-gradient(135deg, #00BCD4, #009688);
-      color: white; border: none; cursor: pointer;
-      box-shadow: 0 6px 14px rgba(0, 150, 175, 0.35);
-      transition: all 0.2s;
+      color: white; font-weight: bold; cursor: pointer; border: none;
     }
     button.primary { background: linear-gradient(135deg, #4CAF50, #66BB6A); }
-    button:active { transform: scale(0.97); }
-    .avatar-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
-      margin: 16px 0; padding: 12px;
-      background: rgba(255,255,255,0.8); border-radius: 18px;
-    }
-    .avatar-option {
-      font-size: 2.2rem; text-align: center; padding: 8px;
-      background: white; border-radius: 50%; width: 60px; height: 60px;
-      margin: auto; display: flex; align-items: center; justify-content: center;
-      border: 2px solid #B2EBF2; cursor: pointer; transition: 0.2s;
-    }
-    .avatar-option.selected { background: #00BCD4; border-color: #006064; transform: scale(1.1); }
-    .lobby-users { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 12px 0; }
-    .user-badge { background: #E0F7FA; border-radius: 30px; padding: 6px 14px; font-weight: bold; display: flex; align-items: center; gap: 6px; }
-    .phrase-display {
-      font-size: 2.4rem; font-weight: bold; letter-spacing: 10px;
-      text-align: center; margin: 20px 0; padding: 16px;
-      background: rgba(0,188,212,0.15); border-radius: 18px;
-    }
-    .eq-card { background: rgba(0,188,212,0.08); padding: 12px; margin: 10px 0; border-radius: 14px; }
-    .timer { font-size: 1.4rem; font-weight: bold; color: #00838F; }
+    .timer { font-size: 1.3rem; font-weight: bold; color: #00838F; text-align: center; margin: 10px 0; }
     .timer.warning { color: #D32F2F; animation: pulse 0.8s infinite; }
     @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
-    .podium { display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin: 20px 0; }
-    .podium-col { text-align: center; }
-    .podium-block { border-radius: 8px 8px 0 0; padding: 10px; color: white; font-weight: bold; }
-    .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .gallery img { width: 100%; border-radius: 12px; }
+    .phrase { font-size: 2rem; text-align: center; letter-spacing: 10px; margin: 15px 0; }
+    .eq-card { background: #E0F7FA; padding: 12px; margin: 8px 0; border-radius: 10px; }
+    .players { display: flex; flex-wrap: wrap; gap: 8px; margin: 15px 0; }
+    .player-badge { background: #B2EBF2; padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; }
   </style>
 </head>
 <body>
-<div id="page-lobby" class="page active">
-  <h1>🔐 RATIONAL CRYPTOGRAM</h1>
-  <input type="text" id="playerName" placeholder="Your name" maxlength="20">
-  <input type="text" id="roomCodeInput" placeholder="Room code" maxlength="8" style="text-transform:uppercase;">
-  <button onclick="joinRoom()">🎯 JOIN ROOM</button>
-  <button class="primary" onclick="createRoom()">👑 HOST NEW ROOM</button>
-</div>
 
-<div id="page-avatar" class="page">
-  <h1>🦊 PICK AVATAR</h1>
-  <div class="avatar-grid" id="avatarGrid"></div>
-  <button class="primary" onclick="confirmAvatar()">✅ CONFIRM & ENTER</button>
-</div>
-
-<div id="page-lobby-room" class="page">
-  <h1>🏠 LOBBY</h1>
-  <h2 id="roomCodeDisplay"></h2>
-  <div id="qrCodeContainer" style="display:flex; justify-content:center; margin:10px 0;"></div>
-  <div class="lobby-users" id="lobbyPlayerList"></div>
-  <button id="startGameBtn" class="primary" onclick="hostStartGame()" style="display:none;">🚀 START GAME</button>
-  <p id="waitingMessage">⏳ Waiting for host...</p>
-</div>
-
-<div id="page-game" class="page">
-  <div style="display:flex; justify-content:space-between;">
-    <span id="levelIndicator">LEVEL 1</span>
-    <span class="timer" id="gameTimer">03:00</span>
+<div id="lobby" class="page active">
+  <div class="container">
+    <h1>🔐 RATIONAL CRYPTOGRAM</h1>
+    <input type="text" id="nameInput" placeholder="Your name" maxlength="20">
+    <input type="text" id="codeInput" placeholder="Room code" maxlength="8" style="text-transform:uppercase;">
+    <button onclick="joinRoom()">JOIN ROOM</button>
+    <button class="primary" onclick="createRoom()">CREATE ROOM</button>
   </div>
-  <div class="phrase-display" id="cipherDisplay"></div>
-  <div id="equationsContainer"></div>
-  <button onclick="submitAnswers()">🔓 DECODE</button>
 </div>
 
-<div id="page-end" class="page">
-  <h1>🏆 GAME OVER</h1>
-  <div id="podiumContainer" class="podium"></div>
-  <p>Your score: <strong id="finalScore">0</strong></p>
-  <input type="file" id="uploadInput" accept="image/*" onchange="uploadSolution()">
-  <button onclick="returnToLobby()">🔁 BACK TO LOBBY</button>
+<div id="room" class="page">
+  <div class="container">
+    <h1>🏠 GAME LOBBY</h1>
+    <h2 id="roomCodeDisplay" style="text-align:center; color:#0097A7;"></h2>
+    <div id="qrContainer" style="text-align:center; margin:10px 0;"></div>
+    <div class="players" id="playerList"></div>
+    <button id="startBtn" class="primary" onclick="startGame()" style="display:none;">START GAME</button>
+    <p id="waitMsg" style="text-align:center;">Waiting for host...</p>
+  </div>
+</div>
+
+<div id="game" class="page">
+  <div class="container">
+    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+      <span id="levelText">LEVEL 1</span>
+      <span class="timer" id="timer">03:00</span>
+    </div>
+    <div class="phrase" id="cipherDisplay">_ _ _ _ _</div>
+    <div id="equations"></div>
+    <button onclick="checkAnswers()">SUBMIT ANSWERS</button>
+  </div>
+</div>
+
+<div id="end" class="page">
+  <div class="container">
+    <h1>🎉 GAME COMPLETE</h1>
+    <p style="text-align:center; font-size:1.2rem;">Score: <strong id="finalScore">0</strong></p>
+    <button onclick="backToLobby()">BACK TO LOBBY</button>
+  </div>
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, set, update, onValue, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, update, onValue, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCkoqlW8Fb1yhmvrAv7bBM50CyeCUjZKyA",
-    authDomain: "rational-cryptogram-game.firebaseapp.com",
-    projectId: "rational-cryptogram-game",
-    storageBucket: "rational-cryptogram-game.firebasestorage.app",
-    messagingSenderId: "654271677921",
-    appId: "1:654271677921:web:ac7245dfd3b376a55e3ea0"
-  };
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+const firebaseConfig = {
+  apiKey: "AIzaSyCkoqlW8Fb1yhmvrAv7bBM50CyeCUjZKyA",
+  authDomain: "rational-cryptogram-game.firebaseapp.com",
+  projectId: "rational-cryptogram-game",
+  storageBucket: "rational-cryptogram-game.firebasestorage.app",
+  messagingSenderId: "654271677921",
+  appId: "1:654271677921:web:ac7245dfd3b376a55e3ea0"
+};
 
-  const AVATARS = ["🦊","🐼","🐨","🐸","🦁","🐯","🐮","🐷","🐵","🐔","🐶","🐱","🦄","🐲","🐢","🦜"];
-  const GAME_LEVELS = [
-    { phrase: "GAUSS", clue: "Cross multiply", eqs: [
-      {html: `<sup>x</sup>/<sub>4</sub> = 2`, ans:8},
-      {html: `<sup>48</sup>/<sub>3x</sub> = 4`, ans:4},
-      {html: `<sup>8x</sup>/<sub>64</sub> = 1`, ans:8},
-      {html: `<sup>2x</sup>/<sub>3</sub> = 6`, ans:9},
-      {html: `<sup>5x</sup>/<sub>4</sub> = 5`, ans:4}
-    ]},
-    { phrase: "INDIA", clue: "Clear denominator", eqs: [
-      {html: `<sup>(x+4)</sup>/<sub>2</sub> = 10`, ans:16},
-      {html: `<sup>(x+17)</sup>/<sub>3</sub> = 9`, ans:10},
-      {html: `<sup>(x+1)</sup>/<sub>3</sub> = 5`, ans:14},
-      {html: `<sup>8</sup>/<sub>(x-2)</sub> = 4`, ans:4},
-      {html: `<sup>4</sup>/<sub>(x-1)</sub> = 2`, ans:3}
-    ]},
-    { phrase: "EULER", clue: "Isolate fraction", eqs: [
-      {html: `<sup>x</sup>/<sub>5</sub> + 2 = 7`, ans:25},
-      {html: `<sup>30</sup>/<sub>x</sub> - 1 = 2`, ans:10},
-      {html: `<sup>x</sup>/<sub>3</sub> + 4 = 14`, ans:30},
-      {html: `<sup>45</sup>/<sub>x</sub> - 3 = 2`, ans:9},
-      {html: `<sup>x</sup>/<sub>4</sub> + 1 = 6`, ans:20}
-    ]}
-  ];
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-  let roomCode = null;
-  let playerName = null;
-  let playerAvatar = "🦊";
-  let isHost = false;
-  let currentLevel = 0;
-  let score = 0;
-  let gameActive = false;
-  let timerInterval = null;
-  let serverTimeOffset = 0;
-  let gameEndTime = null;
+const LEVELS = [
+  { phrase: "GAUSS", eqs: [
+    { q: "x/4 = 2", a: 8 }, { q: "48/3x = 4", a: 4 }, { q: "8x/64 = 1", a: 8 },
+    { q: "2x/3 = 6", a: 9 }, { q: "5x/4 = 5", a: 4 }
+  ]},
+  { phrase: "INDIA", eqs: [
+    { q: "(x+4)/2 = 10", a: 16 }, { q: "(x+17)/3 = 9", a: 10 }, { q: "(x+1)/3 = 5", a: 14 },
+    { q: "8/(x-2) = 4", a: 4 }, { q: "4/(x-1) = 2", a: 3 }
+  ]},
+  { phrase: "EULER", eqs: [
+    { q: "x/5 + 2 = 7", a: 25 }, { q: "30/x - 1 = 2", a: 10 }, { q: "x/3 + 4 = 14", a: 30 },
+    { q: "45/x - 3 = 2", a: 9 }, { q: "x/4 + 1 = 6", a: 20 }
+  ]}
+];
 
-  // ---------- navigation ----------
-  function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+let roomCode, playerName, isHost = false;
+let currentLevel = 0, score = 0, gameEndTime = null;
+let timerInterval = null;
+const MAX_PLAYERS = 40;
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ✅ Feature 2: Reconnect system
+function saveSession() {
+  if (playerName && roomCode) {
+    sessionStorage.setItem('game_session', JSON.stringify({
+      name: playerName, room: roomCode, host: isHost
+    }));
   }
+}
 
-  // ---------- reconnect & persistence ----------
-  function saveLocalIdentity() {
-    if (playerName && roomCode) {
-      localStorage.setItem('crypto_player', JSON.stringify({name: playerName, room: roomCode, avatar: playerAvatar, host: isHost}));
-    }
-  }
-  function clearLocalIdentity() {
-    localStorage.removeItem('crypto_player');
-  }
+async function tryReconnect() {
+  const saved = sessionStorage.getItem('game_session');
+  if (!saved) return false;
+  const { name, room, host } = JSON.parse(saved);
+  const snap = await new Promise(res => onValue(ref(db, `rooms/${room}`), res, { onlyOnce: true }));
+  if (!snap.exists()) return false;
+  
+  playerName = name;
+  roomCode = room;
+  isHost = host;
+  
+  // Re-register in room
+  const playerRef = ref(db, `rooms/${room}/players/${name}`);
+  await set(playerRef, { score: 0, lastSeen: serverTimestamp() });
+  onDisconnect(playerRef).remove();
+  
+  setupListeners(room);
+  showPage('room');
+  updatePlayerList(room);
+  return true;
+}
 
-  async function attemptReconnect() {
-    const saved = localStorage.getItem('crypto_player');
-    if (!saved) return false;
-    try {
-      const { name, room, avatar, host } = JSON.parse(saved);
-      const roomRef = ref(db, `rooms/${room}`);
-      const snapshot = await new Promise(res => onValue(roomRef, snap => res(snap), {onlyOnce: true}));
-      if (!snapshot.exists()) return false;
-      playerName = name;
-      roomCode = room;
-      playerAvatar = avatar;
-      isHost = host;
-      // re-register player presence
-      const playerRef = ref(db, `rooms/${room}/players/${name}`);
-      await set(playerRef, { avatar: avatar, score: score || 0, lastSeen: serverTimestamp() });
-      onDisconnect(playerRef).remove();
-      setupRoomListeners(room);
-      if (isHost) {
-        showPage('page-lobby-room');
-        document.getElementById('startGameBtn').style.display = 'block';
-        document.getElementById('waitingMessage').style.display = 'none';
-        generateQR(room);
-      } else {
-        showPage('page-lobby-room');
-      }
-      return true;
-    } catch (e) {
-      return false;
-    }
+// ✅ Feature 1: Max 40 players check
+window.joinRoom = async function() {
+  const name = document.getElementById('nameInput').value.trim();
+  const code = document.getElementById('codeInput').value.trim().toUpperCase();
+  if (!name || !code) return alert('Fill all fields');
+  
+  const roomRef = ref(db, `rooms/${code}`);
+  const snap = await new Promise(res => onValue(roomRef, res, { onlyOnce: true }));
+  if (!snap.exists()) return alert('Room not found');
+  
+  const players = snap.child('players').val() || {};
+  if (Object.keys(players).length >= MAX_PLAYERS) {
+    return alert(`Room full! Maximum ${MAX_PLAYERS} players allowed.`);
   }
+  
+  playerName = name;
+  roomCode = code;
+  isHost = false;
+  
+  const playerRef = ref(db, `rooms/${code}/players/${name}`);
+  await set(playerRef, { score: 0, lastSeen: serverTimestamp() });
+  onDisconnect(playerRef).remove();
+  
+  saveSession();
+  setupListeners(code);
+  showPage('room');
+  updatePlayerList(code);
+};
 
-  // ---------- room management (max 40) ----------
-  window.createRoom = async function() {
-    const name = document.getElementById('playerName').value.trim();
-    if (!name) return alert("Enter name");
-    playerName = name;
-    isHost = true;
-    roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-    playerAvatar = AVATARS[Math.floor(Math.random()*AVATARS.length)];
+window.createRoom = async function() {
+  const name = document.getElementById('nameInput').value.trim();
+  if (!name) return alert('Enter your name');
+  
+  playerName = name;
+  isHost = true;
+  roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+  
+  await set(ref(db, `rooms/${roomCode}`), {
+    host: name,
+    gameStarted: false,
+    currentLevel: 0,
+    gameEndTime: null,
+    createdAt: serverTimestamp()
+  });
+  
+  const playerRef = ref(db, `rooms/${roomCode}/players/${name}`);
+  await set(playerRef, { score: 0, lastSeen: serverTimestamp() });
+  onDisconnect(playerRef).remove();
+  
+  saveSession();
+  setupListeners(roomCode);
+  showPage('room');
+  document.getElementById('roomCodeDisplay').innerText = `Room: ${roomCode}`;
+  document.getElementById('startBtn').style.display = 'block';
+  document.getElementById('waitMsg').style.display = 'none';
+  
+  // Generate QR code
+  const qrDiv = document.getElementById('qrContainer');
+  qrDiv.innerHTML = '';
+  new QRCode(qrDiv, {
+    text: window.location.href.split('?')[0] + '?room=' + roomCode,
+    width: 100, height: 100
+  });
+  
+  updatePlayerList(roomCode);
+};
+
+function updatePlayerList(code) {
+  onValue(ref(db, `rooms/${code}/players`), snap => {
+    const players = snap.val() || {};
+    const list = document.getElementById('playerList');
+    list.innerHTML = Object.entries(players).map(([name]) => 
+      `<span class="player-badge">👤 ${name}</span>`
+    ).join('');
+  });
+}
+
+function setupListeners(code) {
+  onValue(ref(db, `rooms/${code}`), snap => {
+    const data = snap.val();
+    if (!data) return;
     
-    const roomRef = ref(db, `rooms/${roomCode}`);
-    await set(roomRef, {
-      host: playerName,
-      gameStarted: false,
-      currentLevel: 1,
-      gameEndTime: null,
-      createdAt: serverTimestamp()
-    });
-    const playerRef = ref(db, `rooms/${roomCode}/players/${playerName}`);
-    await set(playerRef, { avatar: playerAvatar, score: 0, lastSeen: serverTimestamp() });
-    onDisconnect(playerRef).remove();
-    
-    saveLocalIdentity();
-    setupRoomListeners(roomCode);
-    showPage('page-lobby-room');
-    document.getElementById('roomCodeDisplay').innerText = `🔑 ${roomCode}`;
-    document.getElementById('startGameBtn').style.display = 'block';
-    document.getElementById('waitingMessage').style.display = 'none';
-    generateQR(roomCode);
-    listenPlayers(roomCode);
-  };
-
-  window.joinRoom = async function() {
-    const name = document.getElementById('playerName').value.trim();
-    const code = document.getElementById('roomCodeInput').value.trim().toUpperCase();
-    if (!name || !code) return alert("Fill name and code");
-    const roomRef = ref(db, `rooms/${code}`);
-    const snap = await new Promise(res => onValue(roomRef, s => res(s), {onlyOnce: true}));
-    if (!snap.exists()) return alert("Room not found");
-    const players = snap.child('players').val() || {};
-    if (Object.keys(players).length >= 40 && !players[name]) {
-      return alert("Room full (max 40 players).");
-    }
-    playerName = name;
-    roomCode = code;
-    isHost = false;
-    showPage('page-avatar');
-    renderAvatarGrid();
-  };
-
-  function renderAvatarGrid() {
-    const grid = document.getElementById('avatarGrid');
-    grid.innerHTML = '';
-    AVATARS.forEach(a => {
-      const div = document.createElement('div');
-      div.className = `avatar-option ${a === playerAvatar ? 'selected' : ''}`;
-      div.innerText = a;
-      div.onclick = () => {
-        document.querySelectorAll('.avatar-option').forEach(d => d.classList.remove('selected'));
-        div.classList.add('selected');
-        playerAvatar = a;
-      };
-      grid.appendChild(div);
-    });
-  }
-
-  window.confirmAvatar = async function() {
-    const playerRef = ref(db, `rooms/${roomCode}/players/${playerName}`);
-    await set(playerRef, { avatar: playerAvatar, score: 0, lastSeen: serverTimestamp() });
-    onDisconnect(playerRef).remove();
-    saveLocalIdentity();
-    setupRoomListeners(roomCode);
-    showPage('page-lobby-room');
-    listenPlayers(roomCode);
-  };
-
-  function listenPlayers(code) {
-    onValue(ref(db, `rooms/${code}/players`), (snap) => {
-      const players = snap.val() || {};
-      const list = document.getElementById('lobbyPlayerList');
-      if (list) {
-        list.innerHTML = Object.entries(players).map(([n, d]) => 
-          `<span class="user-badge">${d.avatar || '👤'} ${n}</span>`).join('');
-      }
-      if (isHost && Object.keys(players).length > 40) {
-        alert("Maximum 40 players reached!");
-      }
-    });
-  }
-
-  function generateQR(code) {
-    const container = document.getElementById('qrCodeContainer');
-    container.innerHTML = '';
-    const url = window.location.href.split('?')[0] + '?room=' + code;
-    new QRCode(container, { text: url, width: 110, height: 110 });
-  }
-
-  // ---------- synchronized timer & levels ----------
-  function setupRoomListeners(code) {
-    const roomRef = ref(db, `rooms/${code}`);
-    onValue(roomRef, (snap) => {
-      const data = snap.val();
-      if (!data) return;
-      if (data.gameStarted && !gameActive) {
-        gameActive = true;
-        currentLevel = (data.currentLevel || 1) - 1;
-        gameEndTime = data.gameEndTime;
-        startGameClient();
-      }
-      if (data.currentLevel && gameActive) {
-        const newLvl = data.currentLevel - 1;
-        if (newLvl !== currentLevel && newLvl < GAME_LEVELS.length) {
-          currentLevel = newLvl;
-          loadLevelUI();
-        }
-      }
-      if (data.gameEndTime) {
-        gameEndTime = data.gameEndTime;
-      }
-    });
-  }
-
-  window.hostStartGame = async function() {
-    const duration = 180; // 3 minutes
-    const endTime = Date.now() + duration * 1000 + serverTimeOffset;
-    await update(ref(db, `rooms/${roomCode}`), {
-      gameStarted: true,
-      currentLevel: 1,
-      gameEndTime: endTime
-    });
-  };
-
-  function startGameClient() {
-    showPage('page-game');
-    currentLevel = 0;
-    score = 0;
-    loadLevelUI();
-    startSynchronizedTimer();
-  }
-
-  function startSynchronizedTimer() {
-    if (timerInterval) clearInterval(timerInterval);
-    const timerEl = document.getElementById('gameTimer');
-    timerInterval = setInterval(() => {
-      if (!gameEndTime) return;
-      const now = Date.now() + serverTimeOffset;
-      const remaining = Math.max(0, Math.floor((gameEndTime - now) / 1000));
-      const mins = Math.floor(remaining / 60);
-      const secs = remaining % 60;
-      timerEl.innerText = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
-      if (remaining <= 30) timerEl.classList.add('warning');
-      else timerEl.classList.remove('warning');
-      if (remaining <= 0) {
-        clearInterval(timerInterval);
-        endGame();
-      }
-    }, 200);
-  }
-
-  function loadLevelUI() {
-    if (currentLevel >= GAME_LEVELS.length) {
-      endGame();
-      return;
-    }
-    const level = GAME_LEVELS[currentLevel];
-    document.getElementById('levelIndicator').innerText = `LEVEL ${currentLevel+1}`;
-    document.getElementById('cipherDisplay').innerText = level.phrase.split('').map(() => '_').join(' ');
-    const container = document.getElementById('equationsContainer');
-    container.innerHTML = level.eqs.map((eq, i) => `
-      <div class="eq-card">
-        <div style="font-size:1.2rem;">${eq.html}</div>
-        <input type="number" id="ans${i}" placeholder="x = ?" style="width:100px;margin-top:6px;">
-      </div>`).join('');
-  }
-
-  window.submitAnswers = function() {
-    const level = GAME_LEVELS[currentLevel];
-    let correct = true;
-    level.eqs.forEach((eq, i) => {
-      const input = document.getElementById(`ans${i}`);
-      if (parseInt(input.value) !== eq.ans) {
-        correct = false;
-        input.style.border = '2px solid red';
-      } else {
-        input.style.border = '2px solid green';
-      }
-    });
-    if (correct) {
-      score += 100;
-      update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: score });
-      if (currentLevel + 1 < GAME_LEVELS.length) {
-        if (isHost) {
-          update(ref(db, `rooms/${roomCode}`), { currentLevel: currentLevel + 2 });
-        }
-        currentLevel++;
-        loadLevelUI();
-      } else {
-        endGame();
-      }
-    }
-  };
-
-  function endGame() {
-    gameActive = false;
-    if (timerInterval) clearInterval(timerInterval);
-    showPage('page-end');
-    document.getElementById('finalScore').innerText = score;
-    // fetch podium
-    onValue(ref(db, `rooms/${roomCode}/players`), (snap) => {
-      const players = snap.val() || {};
-      const sorted = Object.entries(players).sort((a,b) => (b[1].score||0) - (a[1].score||0));
-      const podium = document.getElementById('podiumContainer');
-      podium.innerHTML = sorted.slice(0,3).map((p,i) => `
-        <div class="podium-col">
-          <div style="font-size:2rem;">${p[1].avatar}</div>
-          <div class="podium-block" style="height:${80-i*20}px; background:${i===0?'gold':i===1?'silver':'#CD7F32'};">${i+1}</div>
-          <div>${p[0]}</div>
-        </div>`).join('');
-    }, {onlyOnce: true});
-  }
-
-  window.uploadSolution = function() {
-    const file = document.getElementById('uploadInput').files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      set(ref(db, `rooms/${roomCode}/uploads/${playerName}`), e.target.result);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  window.returnToLobby = () => {
-    clearLocalIdentity();
-    roomCode = null; playerName = null; gameActive = false;
-    showPage('page-lobby');
-  };
-
-  // sync server time offset roughly
-  fetch('https://worldtimeapi.org/api/ip')
-    .then(r => r.json())
-    .then(data => {
-      serverTimeOffset = data.unixtime * 1000 - Date.now();
-    }).catch(() => {});
-
-  // auto reconnect on load
-  window.addEventListener('load', async () => {
-    const reconnected = await attemptReconnect();
-    if (!reconnected) {
-      showPage('page-lobby');
-    }
-    const params = new URLSearchParams(window.location.search);
-    const roomFromUrl = params.get('room');
-    if (roomFromUrl) {
-      document.getElementById('roomCodeInput').value = roomFromUrl.toUpperCase();
+    if (data.gameStarted) {
+      currentLevel = data.currentLevel || 0;
+      gameEndTime = data.gameEndTime;
+      startGameClient();
     }
   });
+}
+
+// ✅ Feature 3: Synchronized timer
+window.startGame = async function() {
+  if (!isHost) return;
+  const duration = 180; // 3 minutes
+  const endTime = Date.now() + duration * 1000;
+  
+  await update(ref(db, `rooms/${roomCode}`), {
+    gameStarted: true,
+    currentLevel: 0,
+    gameEndTime: endTime
+  });
+};
+
+function startGameClient() {
+  showPage('game');
+  score = 0;
+  loadLevel();
+  startTimer();
+}
+
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  const timerEl = document.getElementById('timer');
+  
+  timerInterval = setInterval(() => {
+    if (!gameEndTime) return;
+    const remaining = Math.max(0, Math.floor((gameEndTime - Date.now()) / 1000));
+    const mins = Math.floor(remaining / 60);
+    const secs = remaining % 60;
+    timerEl.innerText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    
+    if (remaining <= 30) timerEl.classList.add('warning');
+    else timerEl.classList.remove('warning');
+    
+    if (remaining <= 0) {
+      clearInterval(timerInterval);
+      endGame();
+    }
+  }, 200);
+}
+
+function loadLevel() {
+  if (currentLevel >= LEVELS.length) {
+    endGame();
+    return;
+  }
+  
+  const level = LEVELS[currentLevel];
+  document.getElementById('levelText').innerText = `LEVEL ${currentLevel + 1}`;
+  document.getElementById('cipherDisplay').innerText = level.phrase.split('').map(() => '_').join(' ');
+  
+  const eqContainer = document.getElementById('equations');
+  eqContainer.innerHTML = level.eqs.map((eq, i) => `
+    <div class="eq-card">
+      <strong>${eq.q}</strong>
+      <input type="number" id="eq${i}" placeholder="x = ?" style="width:80px; margin-left:10px;">
+    </div>
+  `).join('');
+}
+
+// ✅ Feature 4: Smooth level transitions
+window.checkAnswers = async function() {
+  const level = LEVELS[currentLevel];
+  let allCorrect = true;
+  
+  level.eqs.forEach((eq, i) => {
+    const input = document.getElementById(`eq${i}`);
+    if (parseInt(input.value) !== eq.a) {
+      allCorrect = false;
+      input.style.border = '2px solid red';
+    } else {
+      input.style.border = '2px solid green';
+    }
+  });
+  
+  if (allCorrect) {
+    score += 100;
+    await update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score });
+    
+    if (currentLevel + 1 < LEVELS.length) {
+      if (isHost) {
+        await update(ref(db, `rooms/${roomCode}`), { currentLevel: currentLevel + 1 });
+      }
+      currentLevel++;
+      loadLevel(); // Smooth transition happens here
+    } else {
+      endGame();
+    }
+  }
+};
+
+function endGame() {
+  if (timerInterval) clearInterval(timerInterval);
+  showPage('end');
+  document.getElementById('finalScore').innerText = score;
+}
+
+window.backToLobby = function() {
+  sessionStorage.removeItem('game_session');
+  roomCode = null; playerName = null; isHost = false;
+  showPage('lobby');
+};
+
+// Auto-reconnect on page load
+window.addEventListener('load', async () => {
+  const reconnected = await tryReconnect();
+  if (!reconnected) showPage('lobby');
+  
+  const params = new URLSearchParams(window.location.search);
+  const room = params.get('room');
+  if (room) document.getElementById('codeInput').value = room.toUpperCase();
+});
 </script>
 </body>
 </html>
