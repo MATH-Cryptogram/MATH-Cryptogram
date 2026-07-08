@@ -42,79 +42,30 @@
             50% { filter: brightness(1.05); }
         }
 
-        #page-lobby {
+        #page-lobby, #page-avatar-select, #page-scoreboard {
             background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 25%, #80DEEA 50%, #4DD0E1 75%, #26C6DA 100%) !important;
             border: 3px solid #00838F !important;
             box-shadow: 0 0 40px rgba(0, 188, 212, 0.5), 0 0 80px rgba(76, 175, 80, 0.3) !important;
-            animation: lobbyGlow 3s ease-in-out infinite;
         }
 
-        @keyframes lobbyGlow {
-            0%, 100% { box-shadow: 0 0 40px rgba(0, 188, 212, 0.5), 0 0 80px rgba(76, 175, 80, 0.3); }
-            50% { box-shadow: 0 0 60px rgba(0, 188, 212, 0.7), 0 0 100px rgba(76, 175, 80, 0.5); }
-        }
-
-        #page-lobby h1 {
-            color: #004D73 !important;
-            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.7), 0 0 15px rgba(0, 150, 175, 0.3) !important;
-            font-size: 2rem !important;
-            letter-spacing: 3px;
-            font-weight: 800;
-        }
-
-        #page-lobby p {
-            color: #00695C !important;
-            font-size: 1.1rem !important;
-            font-weight: 600 !important;
-            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6) !important;
-        }
-
-        #page-lobby .join-section p {
-            color: #004D73 !important;
-            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5) !important;
-            font-weight: 700 !important;
-        }
-
-        #page-lobby input[type="text"] {
-            background: rgba(255, 255, 255, 0.98) !important;
-            border: 2px solid #0097A7 !important;
-            color: #004D73 !important;
-            font-weight: 600;
-        }
-
-        #page-lobby input[type="text"]:focus {
-            border-color: #00838F !important;
-            background: rgba(255, 255, 255, 1) !important;
-            box-shadow: 0 0 15px rgba(0, 188, 212, 0.6), inset 0 0 5px rgba(76, 175, 80, 0.2) !important;
-        }
-
-        #page-lobby button {
-            background: linear-gradient(135deg, #00BCD4, #009688) !important;
-            color: #FFFFFF !important;
-            border: 2px solid #00897B !important;
-            font-weight: 700;
-            box-shadow: 0 6px 20px rgba(0, 188, 212, 0.4) !important;
-            text-transform: uppercase;
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center !important;
             letter-spacing: 2px;
-            transition: all 0.3s ease;
+            text-transform: uppercase;
+            color: #004D73 !important;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6);
         }
 
-        #page-lobby button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 188, 212, 0.6) !important;
+        h2 {
+            font-size: 1.3rem;
+            margin: 20px 0;
+            color: #00838F;
+            text-align: center !important;
         }
 
-        #page-lobby button.primary {
-            background: linear-gradient(135deg, #4CAF50, #66BB6A) !important;
-            border: 2px solid #388E3C !important;
-            color: #FFFFFF !important;
-            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4) !important;
-            font-size: 1.1rem !important;
-        }
-
-        #page-lobby button.primary:hover {
-            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.6) !important;
-        }
+        p { color: #004D73; }
 
         .page {
             width: 92%;
@@ -132,25 +83,6 @@
 
         .page.active { display: block; }
 
-        h1 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            text-align: center !important;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: #0097A7;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            font-size: 1.3rem;
-            margin: 20px 0;
-            color: #00838F;
-            text-align: center !important;
-        }
-
-        p { color: #004D73; }
-
         input[type="text"], input[type="number"], input[type="file"] {
             width: 100%;
             padding: 12px 15px;
@@ -161,8 +93,6 @@
             background: rgba(255, 255, 255, 0.95);
             color: #004D73;
             outline: none;
-            appearance: none;
-            -webkit-appearance: none;
         }
 
         button {
@@ -181,25 +111,65 @@
             box-shadow: 0 5px 15px rgba(0, 150, 175, 0.3);
         }
 
-        button:active { transform: scale(0.98); }
         button.primary { background: linear-gradient(135deg, #4CAF50, #66BB6A); color: White; }
 
         .join-section {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            margin: 20px 0;
+            gap: 10px;
+            margin: 15px 0;
             align-items: center;
         }
 
-        .join-section p {
-            font-size: 0.9rem;
-            color: #0097A7;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            border: 2px solid #00BCD4;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+        .avatar-option {
+            font-size: 2.2rem;
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.5);
+        }
+        .avatar-option:hover { transform: scale(1.1); }
+        .avatar-option.selected {
+            background-color: #00BCD4;
+            border-color: #00838F;
+            transform: scale(1.05);
         }
 
-        .join-section input { max-width: 280px; }
+        .lobby-users-display {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+            padding: 10px;
+        }
+        .lobby-user-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px solid #0097A7;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .lobby-user-avatar { font-size: 2.8rem; margin-bottom: 5px; }
+        .lobby-user-name { font-size: 0.9rem; font-weight: bold; color: #004D73; word-break: break-all; }
 
         .phrase-display {
             font-size: 2.2rem;
@@ -254,67 +224,29 @@
 
         @keyframes pulse-warning { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 
-        .small-btn { width: auto !important; padding: 8px 12px !important; font-size: 0.8rem !important; background: rgba(0, 188, 212, 0.2) !important; color: #0097A7 !important; border: 1px solid #0097A7 !important; box-shadow: none !important; margin: 0 !important; }
+        .small-btn { width: auto !important; padding: 8px 12px !important; font-size: 0.8rem !important; background: rgba(0, 188, 212, 0.2) !important; color: #0097A7 !important; border: 1px solid #0097A7 !important; margin: 0 !important; box-shadow: none !important; }
         .score-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 15px; margin: 8px 0; background: rgba(0, 188, 212, 0.15); border-radius: 8px; border-left: 4px solid #00BCD4; font-weight: bold; }
-        .score-row span:first-child { color: #0097A7; font-size: 1.1rem; }
+        .score-row span:first-child { color: #0097A7; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
         .score-row span:last-child { color: #00838F; font-size: 1.2rem; }
 
         .solution-box { background: rgba(76, 175, 80, 0.1); padding: 15px; border-left: 4px solid #4CAF50; border-radius: 8px; margin: 15px 0; color: #004D73; line-height: 1.6; }
         .upload-section { background: rgba(0, 188, 212, 0.1); padding: 20px; border: 2px dashed #00BCD4; border-radius: 12px; margin: 20px 0; text-align: center; }
         .upload-section p { color: #0097A7; margin-bottom: 10px; font-size: 0.9rem; }
-        #solution-upload { padding: 10px !important; margin: 0 !important; }
         
         .upload-status { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 0.9rem; }
         .upload-success { background: rgba(76, 175, 80, 0.2); border: 1px solid #4CAF50; color: #2E7D32; }
         .upload-error { background: rgba(244, 67, 54, 0.2); border: 1px solid #F44336; color: #C62828; }
 
         .gallery-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-        .gallery-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 2px solid #00BCD4; background: rgba(0, 188, 212, 0.1); transition: transform 0.2s ease; }
-        .gallery-item:hover { transform: scale(1.02); }
+        .gallery-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 2px solid #00BCD4; background: rgba(0, 188, 212, 0.1); }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
         .gallery-item-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0, 97, 110, 0.9); color: #FFFFFF; padding: 8px; font-size: 0.75rem; text-align: center; }
         .no-uploads { text-align: center; padding: 30px; color: #004D73; font-size: 0.9rem; }
-
-        .leaderboard-container { max-height: 150px; overflow-y: auto; margin: 10px 0; padding: 5px; background: rgba(255,255,255,0.5); border-radius: 8px; }
-
-        @media (max-width: 480px) {
-            .phrase-display { font-size: 1.8rem; letter-spacing: 10px; }
-            .eq-card { padding: 12px; }
-            .gallery-container { grid-template-columns: 1fr; }
-        }
 
         .music-toggle {
             position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%;
             background: linear-gradient(135deg, #00BCD4, #4CAF50); border: none; color: white; font-size: 1.5rem;
             cursor: pointer; box-shadow: 0 4px 12px rgba(0, 150, 175, 0.4); z-index: 1000; display: flex; align-items: center; justify-content: center;
-        }
-
-        /* Lightbox Overlay for Image Zooming Mechanics */
-        .zoom-modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); z-index: 2000;
-            display: none; flex-direction: column; justify-content: center; align-items: center;
-            touch-action: none;
-        }
-        .zoom-modal-content {
-            width: 90%; height: 70%; display: flex; justify-content: center; align-items: center;
-            overflow: hidden; position: relative; border-radius: 12px; background: rgba(255,255,255,0.05);
-        }
-        .zoom-modal-content img {
-            max-width: 100%; max-height: 100%; object-fit: contain;
-            transition: transform 0.15s ease-out; transform-origin: center center;
-        }
-        .zoom-controls-wrapper {
-            display: flex; gap: 15px; margin-top: 20px; z-index: 2100;
-        }
-        .zoom-btn {
-            width: auto !important; padding: 10px 20px !important; margin: 0 !important;
-            font-size: 0.9rem !important; border-radius: 8px !important;
-        }
-        .zoom-close-btn {
-            position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.6);
-            color: #fff; border: 2px solid #fff; border-radius: 50%; width: 44px; height: 44px;
-            font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2200;
         }
     </style>
 </head>
@@ -332,13 +264,40 @@
         </div>
 
         <div class="join-section">
-            <p>🎯 Join a Game</p>
+            <p>🎯 Game Room Code</p>
             <input type="text" id="join-code" placeholder="XXXXXX" maxlength="6" style="text-transform: uppercase;">
-            <button onclick="joinRoom()">⚡ Enter The Game</button>
+            <button onclick="goToAvatarSelection()">Next ➡️</button>
         </div>
 
-        <div style="text-align: center; margin: 20px 0; color: #004D73;">— OR —</div>
+        <div style="text-align: center; margin: 10px 0; color: #004D73;">— OR —</div>
         <button class="primary" onclick="startAsHost()">👑 Start As Host</button>
+    </div>
+
+    <div id="page-avatar-select" class="page">
+        <h1>🦊 CHOOSE YOUR IDENTITY</h1>
+        <p style="text-align: center; color: #004D73; margin-bottom: 15px;">Select an avatar to display in the game lobby</p>
+        
+        <div class="avatar-grid" id="avatar-selector-grid"></div>
+
+        <button class="primary" onclick="confirmAndJoinLobby()">⚡ Enter The Lobby</button>
+        <button style="background: #9E9E9E;" onclick="navigate('page-lobby')">⬅️ Back</button>
+    </div>
+
+    <div id="page-scoreboard" class="page">
+        <h1>🏆 Game Lobby</h1>
+        <h2 id="host-room-code"></h2>
+
+        <div style="text-align: center; margin: 15px 0;">
+            <p style="font-size: 0.85rem; color: #004D73; margin-bottom: 5px;">📱 Scan or Enter Code</p>
+            <div id="qr-code" style="background: white; padding: 15px; display: inline-block; border-radius: 12px;"></div>
+        </div>
+
+        <p style="font-size: 0.9rem; font-weight: bold; color: #0097A7; text-align: center; margin-top: 10px;">👥 PLAYERS IN LOBBY:</p>
+        <div id="lobby-visual-grid" class="lobby-users-display"></div>
+
+        <div id="scoreboard-container" style="margin: 15px 0; display: none;"></div>
+        <button class="primary" id="start-game-btn" onclick="hostStartGame()" style="margin-top: 20px; display: none;">🚀 Start Game</button>
+        <p id="waiting-msg" style="text-align: center; color: #00838F; font-weight: bold; margin-top: 15px;">⏳ Waiting for host to start the game...</p>
     </div>
 
     <div id="page-game" class="page">
@@ -351,11 +310,7 @@
         <div class="phrase-display" id="cipher-output">_ _ _ _</div>
         <div id="clue-text" class="clue-box"></div>
         <div id="problems-container"></div>
-        
         <button onclick="checkAnswers()">🔓 Decode Cryptogram</button>
-
-        <p style="font-size:0.8rem; font-weight:bold; margin-top:15px; color:#0097A7;">📈 LIVE RANKINGS:</p>
-        <div id="player-live-leaderboard" class="leaderboard-container"></div>
     </div>
 
     <div id="page-trivia" class="page">
@@ -371,19 +326,6 @@
         <button onclick="nextLevel()">⏭️ Next Level</button>
     </div>
 
-    <div id="page-scoreboard" class="page">
-        <h1>🏆 Live Ranking Board</h1>
-        <h2 id="host-room-code"></h2>
-
-        <div style="text-align: center; margin: 20px 0;">
-            <p style="font-size: 0.85rem; color: #004D73; margin-bottom: 10px;">📱 Scan or Enter Code</p>
-            <div id="qr-code" style="background: white; padding: 15px; display: inline-block; border-radius: 12px;"></div>
-        </div>
-
-        <div id="scoreboard-container" style="margin: 20px 0;"></div>
-        <button class="primary" onclick="hostStartGame()" style="margin-top: 20px;">🚀 Start Game</button>
-    </div>
-
     <div id="page-host-game" class="page">
         <h1>🎮 Game In Progress</h1>
         <h2 id="host-game-level">LEVEL 1</h2>
@@ -396,7 +338,7 @@
     </div>
 
     <div id="page-end-game" class="page">
-        <h1 style="color: #4CAF50;">🏆 Game Complete!</h1>
+        <h1>🏆 Game Complete!</h1>
 
         <div style="background: rgba(0, 188, 212, 0.1); padding: 15px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #00BCD4;">
             <p style="margin: 5px 0;"><strong>Final Score:</strong> <span id="final-score" style="color: #00838F; font-size: 1.3rem;">0</span></p>
@@ -425,18 +367,6 @@
         </div>
     </div>
 
-    <div id="teacher-zoom-modal" class="zoom-modal-overlay">
-        <div class="zoom-close-btn" onclick="closeZoomModal()">&times;</div>
-        <div class="zoom-modal-content">
-            <img id="zoom-target-image" src="" alt="Student Submission Preview">
-        </div>
-        <div class="zoom-controls-wrapper">
-            <button class="zoom-btn" onclick="applyZoomAdjustment(0.25)">🔍➕ Zoom In</button>
-            <button class="zoom-btn" onclick="applyZoomAdjustment(-0.25)">🔍➖ Zoom Out</button>
-            <button class="zoom-btn primary" onclick="resetZoomScale()">🔄 Reset View</button>
-        </div>
-    </div>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -444,7 +374,6 @@ import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/
 let audioContext;
 let bgMusicPlaying = false;
 let bgMusicOscillators = [];
-let targetImageScale = 1;
 
 function initAudio() {
     try { if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
@@ -488,6 +417,7 @@ function playBackgroundMusic() {
             osc.start(startTime); osc.stop(startTime + duration + 0.05);
             bgMusicOscillators.push(osc);
         };
+
         const loop = () => {
             if (!bgMusicPlaying) return;
             const t = audioContext.currentTime;
@@ -509,6 +439,7 @@ function stopBackgroundMusic() {
 }
 
 window.toggleMusic = function() { bgMusicPlaying ? stopBackgroundMusic() : playBackgroundMusic(); };
+
 const firebaseConfig = {
     apiKey: "AIzaSyCkoqlW8Fb1yhmvrAv7bBM50CyeCUjZKyA",
     authDomain: "rational-cryptogram-game.firebaseapp.com",
@@ -517,8 +448,55 @@ const firebaseConfig = {
     messagingSenderId: "654271677921",
     appId: "1:654271677921:web:ac7245dfd3b376a55e3ea0"
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
+const avatarPool = [
+    "🦊", "🦁", "🐼", "🐯", "🐨", "🐸", "🦩", "🦉", "🐺", "🦥", "🐹", "🐰", "🦆", "🦌", "🐱", "🐶",
+    "🤖", "👽", "👻", "🦄", "🐉", "🦖", "🦅", "🦁", "🐵", "🐧", "🐙", "🐬", "🧙‍♂️", "🥷", "🧑‍🚀", "🤠",
+    "💎", "👑", "🚀", "🌟", "🔥", "🔮", "🍕", "🎮", "🎯", "🍀", "🎨", "🎭"
+];
+let selectedAvatar = "🦊";
+
+window.goToAvatarSelection = function() {
+    const nameInput = document.getElementById("player-name").value.trim();
+    const codeInput = document.getElementById("join-code").value.trim();
+    if (!nameInput || !codeInput) { alert("Please fill up both your Name and the Room Code first!"); return; }
+    
+    playerName = nameInput;
+    roomCode = codeInput.toUpperCase();
+    
+    renderAvatarSelector();
+    navigate("page-avatar-select");
+};
+
+function renderAvatarSelector() {
+    const grid = document.getElementById("avatar-selector-grid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    avatarPool.forEach((avatar) => {
+        const item = document.createElement("div");
+        item.className = "avatar-option" + (avatar === selectedAvatar ? " selected" : "");
+        item.innerText = avatar;
+        item.onclick = () => {
+            document.querySelectorAll(".avatar-option").forEach(el => el.classList.remove("selected"));
+            item.classList.add("selected");
+            selectedAvatar = avatar;
+        };
+        grid.appendChild(item);
+    });
+}
+
+window.confirmAndJoinLobby = function() {
+    set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0, avatar: selectedAvatar });
+    setupRoomListeners(roomCode);
+    navigate("page-scoreboard");
+
+    onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
+        renderScoreboardData(snapshot, ["scoreboard-container"]);
+    });
+};
 
 const gameData = [
     {
@@ -559,34 +537,6 @@ const gameData = [
         trivia: "Leonhard Euler invented many mathematical notations we use today, including f(x) and the number e.",
         author: "Leonhard Euler (1707–1783)",
         steps: "1. Isolate the fraction\n2. Clear the denominator\n3. Solve the resulting equation"
-    },
-    {
-        lvl: 4, phrase: "EUCLID", clue: "⚙️ Move constants before multiplying.",
-        eqs: [
-            { h: `<div class="frac"><span class="numb">x</span><span>64</span></div> = <div class="frac"><span class="numb">1</span><span>2</span></div>`, a: 32 },
-            { h: `<div class="frac"><span class="numb">3x</span><span>36</span></div> = <div class="frac"><span class="numb">4</span><span>3</span></div>`, a: 16 },
-            { h: `<div class="frac"><span class="numb">4x</span><span>10</span></div> = <div class="frac"><span class="numb">6</span><span>5</span></div>`, a: 3 },
-            { h: `<div class="frac"><span class="numb">2</span><span>x</span></div> = <div class="frac"><span class="numb">3</span><span>(x+1)</span></div>`, a: 1 },
-            { h: `<div class="frac"><span class="numb">4</span><span>(x-1)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: -1 },
-            { h: `<div class="frac"><span class="numb">3</span><span>(x+2)</span></div> = <div class="frac"><span class="numb">5</span><span>(x-2)</span></div>`, a: -8 }
-        ],
-        trivia: "Euclid's 'Elements' is one of the most influential mathematical texts ever written, used for over 2000 years.",
-        author: "Euclid (300 BCE)",
-        steps: "1. Cross-multiply both sides\n2. Expand binomials\n3. Collect x terms\n4. Solve for x"
-    },
-    {
-        lvl: 5, phrase: "GREECE", clue: "🧮 Multiply denominators to isolate x.",
-        eqs: [
-            { h: `<div class="frac"><span class="numb">6</span><span>(x+4)</span></div> = <div class="frac"><span class="numb">3</span><span>(x+1)</span></div>`, a: 2 },
-            { h: `<div class="frac"><span class="numb">4</span><span>(x-2)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: -2 },
-            { h: `<div class="frac"><span class="numb">3</span><span>(x+2)</span></div> = <div class="frac"><span class="numb">2</span><span>(x-2)</span></div>`, a: 10 },
-            { h: `<div class="frac"><span class="numb">3</span><span>x</span></div> = <div class="frac"><span class="numb">2</span><span>(x-4)</span></div>`, a: -2 },
-            { h: `<div class="frac"><span class="numb">4</span><span>(x-2)</span></div> = <div class="frac"><span class="numb">2</span><span>x</span></div>`, a: 7 },
-            { h: `<div class="frac"><span class="numb">6</span><span>(x-3)</span></div> = <div class="frac"><span class="numb">3</span><span>x</span></div>`, a: -3 }
-        ],
-        trivia: "Ancient Greece revolutionized mathematics with logic and proof. Philosophers explored mathematical reasoning as a path to truth!",
-        author: "Aristotle (384–322 BCE)",
-        steps: "1. Cross-multiply\n2. Expand all expressions\n3. Collect like terms\n4. Solve"
     }
 ];
 
@@ -597,6 +547,23 @@ let solvedIndices = [];
 
 function renderScoreboardData(snapshot, containers) {
     const data = snapshot.val();
+    
+    const visualGrid = document.getElementById("lobby-visual-grid");
+    if (visualGrid) {
+        visualGrid.innerHTML = "";
+        if (data) {
+            Object.entries(data).forEach(([name, info]) => {
+                const card = document.createElement("div");
+                card.className = "lobby-user-card";
+                card.innerHTML = `
+                    <div class="lobby-user-avatar">${info.avatar || "👤"}</div>
+                    <div class="lobby-user-name">${name}</div>
+                `;
+                visualGrid.appendChild(card);
+            });
+        }
+    }
+
     containers.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
@@ -607,7 +574,7 @@ function renderScoreboardData(snapshot, containers) {
                     const div = document.createElement("div");
                     div.className = "score-row";
                     const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '👤';
-                    div.innerHTML = `<span>${medal} ${name}</span><span>${info.score || 0} pts</span>`;
+                    div.innerHTML = `<span>${medal} <b style='font-size:1.25rem;line-height:1;'>${info.avatar || "👤"}</b> ${name}</span><span>${info.score || 0} pts</span>`;
                     el.appendChild(div);
                 });
             }
@@ -621,6 +588,7 @@ function updateHostGalleryView(uploadsData) {
     
     gallery.innerHTML = "";
     const keys = Object.keys(uploadsData);
+    
     const countEl = document.getElementById("upload-count");
     if (countEl) countEl.innerText = keys.length;
 
@@ -630,45 +598,24 @@ function updateHostGalleryView(uploadsData) {
         Object.entries(uploadsData).forEach(([pName, imageData]) => {
             const item = document.createElement("div");
             item.className = "gallery-item";
-            item.style.cursor = "pointer";
             item.innerHTML = `<img src="${imageData}"><div class="gallery-item-label">${pName}</div>`;
-            item.onclick = () => window.launchTeacherZoomModal(imageData);
             gallery.appendChild(item);
         });
     }
 }
 
-window.launchTeacherZoomModal = function(imgSrc) {
-    const modal = document.getElementById("teacher-zoom-modal");
-    const targetImg = document.getElementById("zoom-target-image");
-    targetImg.src = imgSrc;
-    targetImg.style.transform = "scale(1)";
-    targetImageScale = 1;
-    modal.style.display = "flex";
-};
-
-window.closeZoomModal = function() {
-    document.getElementById("teacher-zoom-modal").style.display = "none";
-};
-
-window.applyZoomAdjustment = function(amount) {
-    targetImageScale = Math.max(0.5, Math.min(4.0, targetImageScale + amount));
-    document.getElementById("zoom-target-image").style.transform = `scale(${targetImageScale})`;
-};
-
-window.resetZoomScale = function() {
-    targetImageScale = 1;
-    document.getElementById("zoom-target-image").style.transform = "scale(1)";
-};
-
 window.startAsHost = function() {
     playerName = document.getElementById("player-name").value.trim();
-    if (!playerName) { alert("Enter your name!"); return; }
+    if (!playerName) { alert("Enter host name!"); return; }
 
     isHost = true;
     roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
     set(ref(db, "rooms/" + roomCode), { gameStarted: false, level: 1 });
     document.getElementById("host-room-code").innerText = "🎮 Room Code: " + roomCode;
+    
+    document.getElementById("start-game-btn").style.display = "block";
+    document.getElementById("waiting-msg").style.display = "none";
+
     const qrContainer = document.getElementById("qr-code");
     qrContainer.innerHTML = "";
     const joinURL = window.location.origin + window.location.pathname + "?room=" + roomCode;
@@ -676,26 +623,14 @@ window.startAsHost = function() {
 
     setupRoomListeners(roomCode);
     navigate("page-scoreboard");
+
     onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
         renderScoreboardData(snapshot, ["scoreboard-container", "host-scoreboard-container"]);
     });
+
     onValue(ref(db, `rooms/${roomCode}/uploads`), (snapshot) => {
         uploads = snapshot.val() || {};
         updateHostGalleryView(uploads);
-    });
-};
-
-window.joinRoom = function() {
-    playerName = document.getElementById("player-name").value.trim();
-    roomCode = document.getElementById("join-code").value.trim().toUpperCase();
-    if (!playerName || !roomCode) { alert("Enter name and code!"); return; }
-
-    set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0 });
-    setupRoomListeners(roomCode);
-    navigate("page-scoreboard");
-
-    onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
-        renderScoreboardData(snapshot, ["scoreboard-container", "player-live-leaderboard"]);
     });
 };
 
@@ -735,6 +670,7 @@ function startGame() {
     startTime = new Date();
     let timeLeft = 180;
     playBackgroundMusic();
+
     const timerDisplay = document.getElementById("timer");
     const hostTimerDisplay = document.getElementById("host-timer");
 
@@ -752,6 +688,7 @@ function startGame() {
 
     timerInterval = setInterval(updateTimer, 1000);
     updateTimer();
+
     if (isHost) { navigate("page-host-game"); } else { navigate("page-game"); loadLevel(); }
 }
 
@@ -811,6 +748,7 @@ window.liveCheckAnswer = function(idx) {
 window.checkAnswers = function() {
     const level = gameData[currentLevelIndex];
     let allCorrect = true;
+
     level.eqs.forEach((eq, idx) => {
         const input = document.getElementById(`ans-${idx}`);
         const userAns = parseInt(input.value);
@@ -826,6 +764,7 @@ window.checkAnswers = function() {
             }
         }
     });
+
     updateCipherDisplay();
 
     if (allCorrect) {
@@ -859,8 +798,7 @@ function endGame() {
     clearInterval(timerInterval);
     stopBackgroundMusic();
     const elapsed = Math.floor((new Date() - startTime) / 1000);
-    const mins = Math.floor(elapsed / 60);
-    const secs = elapsed % 60;
+    const mins = Math.floor(elapsed / 60); const secs = elapsed % 60;
 
     if (isHost) {
         navigate("page-host-uploads");
@@ -876,6 +814,7 @@ window.handleSolutionUpload = function() {
     const fileInput = document.getElementById("solution-upload");
     const file = fileInput.files[0];
     if (!file) return;
+
     const statusDiv = document.getElementById("upload-status");
     statusDiv.className = "upload-status";
     statusDiv.innerText = "Processing & Compressing Image...";
@@ -890,10 +829,12 @@ window.handleSolutionUpload = function() {
             
             canvas.width = MAX_WIDTH;
             canvas.height = img.height * scale;
+
             const ctx2d = canvas.getContext("2d");
             ctx2d.drawImage(img, 0, 0, canvas.width, canvas.height);
             
             const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
+            
             set(ref(db, `rooms/${roomCode}/uploads/${playerName}`), compressedBase64)
                 .then(() => {
                     statusDiv.className = "upload-status upload-success";
@@ -910,15 +851,16 @@ window.handleSolutionUpload = function() {
 };
 
 window.backToLobby = function() {
-    roomCode = ""; playerName = "";
-    isHost = false; score = 0; currentLevelIndex = 0; localGameStarted = false; solvedIndices = [];
+    roomCode = ""; playerName = ""; isHost = false; score = 0; currentLevelIndex = 0; localGameStarted = false; solvedIndices = [];
     navigate("page-lobby");
 };
+
 window.navigate = function(pageId) {
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
     const page = document.getElementById(pageId);
     if (page) page.classList.add("active");
 };
+
 window.toggleFullScreen = function() {
     const elem = document.documentElement;
     if (!document.fullscreenElement) {
@@ -927,6 +869,7 @@ window.toggleFullScreen = function() {
         document.exitFullscreen();
     }
 };
+
 try {
     const params = new URLSearchParams(window.location.search);
     const room = params.get('room') || params.get('code');
