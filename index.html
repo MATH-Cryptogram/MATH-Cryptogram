@@ -8,10 +8,17 @@
     <style>
         /* ... Keep your existing CSS exactly as it is ... */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #e0f7fa; }
-        .page { display: none; width: 90%; max-width: 500px; padding: 20px; background: white; border-radius: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
-        .page.active { display: block; }
-        button { width: 100%; padding: 15px; margin: 10px 0; background: #00bcd4; color: white; border: none; border-radius: 10px; cursor: pointer; }
+        :root {--primary: #0EA5E9;--secondary: #06B6D4;--accent: #10B981;--light: #F0F9FF;--dark: #0369A1;}
+        html, body { position: fixed;overflow: hidden;width: 100%;height: 100%;-webkit-text-size-adjust: 100%;touch-action: manipulation;}
+        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;color: Black; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #E0F4FF 0%, #B3E5FC 25%, #81D4FA 50%, #4FC3F7 75%, #B3E5FC 100%);background-attachment: fixed;margin: 0;animation: gradientShift 20s ease infinite;}
+        #page-lobby, #page-avatar-select, #page-scoreboard, #page-end-game { background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 25%, #80DEEA 50%, #4DD0E1 75%, #26C6DA 100%) !important; border: 3px solid #00838F !important; box-shadow: 0 0 40px rgba(0, 188, 212, 0.5), 0 0 80px rgba(76, 175, 80, 0.3) !important;}
+        h1 {font-size: 1.5rem; margin-bottom: 20px; text-align: center !important; letter-spacing: 2px; text-transform: uppercase; color: #004D73 !important; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6);}
+        h2 { font-size: 1.3rem; margin: 20px 0; color: #00838F; text-align: center !important; } p { color: #004D73; }
+        .page { width: 92%; max-width: 500px; max-height: 85vh; overflow-y: auto;  -webkit-overflow-scrolling: touch; padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)) 20px; background: rgba(224, 247, 250, 0.98); border-radius: 20px; border: 3px solid #0097A7; box-shadow: 0 0 30px rgba(0, 188, 212, 0.4); display: none;}
+        .page.active { display: block; } input[type="text"], input[type="number"], input[type="file"] { width: 100%; padding: 12px 15px; margin: 10px 0; font-size: 16px !important; border: 2px solid #00BCD4; border-radius: 10px; background: rgba(255, 255, 255, 0.95); color: #004D73; outline: none;}
+        button { width: 100%; padding: 14px; margin: 12px 0; font-size: 1rem; font-weight: bold; border: none; border-radius: 10px; background: linear-gradient(135deg, #00BCD4, #009688); color: White; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(0, 150, 175, 0.3);}
+        button.primary { background: linear-gradient(135deg, #4CAF50, #66BB6A); color: White; }
+        .join-section { display: flex; flex-direction: column; gap: 10px; margin: 15px 0; align-items: center;}
     </style>
 </head>
 <body>
