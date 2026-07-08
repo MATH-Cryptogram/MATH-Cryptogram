@@ -38,9 +38,19 @@
     .eq-card { background: #E0F7FA; padding: 12px; margin: 8px 0; border-radius: 10px; }
     .players { display: flex; flex-wrap: wrap; gap: 8px; margin: 15px 0; }
     .player-badge { background: #B2EBF2; padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; }
+    .transition-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,188,212,0.3); display: none;
+      justify-content: center; align-items: center; z-index: 1000;
+      font-size: 2rem; color: white; font-weight: bold;
+    }
+    .transition-overlay.show { display: flex; animation: fadeIn 0.3s; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
 <body>
+
+<div class="transition-overlay" id="transitionOverlay">LOADING NEXT LEVEL...</div>
 
 <div id="lobby" class="page active">
   <div class="container">
@@ -124,38 +134,98 @@ function showPage(id) {
   document.getElementById(id).classList.add('active');
 }
 
-// ✅ Feature 2: Reconnect system
+// ✅ PERSISTENT SESSION - survives reloads and back button
 function saveSession() {
   if (playerName && roomCode) {
-    sessionStorage.setItem('game_session', JSON.stringify({
-      name: playerName, room: roomCode, host: isHost
-    }));
+    const sessionData = {
+      name: playerName,
+      room: roomCode,
+      host: isHost,
+      score: score,
+      level: currentLevel
+    };
+    localStorage.setItem('crypto_session', JSON.stringify(sessionData));
+    sessionStorage.setItem('crypto_session', JSON.stringify(sessionData));
   }
 }
 
+function getSession() {
+  // Try sessionStorage first (survives back button), then localStorage (survives reload)
+  const session = sessionStorage.getItem('crypto_session') || localStorage.getItem('crypto_session');
+  return session ? JSON.parse(session) : null;
+}
+
+// ✅ RECONNECT HANDLER - restores player state at correct level
 async function tryReconnect() {
-  const saved = sessionStorage.getItem('game_session');
+  const saved = getSession();
   if (!saved) return false;
-  const { name, room, host } = JSON.parse(saved);
-  const snap = await new Promise(res => onValue(ref(db, `rooms/${room}`), res, { onlyOnce: true }));
-  if (!snap.exists()) return false;
   
-  playerName = name;
-  roomCode = room;
-  isHost = host;
+  const snap = await new Promise(res => {
+    onValue(ref(db, `rooms/${saved.room}`), res, { onlyOnce: true });
+  });
   
-  // Re-register in room
-  const playerRef = ref(db, `rooms/${room}/players/${name}`);
-  await set(playerRef, { score: 0, lastSeen: serverTimestamp() });
-  onDisconnect(playerRef).remove();
+  if (!snap.exists()) {
+    clearSession();
+    return false;
+  }
   
-  setupListeners(room);
-  showPage('room');
-  updatePlayerList(room);
+  const roomData = snap.val();
+  
+  // Restore player identity
+  playerName = saved.name;
+  roomCode = saved.room;
+  isHost = saved.host;
+  score = saved.score || 0;
+  currentLevel = saved.level || 0;
+  
+  // Re-register presence
+  const playerRef = ref(db, `rooms/${roomCode}/players/${playerName}`);
+  await set(playerRef, { 
+    score: score, 
+    lastSeen: serverTimestamp(),
+    reconnected: true 
+  });
+  onDisconnect(playerRef).update({ lastSeen: serverTimestamp() });
+  
+  // Always update session on reconnect
+  saveSession();
+  
+  // ✅ Check if game is active and restore to correct state
+  if (roomData.gameStarted) {
+    gameEndTime = roomData.gameEndTime;
+    const serverLevel = roomData.currentLevel || 0;
+    
+    // Always sync to server level (prevents falling behind or ahead)
+    currentLevel = serverLevel;
+    saveSession();
+    
+    if (gameEndTime && Date.now() < gameEndTime) {
+      showPage('game');
+      loadLevel();
+      startTimer();
+    } else if (gameEndTime && Date.now() >= gameEndTime) {
+      showPage('end');
+      document.getElementById('finalScore').innerText = score;
+    }
+  } else {
+    showPage('room');
+    if (isHost) {
+      document.getElementById('startBtn').style.display = 'block';
+      document.getElementById('waitMsg').style.display = 'none';
+    }
+  }
+  
+  setupListeners(roomCode);
+  updatePlayerList(roomCode);
   return true;
 }
 
-// ✅ Feature 1: Max 40 players check
+function clearSession() {
+  localStorage.removeItem('crypto_session');
+  sessionStorage.removeItem('crypto_session');
+}
+
+// ✅ Feature 1: Max 40 players
 window.joinRoom = async function() {
   const name = document.getElementById('nameInput').value.trim();
   const code = document.getElementById('codeInput').value.trim().toUpperCase();
@@ -166,17 +236,19 @@ window.joinRoom = async function() {
   if (!snap.exists()) return alert('Room not found');
   
   const players = snap.child('players').val() || {};
-  if (Object.keys(players).length >= MAX_PLAYERS) {
+  if (Object.keys(players).length >= MAX_PLAYERS && !players[name]) {
     return alert(`Room full! Maximum ${MAX_PLAYERS} players allowed.`);
   }
   
   playerName = name;
   roomCode = code;
   isHost = false;
+  score = 0;
+  currentLevel = 0;
   
   const playerRef = ref(db, `rooms/${code}/players/${name}`);
   await set(playerRef, { score: 0, lastSeen: serverTimestamp() });
-  onDisconnect(playerRef).remove();
+  onDisconnect(playerRef).update({ lastSeen: serverTimestamp() });
   
   saveSession();
   setupListeners(code);
@@ -191,6 +263,8 @@ window.createRoom = async function() {
   playerName = name;
   isHost = true;
   roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+  score = 0;
+  currentLevel = 0;
   
   await set(ref(db, `rooms/${roomCode}`), {
     host: name,
@@ -202,7 +276,7 @@ window.createRoom = async function() {
   
   const playerRef = ref(db, `rooms/${roomCode}/players/${name}`);
   await set(playerRef, { score: 0, lastSeen: serverTimestamp() });
-  onDisconnect(playerRef).remove();
+  onDisconnect(playerRef).update({ lastSeen: serverTimestamp() });
   
   saveSession();
   setupListeners(roomCode);
@@ -211,7 +285,6 @@ window.createRoom = async function() {
   document.getElementById('startBtn').style.display = 'block';
   document.getElementById('waitMsg').style.display = 'none';
   
-  // Generate QR code
   const qrDiv = document.getElementById('qrContainer');
   qrDiv.innerHTML = '';
   new QRCode(qrDiv, {
@@ -226,8 +299,8 @@ function updatePlayerList(code) {
   onValue(ref(db, `rooms/${code}/players`), snap => {
     const players = snap.val() || {};
     const list = document.getElementById('playerList');
-    list.innerHTML = Object.entries(players).map(([name]) => 
-      `<span class="player-badge">👤 ${name}</span>`
+    list.innerHTML = Object.entries(players).map(([name, data]) => 
+      `<span class="player-badge">👤 ${name} ${data.reconnected ? '🔄' : ''}</span>`
     ).join('');
   });
 }
@@ -237,15 +310,29 @@ function setupListeners(code) {
     const data = snap.val();
     if (!data) return;
     
-    if (data.gameStarted) {
-      currentLevel = data.currentLevel || 0;
+    // ✅ Timer keeps running even when disconnected
+    if (data.gameEndTime) {
       gameEndTime = data.gameEndTime;
+    }
+    
+    if (data.gameStarted && document.getElementById('game').classList.contains('active') === false) {
+      currentLevel = data.currentLevel || 0;
+      saveSession();
       startGameClient();
+    }
+    
+    // ✅ Sync level changes in real-time
+    if (data.currentLevel !== undefined && data.currentLevel !== currentLevel) {
+      currentLevel = data.currentLevel;
+      saveSession();
+      if (document.getElementById('game').classList.contains('active')) {
+        loadLevel();
+      }
     }
   });
 }
 
-// ✅ Feature 3: Synchronized timer
+// ✅ Feature 3: Synchronized timer across all devices
 window.startGame = async function() {
   if (!isHost) return;
   const duration = 180; // 3 minutes
@@ -260,7 +347,6 @@ window.startGame = async function() {
 
 function startGameClient() {
   showPage('game');
-  score = 0;
   loadLevel();
   startTimer();
 }
@@ -271,7 +357,10 @@ function startTimer() {
   
   timerInterval = setInterval(() => {
     if (!gameEndTime) return;
-    const remaining = Math.max(0, Math.floor((gameEndTime - Date.now()) / 1000));
+    
+    // ✅ All devices calculate from same endTime
+    const now = Date.now();
+    const remaining = Math.max(0, Math.floor((gameEndTime - now) / 1000));
     const mins = Math.floor(remaining / 60);
     const secs = remaining % 60;
     timerEl.innerText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
@@ -308,28 +397,48 @@ function loadLevel() {
 // ✅ Feature 4: Smooth level transitions
 window.checkAnswers = async function() {
   const level = LEVELS[currentLevel];
+  if (!level) return;
+  
   let allCorrect = true;
   
   level.eqs.forEach((eq, i) => {
     const input = document.getElementById(`eq${i}`);
-    if (parseInt(input.value) !== eq.a) {
+    if (!input || parseInt(input.value) !== eq.a) {
       allCorrect = false;
-      input.style.border = '2px solid red';
+      if (input) input.style.border = '2px solid red';
     } else {
-      input.style.border = '2px solid green';
+      if (input) input.style.border = '2px solid green';
     }
   });
   
   if (allCorrect) {
     score += 100;
-    await update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score });
+    saveSession();
+    
+    await update(ref(db, `rooms/${roomCode}/players/${playerName}`), { 
+      score: score,
+      lastSeen: serverTimestamp()
+    });
     
     if (currentLevel + 1 < LEVELS.length) {
+      // ✅ Smooth transition
+      const overlay = document.getElementById('transitionOverlay');
+      overlay.classList.add('show');
+      
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
       if (isHost) {
-        await update(ref(db, `rooms/${roomCode}`), { currentLevel: currentLevel + 1 });
+        await update(ref(db, `rooms/${roomCode}`), { 
+          currentLevel: currentLevel + 1 
+        });
       }
+      
       currentLevel++;
-      loadLevel(); // Smooth transition happens here
+      saveSession();
+      loadLevel();
+      
+      await new Promise(resolve => setTimeout(resolve, 200));
+      overlay.classList.remove('show');
     } else {
       endGame();
     }
@@ -343,12 +452,34 @@ function endGame() {
 }
 
 window.backToLobby = function() {
-  sessionStorage.removeItem('game_session');
-  roomCode = null; playerName = null; isHost = false;
+  clearSession();
+  roomCode = null; 
+  playerName = null; 
+  isHost = false;
+  currentLevel = 0;
+  score = 0;
   showPage('lobby');
 };
 
-// Auto-reconnect on page load
+// ✅ Handle page visibility (back button, tab switch)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && playerName && roomCode) {
+    // Re-sync timer and level when user returns
+    saveSession();
+    if (gameEndTime && document.getElementById('game').classList.contains('active')) {
+      startTimer(); // Restart timer display
+    }
+  }
+});
+
+// ✅ Handle back button
+window.addEventListener('popstate', (event) => {
+  if (playerName && roomCode) {
+    saveSession();
+  }
+});
+
+// Auto-reconnect on load
 window.addEventListener('load', async () => {
   const reconnected = await tryReconnect();
   if (!reconnected) showPage('lobby');
@@ -356,6 +487,11 @@ window.addEventListener('load', async () => {
   const params = new URLSearchParams(window.location.search);
   const room = params.get('room');
   if (room) document.getElementById('codeInput').value = room.toUpperCase();
+});
+
+// Save session before unload
+window.addEventListener('beforeunload', () => {
+  saveSession();
 });
 </script>
 </body>
