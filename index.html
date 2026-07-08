@@ -69,52 +69,11 @@
             text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6) !important;
         }
 
-        .join-section {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin: 15px 0;
-            align-items: center;
-            width: 100%;
-        }
-
-        .join-section p {
-            font-size: 0.9rem;
+        #page-lobby .join-section p {
             color: #004D73 !important;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5) !important;
             font-weight: 700 !important;
         }
-
-        .avatar-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            width: 100%;
-            margin: 10px 0;
-        }
-
-        .avatar-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.7);
-            border: 2px solid transparent;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .avatar-item:hover { transform: translateY(-2px); background: rgba(255, 255, 255, 0.9); }
-        .avatar-item.selected {
-            background: #E0F2FE;
-            border-color: #0284C7;
-            box-shadow: 0 0 10px rgba(2, 132, 199, 0.4);
-        }
-
-        .avatar-emoji { font-size: 2rem; margin-bottom: 2px; }
-        .avatar-label { font-size: 0.75rem; font-weight: bold; color: #0369A1; }
 
         #page-lobby input[type="text"] {
             background: rgba(255, 255, 255, 0.98) !important;
@@ -151,6 +110,10 @@
             color: #FFFFFF !important;
             box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4) !important;
             font-size: 1.1rem !important;
+        }
+
+        #page-lobby button.primary:hover {
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.6) !important;
         }
 
         .page {
@@ -221,6 +184,23 @@
         button:active { transform: scale(0.98); }
         button.primary { background: linear-gradient(135deg, #4CAF50, #66BB6A); color: White; }
 
+        .join-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+            align-items: center;
+        }
+
+        .join-section p {
+            font-size: 0.9rem;
+            color: #0097A7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .join-section input { max-width: 280px; }
+
         .phrase-display {
             font-size: 2.2rem;
             font-weight: bold;
@@ -276,7 +256,7 @@
 
         .small-btn { width: auto !important; padding: 8px 12px !important; font-size: 0.8rem !important; background: rgba(0, 188, 212, 0.2) !important; color: #0097A7 !important; border: 1px solid #0097A7 !important; box-shadow: none !important; margin: 0 !important; }
         .score-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 15px; margin: 8px 0; background: rgba(0, 188, 212, 0.15); border-radius: 8px; border-left: 4px solid #00BCD4; font-weight: bold; }
-        .score-row span:first-child { color: #0097A7; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        .score-row span:first-child { color: #0097A7; font-size: 1.1rem; }
         .score-row span:last-child { color: #00838F; font-size: 1.2rem; }
 
         .solution-box { background: rgba(76, 175, 80, 0.1); padding: 15px; border-left: 4px solid #4CAF50; border-radius: 8px; margin: 15px 0; color: #004D73; line-height: 1.6; }
@@ -294,7 +274,7 @@
         .gallery-item-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0, 97, 110, 0.9); color: #FFFFFF; padding: 8px; font-size: 0.75rem; text-align: center; }
         .no-uploads { text-align: center; padding: 30px; color: #004D73; font-size: 0.9rem; }
 
-        .leaderboard-container { max-height: 250px; overflow-y: auto; margin: 10px 0; padding: 5px; background: rgba(255,255,255,0.5); border-radius: 8px; }
+        .leaderboard-container { max-height: 150px; overflow-y: auto; margin: 10px 0; padding: 5px; background: rgba(255,255,255,0.5); border-radius: 8px; }
 
         @media (max-width: 480px) {
             .phrase-display { font-size: 1.8rem; letter-spacing: 10px; }
@@ -303,8 +283,7 @@
         }
 
         .music-toggle {
-            position: fixed;
-            bottom: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%;
+            position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%;
             background: linear-gradient(135deg, #00BCD4, #4CAF50); border: none; color: white; font-size: 1.5rem;
             cursor: pointer; box-shadow: 0 4px 12px rgba(0, 150, 175, 0.4); z-index: 1000; display: flex; align-items: center; justify-content: center;
         }
@@ -316,35 +295,11 @@
 
     <div id="page-lobby" class="page active">
         <h1>🎮 THE RATIONAL CRYPTOGRAM</h1>
-        <p style="text-align: center; color: #004D73; margin-bottom: 15px;">Solve equations to Decode</p>
+        <p style="text-align: center; color: #004D73; margin-bottom: 25px;">Solve equations to Decode</p>
 
         <div class="join-section">
             <p>👤 Enter Your Name</p>
             <input type="text" id="player-name" placeholder="Your name" maxlength="20">
-        </div>
-
-        <div class="join-section">
-            <p>🎭 Choose Your Avatar</p>
-            <div class="avatar-grid">
-                <div class="avatar-item" onclick="selectAvatar('👩‍🏫', 'Teacher')">
-                    <span class="avatar-emoji">👩‍🏫</span><span class="avatar-label">Teacher</span>
-                </div>
-                <div class="avatar-item" onclick="selectAvatar('👨‍🍳', 'Chef')">
-                    <span class="avatar-emoji">👨‍🍳</span><span class="avatar-label">Chef</span>
-                </div>
-                <div class="avatar-item" onclick="selectAvatar('👷', 'Engineer')">
-                    <span class="avatar-emoji">👷</span><span class="avatar-label">Engineer</span>
-                </div>
-                <div class="avatar-item" onclick="selectAvatar('👨‍🚀', 'Astronaut')">
-                    <span class="avatar-emoji">👨‍🚀</span><span class="avatar-label">Astronaut</span>
-                </div>
-                <div class="avatar-item" onclick="selectAvatar('👩‍⚕️', 'Doctor')">
-                    <span class="avatar-emoji">👩‍⚕️</span><span class="avatar-label">Doctor</span>
-                </div>
-                <div class="avatar-item" onclick="selectAvatar('🎨', 'Artist')">
-                    <span class="avatar-emoji">🎨</span><span class="avatar-label">Artist</span>
-                </div>
-            </div>
         </div>
 
         <div class="join-section">
@@ -353,7 +308,7 @@
             <button onclick="joinRoom()">⚡ Enter The Game</button>
         </div>
 
-        <div style="text-align: center; margin: 10px 0; color: #004D73;">— OR —</div>
+        <div style="text-align: center; margin: 20px 0; color: #004D73;">— OR —</div>
         <button class="primary" onclick="startAsHost()">👑 Start As Host</button>
     </div>
 
@@ -367,8 +322,10 @@
         <div class="phrase-display" id="cipher-output">_ _ _ _</div>
         <div id="clue-text" class="clue-box"></div>
         <div id="problems-container"></div>
-        
         <button onclick="checkAnswers()">🔓 Decode Cryptogram</button>
+
+        <p style="font-size:0.8rem; font-weight:bold; margin-top:15px; color:#0097A7;">📈 LIVE RANKINGS:</p>
+        <div id="player-live-leaderboard" class="leaderboard-container"></div>
     </div>
 
     <div id="page-trivia" class="page">
@@ -404,14 +361,8 @@
             Time Left: <span id="host-timer" style="color: #0097A7; font-weight: bold;">03:00</span>
         </p>
 
-        <p style="font-size:0.9rem; font-weight:bold; margin-bottom:10px; color:#0097A7;">📈 LIVE REAL-TIME LEADERBOARD:</p>
-        <div id="host-scoreboard-container" class="leaderboard-container"></div>
-    </div>
-
-    <div id="page-host-winners" class="page">
-        <h1 style="color: #4CAF50; font-size: 2rem;">🏆 Final Winners Podium</h1>
-        <div id="podium-container" style="margin: 25px 0;"></div>
-        <button class="primary" onclick="proceedToUploads()">Next: View Solutions 📸</button>
+        <div id="host-scoreboard-container" style="margin: 20px 0;"></div>
+        <p style="text-align: center; color: #004D73; font-size: 0.85rem; margin-top: 20px;">Players are solving...</p>
     </div>
 
     <div id="page-end-game" class="page">
@@ -444,17 +395,6 @@
         </div>
     </div>
 
-    <div id="image-zoom-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; flex-direction: column;">
-        <span onclick="closeZoomModal()" style="position: absolute; top: 20px; right: 30px; color: white; font-size: 2.5rem; cursor: pointer; font-weight: bold; user-select: none;">&times;</span>
-        <div style="overflow: auto; max-width: 90%; max-height: 75vh; display: flex; justify-content: center; align-items: center;">
-            <img id="zoom-modal-img" src="" style="transform: scale(1); transition: transform 0.2s; max-width: 100%; height: auto; border-radius: 4px;">
-        </div>
-        <div style="margin-top: 25px; display: flex; gap: 15px;">
-            <button class="small-btn" onclick="adjustZoom(1.2)" style="background: #00BCD4 !important; color: white !important; font-size: 1.1rem !important; padding: 10px 20px !important; width: auto !important;">🔍 Zoom In</button>
-            <button class="small-btn" onclick="adjustZoom(0.8)" style="background: #00BCD4 !important; color: white !important; font-size: 1.1rem !important; padding: 10px 20px !important; width: auto !important;">🔍 Zoom Out</button>
-        </div>
-    </div>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -462,18 +402,6 @@ import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/
 let audioContext;
 let bgMusicPlaying = false;
 let bgMusicOscillators = [];
-let selectedAvatarEmoji = "👤"; 
-
-window.selectAvatar = function(emoji, label) {
-    document.querySelectorAll(".avatar-item").forEach(item => item.classList.remove("selected"));
-    selectedAvatarEmoji = emoji;
-    const items = document.querySelectorAll(".avatar-item");
-    items.forEach(item => {
-        if (item.innerText.includes(label)) {
-            item.classList.add("selected");
-        }
-    });
-};
 
 function initAudio() {
     try { if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
@@ -517,6 +445,7 @@ function playBackgroundMusic() {
             osc.start(startTime); osc.stop(startTime + duration + 0.05);
             bgMusicOscillators.push(osc);
         };
+
         const loop = () => {
             if (!bgMusicPlaying) return;
             const t = audioContext.currentTime;
@@ -547,6 +476,7 @@ const firebaseConfig = {
     messagingSenderId: "654271677921",
     appId: "1:654271677921:web:ac7245dfd3b376a55e3ea0"
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
@@ -624,7 +554,6 @@ let roomCode = "", playerName = "", isHost = false, score = 0, currentLevelIndex
 let uploads = {};
 let localGameStarted = false;
 let solvedIndices = [];
-let currentZoomScale = 1;
 
 function renderScoreboardData(snapshot, containers) {
     const data = snapshot.val();
@@ -638,8 +567,7 @@ function renderScoreboardData(snapshot, containers) {
                     const div = document.createElement("div");
                     div.className = "score-row";
                     const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '👤';
-                    const av = info.avatar ? info.avatar : "👤";
-                    div.innerHTML = `<span>${medal} ${av} ${name}</span><span>${info.score || 0} pts</span>`;
+                    div.innerHTML = `<span>${medal} ${name}</span><span>${info.score || 0} pts</span>`;
                     el.appendChild(div);
                 });
             }
@@ -653,6 +581,7 @@ function updateHostGalleryView(uploadsData) {
     
     gallery.innerHTML = "";
     const keys = Object.keys(uploadsData);
+    
     const countEl = document.getElementById("upload-count");
     if (countEl) countEl.innerText = keys.length;
 
@@ -662,39 +591,11 @@ function updateHostGalleryView(uploadsData) {
         Object.entries(uploadsData).forEach(([pName, imageData]) => {
             const item = document.createElement("div");
             item.className = "gallery-item";
-            item.style.cursor = "pointer";
-            item.onclick = () => window.openZoomModal(imageData);
             item.innerHTML = `<img src="${imageData}"><div class="gallery-item-label">${pName}</div>`;
             gallery.appendChild(item);
         });
     }
 }
-
-window.openZoomModal = function(src) {
-    const modal = document.getElementById("image-zoom-modal");
-    const img = document.getElementById("zoom-modal-img");
-    if (modal && img) {
-        img.src = src;
-        currentZoomScale = 1;
-        img.style.transform = `scale(${currentZoomScale})`;
-        modal.style.display = "flex";
-    }
-};
-
-window.closeZoomModal = function() {
-    const modal = document.getElementById("image-zoom-modal");
-    if (modal) modal.style.display = "none";
-};
-
-window.adjustZoom = function(factor) {
-    const img = document.getElementById("zoom-modal-img");
-    if (img) {
-        currentZoomScale *= factor;
-        if (currentZoomScale < 0.5) currentZoomScale = 0.5;
-        if (currentZoomScale > 4) currentZoomScale = 4;
-        img.style.transform = `scale(${currentZoomScale})`;
-    }
-};
 
 window.startAsHost = function() {
     playerName = document.getElementById("player-name").value.trim();
@@ -704,6 +605,7 @@ window.startAsHost = function() {
     roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
     set(ref(db, "rooms/" + roomCode), { gameStarted: false, level: 1 });
     document.getElementById("host-room-code").innerText = "🎮 Room Code: " + roomCode;
+    
     const qrContainer = document.getElementById("qr-code");
     qrContainer.innerHTML = "";
     const joinURL = window.location.origin + window.location.pathname + "?room=" + roomCode;
@@ -711,11 +613,14 @@ window.startAsHost = function() {
 
     setupRoomListeners(roomCode);
     navigate("page-scoreboard");
+
     onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
         renderScoreboardData(snapshot, ["scoreboard-container", "host-scoreboard-container"]);
     });
+
     onValue(ref(db, `rooms/${roomCode}/uploads`), (snapshot) => {
         uploads = snapshot.val() || {};
+        updateHostGalleryView(uploads);
     });
 };
 
@@ -724,12 +629,12 @@ window.joinRoom = function() {
     roomCode = document.getElementById("join-code").value.trim().toUpperCase();
     if (!playerName || !roomCode) { alert("Enter name and code!"); return; }
 
-    set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0, avatar: selectedAvatarEmoji });
+    set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0 });
     setupRoomListeners(roomCode);
     navigate("page-scoreboard");
 
     onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
-        renderScoreboardData(snapshot, ["scoreboard-container"]);
+        renderScoreboardData(snapshot, ["scoreboard-container", "player-live-leaderboard"]);
     });
 };
 
@@ -769,6 +674,7 @@ function startGame() {
     startTime = new Date();
     let timeLeft = 180;
     playBackgroundMusic();
+
     const timerDisplay = document.getElementById("timer");
     const hostTimerDisplay = document.getElementById("host-timer");
 
@@ -786,6 +692,7 @@ function startGame() {
 
     timerInterval = setInterval(updateTimer, 1000);
     updateTimer();
+
     if (isHost) { navigate("page-host-game"); } else { navigate("page-game"); loadLevel(); }
 }
 
@@ -836,11 +743,9 @@ window.liveCheckAnswer = function(idx) {
             input.style.border = "2px solid green";
             solvedIndices.push(idx);
             updateCipherDisplay();
-            score += 5; 
-            update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: score });
         }
     } else {
-        input.style.border = "2px solid #00BCD4";
+        input.style.border = "2px solid #00BCD4"; // Reset to theme standard color during adjustment
     }
 };
 
@@ -860,24 +765,23 @@ window.checkAnswers = function() {
             input.style.border = "2px solid green";
             if (!solvedIndices.includes(idx)) {
                 solvedIndices.push(idx);
-                score += 5; 
             }
         }
     });
+
     updateCipherDisplay();
 
     if (allCorrect) {
-        score += 100; 
-        update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: score });
+        score += 100;
         playSuccessSound();
+        update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: score });
+
         setTimeout(() => {
             document.getElementById("trivia-content").innerText = level.trivia;
             document.getElementById("trivia-author").innerText = `— ${level.author}`;
             document.getElementById("step-by-step").innerText = level.steps;
             navigate("page-trivia");
         }, 500);
-    } else {
-        update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: score });
     }
 };
 
@@ -898,12 +802,11 @@ function endGame() {
     clearInterval(timerInterval);
     stopBackgroundMusic();
     const elapsed = Math.floor((new Date() - startTime) / 1000);
-    const mins = Math.floor(elapsed / 60);
-    const secs = elapsed % 60;
+    const mins = Math.floor(elapsed / 60); const secs = elapsed % 60;
 
     if (isHost) {
-        navigate("page-host-winners");
-        renderPodium();
+        navigate("page-host-uploads");
+        updateHostGalleryView(uploads);
     } else {
         document.getElementById("final-score").innerText = score;
         document.getElementById("final-time").innerText = `${mins}m ${secs}s`;
@@ -911,42 +814,11 @@ function endGame() {
     }
 }
 
-function renderPodium() {
-    const podiumContainer = document.getElementById("podium-container");
-    if (!podiumContainer) return;
-    podiumContainer.innerHTML = "<p style='text-align:center;'>Calculating Winners...</p>";
-
-    onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
-        const data = snapshot.val();
-        podiumContainer.innerHTML = "";
-        if (data) {
-            const sorted = Object.entries(data).sort((a, b) => (b[1].score || 0) - (a[1].score || 0));
-            const medals = ['🥇 1st Place', '🥈 2nd Place', '🥉 3rd Place'];
-            
-            sorted.slice(0, 3).forEach(([name, info], idx) => {
-                const div = document.createElement("div");
-                div.className = "score-row";
-                div.style.fontSize = "1.2rem";
-                const av = info.avatar ? info.avatar : "👤";
-                div.innerHTML = `<span>${medals[idx]} : ${av} ${name}</span><span>${info.score || 0} pts</span>`;
-                podiumContainer.appendChild(div);
-            });
-            if (sorted.length === 0) {
-                podiumContainer.innerHTML = "<p style='text-align:center;'>No players submitted scores.</p>";
-            }
-        }
-    }, { onlyOnce: true });
-}
-
-window.proceedToUploads = function() {
-    navigate("page-host-uploads");
-    updateHostGalleryView(uploads);
-};
-
 window.handleSolutionUpload = function() {
     const fileInput = document.getElementById("solution-upload");
     const file = fileInput.files[0];
     if (!file) return;
+
     const statusDiv = document.getElementById("upload-status");
     statusDiv.className = "upload-status";
     statusDiv.innerText = "Processing & Compressing Image...";
@@ -961,10 +833,12 @@ window.handleSolutionUpload = function() {
             
             canvas.width = MAX_WIDTH;
             canvas.height = img.height * scale;
+
             const ctx2d = canvas.getContext("2d");
             ctx2d.drawImage(img, 0, 0, canvas.width, canvas.height);
             
             const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
+            
             set(ref(db, `rooms/${roomCode}/uploads/${playerName}`), compressedBase64)
                 .then(() => {
                     statusDiv.className = "upload-status upload-success";
@@ -981,9 +855,7 @@ window.handleSolutionUpload = function() {
 };
 
 window.backToLobby = function() {
-    roomCode = ""; playerName = ""; selectedAvatarEmoji = "👤";
-    isHost = false; score = 0; currentLevelIndex = 0; localGameStarted = false; solvedIndices = [];
-    document.querySelectorAll(".avatar-item").forEach(item => item.classList.remove("selected"));
+    roomCode = ""; playerName = ""; isHost = false; score = 0; currentLevelIndex = 0; localGameStarted = false; solvedIndices = [];
     navigate("page-lobby");
 };
 
