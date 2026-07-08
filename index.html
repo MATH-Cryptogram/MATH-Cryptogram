@@ -7,6 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
 
         :root { 
             --primary: #0EA5E9;
@@ -120,45 +121,24 @@
             margin: 15px 0;
             align-items: center;
         }
-
-        /* Modernized Illustrated/Badged Avatar Matrix Grid Style [cite: 27, 28] */
-        .avatar-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin: 15px 0;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 15px;
-            border: 2px solid #00BCD4;
-            max-height: 260px;
-            overflow-y: auto;
+        /* Add to your existing <style> block */
+        .avatar-render {
+            width: 50px;
+            height: 50px;
+            background-image: url('avatar.png');
+            background-size: 1000% 500%; /* 10 columns, 5 rows */
+            background-repeat: no-repeat;
+            display: inline-block;
+            border-radius: 50%;
+            cursor: pointer;
         }
         .avatar-option {
-            font-size: 2.2rem;
-            text-align: center;
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 50%;
-            width: 65px;
-            height: 65px;
-            margin: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 3px solid rgba(0, 188, 212, 0.2);
-            background: linear-gradient(135deg, #FFFFFF, #E0F7FA);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+            display: inline-block;
+            margin: 5px;
+            border: 3px solid transparent;
         }
-        .avatar-option:hover { transform: scale(1.15); box-shadow: 0 6px 12px rgba(0,188,212,0.3); }
-        .avatar-option.selected {
-            background: linear-gradient(135deg, #00BCD4, #0097A7);
-            border-color: #006064;
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 0 15px rgba(0,188,212,0.6);
+        .avatar-option.selected { border-color: #06B6D4; 
         }
-
         .lobby-users-display {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -358,10 +338,9 @@
     </div>
 
     <div id="page-avatar-select" class="page">
-        <h1>🦊 CHOOSE YOUR AVATAR</h1>
-        <p style="text-align: center; color: #004D73; margin-bottom: 15px;">Select an avatar to display in the game lobby</p>
-        
-        <div class="avatar-grid" id="avatar-selector-grid"></div>
+        <h1>CHOOSE YOUR IDENTITY</h1>
+        <div id="avatar-selector-grid"></div>
+    </div>
 
         <button class="primary" onclick="confirmAndJoinLobby()">⚡ ENTER THE LOBBY</button>
         <button style="background: #9E9E9E;" onclick="navigate('page-lobby')">⬅️ Back</button>
@@ -843,6 +822,33 @@ function setupRoomListeners(room) {
     });
 }
 
+function renderAvatarSelector() {
+    const grid = document.getElementById("avatar-selector-grid");
+    grid.innerHTML = ""; // Clear existing
+    
+    for (let i = 0; i < 50; i++) {
+        const col = i % 10;
+        const row = Math.floor(i / 10);
+        
+        const wrapper = document.createElement("div");
+        wrapper.className = "avatar-option";
+        // Calculate background position based on the 10x5 grid
+        wrapper.innerHTML = `<div class="avatar-render" 
+            style="background-position: ${col * 11.11}% ${row * 25}%"></div>`;
+        
+        wrapper.onclick = () => {
+            document.querySelectorAll(".avatar-option").forEach(el => el.classList.remove("selected"));
+            wrapper.classList.add("selected");
+            // Save this index or the col/row to your Firebase database
+            selectedAvatarIndex = i; 
+        };
+        grid.appendChild(wrapper);
+    }
+}
+
+// Call this when the page loads or when entering the avatar select screen
+renderAvatarSelector();
+}    
 function startGame() {
     score = 0;
     startTime = new Date();
