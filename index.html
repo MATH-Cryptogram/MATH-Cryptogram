@@ -29,13 +29,18 @@
         h2 { font-size: 1.3rem; margin: 20px 0; color: #00838F; text-align: center !important; }
         p { color: #004D73; }
 
+        /* ── Page + smooth transitions ── */
         .page {
             width: 92%; max-width: 500px; max-height: 85vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
             padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)) 20px;
             background: rgba(224,247,250,0.98); border-radius: 20px; border: 3px solid #0097A7;
             box-shadow: 0 0 30px rgba(0,188,212,0.4); display: none;
         }
-        .page.active { display: block; }
+        .page.active { display: block; animation: pageIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both; }
+        @keyframes pageIn {
+            from { opacity: 0; transform: translateY(14px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0)   scale(1); }
+        }
 
         input[type="text"], input[type="number"], input[type="file"] {
             width: 100%; padding: 12px 15px; margin: 10px 0; font-size: 16px !important;
@@ -45,43 +50,48 @@
             width: 100%; padding: 14px; margin: 12px 0; font-size: 1rem; font-weight: bold; border: none;
             border-radius: 10px; background: linear-gradient(135deg, #00BCD4, #009688); color: White; cursor: pointer;
             text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(0,150,175,0.3);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
+        button:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(0,150,175,0.2); }
         button.primary { background: linear-gradient(135deg, #4CAF50, #66BB6A); color: White; }
 
         .join-section { display: flex; flex-direction: column; gap: 10px; margin: 15px 0; align-items: center; }
 
+        /* ── Avatar grid (sprite-based) ── */
         .avatar-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 15px 0; padding: 15px;
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 15px 0; padding: 12px;
             background: rgba(255,255,255,0.85); border-radius: 15px; border: 2px solid #00BCD4;
-            max-height: 260px; overflow-y: auto;
+            max-height: 300px; overflow-y: auto;
         }
         .avatar-option {
-            font-size: 2.2rem; text-align: center; padding: 10px; cursor: pointer; border-radius: 50%;
-            width: 65px; height: 65px; margin: auto; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border-radius: 50%; width: 58px; height: 58px; margin: auto;
             transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 3px solid rgba(0,188,212,0.2); background: linear-gradient(135deg, #FFFFFF, #E0F7FA);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+            border: 3px solid rgba(0,188,212,0.25); box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+            background-repeat: no-repeat; background-color: #f0f9ff;
         }
-        .avatar-option:hover { transform: scale(1.15); box-shadow: 0 6px 12px rgba(0,188,212,0.3); }
-        .avatar-option.selected { background: linear-gradient(135deg, #00BCD4, #0097A7); border-color: #006064; transform: scale(1.1) rotate(5deg); box-shadow: 0 0 15px rgba(0,188,212,0.6); }
+        .avatar-option:hover { transform: scale(1.15); box-shadow: 0 6px 14px rgba(0,188,212,0.35); }
+        .avatar-option.selected { border-color: #006064; border-width: 4px; transform: scale(1.12) rotate(5deg); box-shadow: 0 0 0 3px #00BCD4, 0 0 18px rgba(0,188,212,0.65); }
 
-        .lobby-users-display { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; padding: 10px; }
-        .lobby-user-card { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.95); padding: 12px; border-radius: 14px; border: 2px solid #0097A7; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
-        .lobby-user-avatar { font-size: 2.4rem; margin-bottom: 8px; background: linear-gradient(135deg, #E0F7FA, #B2EBF2); border-radius: 50%; width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; border: 2px solid #00BCD4; }
-        .lobby-user-name { font-size: 0.9rem; font-weight: bold; color: #004D73; word-break: break-all; }
+        /* ── Lobby ── */
+        .lobby-users-display { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 15px 0; padding: 8px; }
+        .lobby-user-card { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.95); padding: 10px; border-radius: 14px; border: 2px solid #0097A7; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
+        .lobby-user-avatar { margin-bottom: 8px; display: flex; align-items: center; justify-content: center; }
+        .lobby-user-name { font-size: 0.85rem; font-weight: bold; color: #004D73; word-break: break-all; }
 
-        .podium-wrapper { display: flex; justify-content: center; align-items: flex-end; gap: 12px; margin: 30px auto 15px auto; height: 180px; width: 100%; max-width: 400px; padding-bottom: 5px; }
+        /* ── Podium ── */
+        .podium-wrapper { display: flex; justify-content: center; align-items: flex-end; gap: 12px; margin: 30px auto 15px auto; height: 200px; width: 100%; max-width: 400px; padding-bottom: 5px; }
         .podium-column { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; animation: growPodium 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
         @keyframes growPodium { from { transform: scaleY(0); transform-origin: bottom; } to { transform: scaleY(1); } }
-        .podium-avatar { font-size: 2.3rem; margin-bottom: 6px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); }
-        .podium-name { font-size: 0.85rem; font-weight: bold; color: #004D73; margin-bottom: 6px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
-        .podium-block { width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(0,0,0,0.15); position: relative; }
+        .podium-avatar { margin-bottom: 6px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.18)); display: flex; justify-content: center; }
+        .podium-name { font-size: 0.8rem; font-weight: bold; color: #004D73; margin-bottom: 6px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
+        .podium-block { width: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
         .podium-rank { font-size: 1.6rem; font-weight: 900; color: rgba(255,255,255,0.9); text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .podium-score { font-size: 0.75rem; font-weight: bold; color: rgba(255,255,255,0.85); }
+        .podium-score { font-size: 0.72rem; font-weight: bold; color: rgba(255,255,255,0.85); }
         .podium-1st { height: 110px; background: linear-gradient(to top, #D4AF37, #FFD700); border: 2px solid #B8860B; }
         .podium-2nd { height: 80px; background: linear-gradient(to top, #AAA, #E6E6E6); border: 2px solid #888; }
         .podium-3rd { height: 55px; background: linear-gradient(to top, #CD7F32, #D2691E); border: 2px solid #8B4513; }
 
+        /* ── Game screen ── */
         .phrase-display {
             font-size: 2.2rem; font-weight: bold; letter-spacing: 15px; text-align: center; margin: 25px 0;
             padding: 20px; background: rgba(0,188,212,0.1); border: 2px solid #00BCD4; border-radius: 15px;
@@ -89,7 +99,6 @@
         }
         .revealed-letter { color: #4CAF50; font-weight: 900; }
         .hidden-letter { color: #9ECAE1; }
-
         .clue-box { background: rgba(76,175,80,0.1); padding: 15px; border-left: 4px solid #4CAF50; border-radius: 8px; margin: 15px 0; font-style: italic; color: #004D73; }
 
         .eq-card { background: rgba(0,188,212,0.08); padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid rgba(0,188,212,0.3); }
@@ -102,14 +111,14 @@
 
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(0,188,212,0.3); gap: 10px; }
         .top-bar span { font-weight: bold; color: #0097A7; font-size: 1.1rem; }
-        #timer { font-size: 1.3rem; color: #00838F; }
+        #timer { font-size: 1.3rem; color: #00838F; transition: color 0.3s; }
         #timer.warning { color: #D32F2F; animation: pulse-warning 1s infinite; }
         @keyframes pulse-warning { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 
         .small-btn { width: auto !important; padding: 8px 12px !important; font-size: 0.8rem !important; background: rgba(0,188,212,0.2) !important; color: #0097A7 !important; border: 1px solid #0097A7 !important; margin: 0 !important; box-shadow: none !important; }
-        .score-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 15px; margin: 8px 0; background: rgba(0,188,212,0.15); border-radius: 8px; border-left: 4px solid #00BCD4; font-weight: bold; }
-        .score-row span:first-child { color: #0097A7; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
-        .score-row span:last-child { color: #00838F; font-size: 1.2rem; }
+        .score-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; margin: 6px 0; background: rgba(0,188,212,0.15); border-radius: 8px; border-left: 4px solid #00BCD4; font-weight: bold; }
+        .score-row span:first-child { color: #0097A7; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+        .score-row span:last-child { color: #00838F; font-size: 1.1rem; }
 
         .solution-box { background: rgba(76,175,80,0.1); padding: 15px; border-left: 4px solid #4CAF50; border-radius: 8px; margin: 15px 0; color: #004D73; line-height: 1.6; }
         .upload-section { background: rgba(0,188,212,0.1); padding: 20px; border: 2px dashed #00BCD4; border-radius: 12px; margin: 20px 0; text-align: center; }
@@ -119,14 +128,19 @@
         .upload-error { background: rgba(244,67,54,0.2); border: 1px solid #F44336; color: #C62828; }
 
         .gallery-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-        .gallery-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 2px solid #00BCD4; background: rgba(0,188,212,0.1); transition: transform 0.2s ease; }
+        .gallery-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 2px solid #00BCD4; background: rgba(0,188,212,0.1); transition: transform 0.2s ease; cursor: pointer; }
         .gallery-item:hover { transform: scale(1.03); }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
         .gallery-item-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,97,110,0.9); color: #FFF; padding: 8px; font-size: 0.75rem; text-align: center; }
         .no-uploads { text-align: center; padding: 30px; color: #004D73; font-size: 0.9rem; }
 
-        .music-toggle { position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #00BCD4, #4CAF50); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 12px rgba(0,150,175,0.4); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        .music-toggle { position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #00BCD4, #4CAF50); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 12px rgba(0,150,175,0.4); z-index: 1000; display: flex; align-items: center; justify-content: center; margin: 0; padding: 0; width: 50px; }
 
+        /* ── Reconnect banner ── */
+        #reconnect-banner { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); background: #00838F; color: #fff; padding: 10px 22px; border-radius: 30px; font-size: 0.9rem; font-weight: bold; z-index: 3000; box-shadow: 0 4px 16px rgba(0,0,0,0.25); animation: slideDown 0.4s cubic-bezier(0.22,1,0.36,1) both; display: none; }
+        @keyframes slideDown { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+        /* ── Zoom modal ── */
         .zoom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; display: none; flex-direction: column; justify-content: center; align-items: center; touch-action: none; }
         .zoom-modal-content { width: 90%; height: 65%; display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative; border-radius: 12px; background: rgba(255,255,255,0.05); }
         .zoom-modal-content img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.15s ease-out; transform-origin: center center; }
@@ -138,6 +152,7 @@
 <body>
 
     <button class="music-toggle" id="musicToggle" onclick="toggleMusic()">🎵</button>
+    <div id="reconnect-banner">🔄 Reconnecting to your game...</div>
 
     <div id="page-lobby" class="page active">
         <h1>🎮 THE RATIONAL CRYPTOGRAM</h1>
@@ -156,7 +171,7 @@
     </div>
 
     <div id="page-avatar-select" class="page">
-        <h1>🦊 CHOOSE YOUR AVATAR</h1>
+        <h1>🐾 CHOOSE YOUR AVATAR</h1>
         <p style="text-align:center;color:#004D73;margin-bottom:15px;">Select an avatar to display in the game lobby</p>
         <div class="avatar-grid" id="avatar-selector-grid"></div>
         <button class="primary" onclick="confirmAndJoinLobby()">⚡ ENTER THE LOBBY</button>
@@ -265,9 +280,12 @@ const app = initializeApp({
 const db = getDatabase(app);
 
 /* ── Constants ── */
-const MAX_PLAYERS = 50;
-const ROOM_CODE_LENGTH = 6;
-const GAME_DURATION = 180;
+const MAX_PLAYERS    = 50;
+const ROOM_CODE_LEN  = 6;
+const GAME_DURATION  = 180;   // seconds
+const SESSION_KEY    = 'rc_game_session';
+const AVATAR_IMG     = 'attached_assets/avatar_1783599904295.png';
+const AVATAR_COUNT   = 50;    // 10 cols × 5 rows
 
 /* ── Game Data ── */
 const gameData = [
@@ -312,39 +330,63 @@ const gameData = [
     }
 ];
 
-/* ── Avatar Pool ── */
-const avatarPool = [
-    "🦊","🦁","🐼","🐯","🐨","🐸","🦩","🦉","🐺","🦥","🐹","🐰","🦆","🦌","🐱","🐶",
-    "🤖","👽","👻","🦄","🐉","🦖","🦅","🐵","🐧","🐙","🐬","🧙‍♂️","🥷","🧑‍🚀","🤠",
-    "💎","👑","🚀","🌟","🔥","🔮","🍕","🎮","🎯","🍀","🎨","🎭"
-];
-
 /* ── State ── */
 let roomCode = "", playerName = "", playerId = "", isHost = false;
-let score = 0, currentLevelIndex = 0, timerInterval = null, startTime = null;
+let score = 0, currentLevelIndex = 0, timerInterval = null, gameStartAt = null;
 let uploads = {}, localGameStarted = false, solvedIndices = [], currentLobbyDataSnapshot = null;
-let selectedAvatar = "🦊", audioContext, bgMusicPlaying = false, bgMusicOscillators = [], targetImageScale = 1;
+let selectedAvatar = 0;   // avatar index 0–49
+let audioContext, bgMusicPlaying = false, bgMusicOscillators = [], targetImageScale = 1;
+
+/* ── Avatar sprite helpers ── */
+// The sheet is 10 cols × 5 rows. background-size 1000% 500% makes each cell
+// exactly fit the container. background-position uses the percentage formula:
+//   x = col / (cols-1) * 100%,  y = row / (rows-1) * 100%
+const avatarBg = (idx, size) => {
+    const i   = (Number.isInteger(idx) && idx >= 0 && idx < AVATAR_COUNT) ? idx : 0;
+    const col = i % 10, row = Math.floor(i / 10);
+    const x   = (col / 9 * 100).toFixed(2) + '%';
+    const y   = (row / 4 * 100).toFixed(2) + '%';
+    return `width:${size}px;height:${size}px;border-radius:50%;` +
+           `background-image:url('${AVATAR_IMG}');background-size:1000% 500%;` +
+           `background-position:${x} ${y};background-repeat:no-repeat;flex-shrink:0;display:inline-block;`;
+};
+const avatarDiv = (idx, size = 46) => `<div style="${avatarBg(idx, size)}"></div>`;
+
+/* ── Session persistence ── */
+const saveSession = () => {
+    if (!roomCode || !playerName) return;
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ roomCode, playerName, avatarIdx: selectedAvatar }));
+};
+const clearSession = () => localStorage.removeItem(SESSION_KEY);
 
 /* ── Utilities ── */
-const generateRoomCode = () => Math.random().toString(36).substring(2, 2 + ROOM_CODE_LENGTH).toUpperCase();
-const generatePlayerId = () => `P-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 8)}`;
-const getTimestamp = () => Date.now();
+const generateRoomCode = () => Math.random().toString(36).substring(2, 2 + ROOM_CODE_LEN).toUpperCase();
+const generatePlayerId = () => `P-${Date.now().toString(36)}-${Math.random().toString(36).substring(2,8)}`;
+const getTimestamp    = () => Date.now();
+const fmtTime = (secs) => `${String(Math.floor(secs/60)).padStart(2,'0')}:${String(secs%60).padStart(2,'0')}`;
 
-const logActivity = async (message) => {
+const logActivity = async (msg) => {
     if (!roomCode) return;
-    await set(ref(db, `rooms/${roomCode}/activity/${Date.now()}`), { message, timestamp: getTimestamp() });
+    await set(ref(db, `rooms/${roomCode}/activity/${Date.now()}`), { message: msg, timestamp: getTimestamp() });
 };
-
 const updateConnectedPlayers = async () => {
     const snap = await get(ref(db, `rooms/${roomCode}/players`));
-    const total = Object.keys(snap.val() || {}).length;
-    await update(ref(db, `rooms/${roomCode}/statistics`), { connectedPlayers: total });
+    await update(ref(db, `rooms/${roomCode}/statistics`), { connectedPlayers: Object.keys(snap.val() || {}).length });
 };
 
+/* ── Navigation (smooth) ── */
 window.navigate = (pageId) => {
-    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll(".page").forEach(p => {
+        if (p.classList.contains("active")) {
+            p.style.animation = "none"; // reset so next open re-animates
+            p.classList.remove("active");
+        }
+    });
     const page = document.getElementById(pageId);
-    if (page) page.classList.add("active");
+    if (!page) return;
+    // force reflow so animation restarts if same page re-opens
+    void page.offsetWidth;
+    page.classList.add("active");
 };
 window.toggleFullScreen = () => {
     if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
@@ -353,7 +395,6 @@ window.toggleFullScreen = () => {
 
 /* ── Audio ── */
 const initAudio = () => { try { if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {} };
-
 const playSound = (freq, dur) => {
     try {
         initAudio();
@@ -365,72 +406,68 @@ const playSound = (freq, dur) => {
         osc.start(audioContext.currentTime); osc.stop(audioContext.currentTime + dur);
     } catch(e) {}
 };
-
-const playCorrectBeep = () => playSound(880, 0.1);
-const playErrorBeep  = () => playSound(262, 0.15);
-const playSuccessSound = () => { playSound(523, 0.15); setTimeout(() => playSound(659, 0.15), 100); setTimeout(() => playSound(784, 0.3), 200); };
+const playCorrectBeep  = () => playSound(880, 0.1);
+const playErrorBeep    = () => playSound(262, 0.15);
+const playSuccessSound = () => { playSound(523,0.15); setTimeout(()=>playSound(659,0.15),100); setTimeout(()=>playSound(784,0.3),200); };
 
 const stopBackgroundMusic = () => {
     bgMusicPlaying = false;
-    bgMusicOscillators.forEach(osc => { try { osc.stop(); } catch(e) {} });
+    bgMusicOscillators.forEach(o => { try { o.stop(); } catch(e) {} });
     bgMusicOscillators = [];
     document.getElementById("musicToggle").textContent = "🔇";
 };
-
 const playBackgroundMusic = () => {
     try {
         initAudio();
         if (bgMusicPlaying) stopBackgroundMusic();
         bgMusicPlaying = true;
-        const createNote = (freq, startTime, duration, type = 'sine', volume = 0.03) => {
+        const note = (freq, st, dur, type='sine', vol=0.03) => {
             const osc = audioContext.createOscillator(), gain = audioContext.createGain();
             osc.type = type; osc.connect(gain); gain.connect(audioContext.destination);
             osc.frequency.value = freq;
-            gain.gain.setValueAtTime(0, startTime);
-            gain.gain.linearRampToValueAtTime(volume, startTime + 0.02);
-            gain.gain.linearRampToValueAtTime(0, startTime + duration);
-            osc.start(startTime); osc.stop(startTime + duration + 0.05);
+            gain.gain.setValueAtTime(0, st);
+            gain.gain.linearRampToValueAtTime(vol, st + 0.02);
+            gain.gain.linearRampToValueAtTime(0, st + dur);
+            osc.start(st); osc.stop(st + dur + 0.05);
             bgMusicOscillators.push(osc);
         };
         const loop = () => {
             if (!bgMusicPlaying) return;
             const t = audioContext.currentTime;
-            [196.00, 246.94, 293.66].forEach(f => createNote(f, t, 2.8, 'sine', 0.02));
-            createNote(392.00, t + 0.25, 0.6, 'triangle', 0.04);
-            createNote(329.63, t + 0.70, 0.6, 'triangle', 0.035);
+            [196,246.94,293.66].forEach(f => note(f, t, 2.8, 'sine', 0.02));
+            note(392, t+0.25, 0.6, 'triangle', 0.04);
+            note(329.63, t+0.70, 0.6, 'triangle', 0.035);
             setTimeout(loop, 2800);
         };
         loop();
         document.getElementById("musicToggle").textContent = "🎵";
     } catch(e) {}
 };
-
 window.toggleMusic = () => bgMusicPlaying ? stopBackgroundMusic() : playBackgroundMusic();
 
-/* ── Avatar UI ── */
+/* ── Avatar selector UI ── */
 const renderAvatarSelector = () => {
     const grid = document.getElementById("avatar-selector-grid");
     if (!grid) return;
     grid.innerHTML = "";
-    avatarPool.forEach(avatar => {
+    for (let i = 0; i < AVATAR_COUNT; i++) {
         const item = document.createElement("div");
-        item.className = "avatar-option" + (avatar === selectedAvatar ? " selected" : "");
-        item.innerText = avatar;
+        item.className = "avatar-option" + (i === selectedAvatar ? " selected" : "");
+        item.style.cssText = avatarBg(i, 58);
         item.onclick = () => {
             document.querySelectorAll(".avatar-option").forEach(el => el.classList.remove("selected"));
             item.classList.add("selected");
-            selectedAvatar = avatar;
+            selectedAvatar = i;
         };
         grid.appendChild(item);
-    });
+    }
 };
 
 window.goToAvatarSelection = () => {
-    const nameInput = document.getElementById("player-name").value.trim();
-    const codeInput = document.getElementById("join-code").value.trim();
-    if (!nameInput || !codeInput) { alert("Please fill up both your Name and the Room Code first!"); return; }
-    playerName = nameInput;
-    roomCode = codeInput.toUpperCase();
+    const name = document.getElementById("player-name").value.trim();
+    const code = document.getElementById("join-code").value.trim();
+    if (!name || !code) { alert("Please fill up both your Name and the Room Code first!"); return; }
+    playerName = name; roomCode = code.toUpperCase();
     renderAvatarSelector();
     navigate("page-avatar-select");
 };
@@ -438,14 +475,14 @@ window.goToAvatarSelection = () => {
 /* ── Scoreboard & Podium ── */
 const renderScoreboardData = (snapshot, containers) => {
     const data = snapshot.val();
-    const visualGrid = document.getElementById("lobby-visual-grid");
-    if (visualGrid) {
-        visualGrid.innerHTML = "";
+    const grid = document.getElementById("lobby-visual-grid");
+    if (grid) {
+        grid.innerHTML = "";
         if (data) Object.entries(data).forEach(([name, info]) => {
             const card = document.createElement("div");
             card.className = "lobby-user-card";
-            card.innerHTML = `<div class="lobby-user-avatar">${info.avatar || "👤"}</div><div class="lobby-user-name">${name}</div>`;
-            visualGrid.appendChild(card);
+            card.innerHTML = `<div class="lobby-user-avatar">${avatarDiv(info.avatar, 46)}</div><div class="lobby-user-name">${name}</div>`;
+            grid.appendChild(card);
         });
     }
     containers.forEach(id => {
@@ -453,72 +490,68 @@ const renderScoreboardData = (snapshot, containers) => {
         if (!el) return;
         el.innerHTML = "";
         if (!data) return;
-        const sorted = Object.entries(data).sort((a, b) => (b[1].score || 0) - (a[1].score || 0));
+        const sorted = Object.entries(data).sort((a,b) => (b[1].score||0) - (a[1].score||0));
         sorted.forEach(([name, info], idx) => {
-            const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '👤';
+            const medal = idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':'#'+(idx+1);
             const div = document.createElement("div");
             div.className = "score-row";
-            div.innerHTML = `<span>${medal} <b style='font-size:1.25rem;line-height:1;'>${info.avatar || "👤"}</b> ${name}</span><span>${info.score || 0} pts</span>`;
+            div.innerHTML = `<span>${medal} ${avatarDiv(info.avatar, 30)} ${name}</span><span>${info.score||0} pts</span>`;
             el.appendChild(div);
         });
     });
 };
 
-const constructWinnersPodium = (podiumContainerId) => {
-    const el = document.getElementById(podiumContainerId);
+const constructWinnersPodium = (id) => {
+    const el = document.getElementById(id);
     if (!el || !currentLobbyDataSnapshot) return;
-    const sorted = Object.entries(currentLobbyDataSnapshot).sort((a, b) => (b[1].score || 0) - (a[1].score || 0));
-    const [first, second, third] = [0, 1, 2].map(i => sorted[i] ? { name: sorted[i][0], ...sorted[i][1] } : null);
-    const col = (p, rank, cls, delay) => p ? `
-        <div class="podium-column" style="animation-delay:${delay}s">
-            <div class="podium-avatar">${p.avatar || "👤"}</div>
-            <div class="podium-name"${rank === 1 ? ' style="font-weight:900;color:#B8860B;"' : ''}>
-                ${rank === 1 ? '👑 ' : ''}${p.name}
-            </div>
-            <div class="podium-block ${cls}">
-                <span class="podium-rank">${rank}</span>
-                <span class="podium-score">${p.score} pts</span>
-            </div>
-        </div>` : '<div class="podium-column"></div>';
-    el.innerHTML = col(second, 2, 'podium-2nd', 0.2) + col(first, 1, 'podium-1st', 0) + col(third, 3, 'podium-3rd', 0.4);
+    const sorted = Object.entries(currentLobbyDataSnapshot).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
+    const p = [0,1,2].map(i => sorted[i] ? { name: sorted[i][0], ...sorted[i][1] } : null);
+    const col = (player, rank, cls, delay) => player
+        ? `<div class="podium-column" style="animation-delay:${delay}s">
+               <div class="podium-avatar">${avatarDiv(player.avatar, 52)}</div>
+               <div class="podium-name"${rank===1?' style="font-weight:900;color:#B8860B;"':''}>
+                   ${rank===1?'👑 ':''}${player.name}
+               </div>
+               <div class="podium-block ${cls}">
+                   <span class="podium-rank">${rank}</span>
+                   <span class="podium-score">${player.score||0} pts</span>
+               </div>
+           </div>`
+        : '<div class="podium-column"></div>';
+    el.innerHTML = col(p[1],2,'podium-2nd',0.2) + col(p[0],1,'podium-1st',0) + col(p[2],3,'podium-3rd',0.4);
 };
 
 /* ── Gallery / Zoom ── */
-const updateHostGalleryView = (uploadsData) => {
+const updateHostGalleryView = (data) => {
     const gallery = document.getElementById("gallery-container");
     if (!gallery) return;
-    const keys = Object.keys(uploadsData);
+    const keys = Object.keys(data);
     const countEl = document.getElementById("upload-count");
     if (countEl) countEl.innerText = keys.length;
-    if (keys.length === 0) { gallery.innerHTML = '<div class="no-uploads"><p>No submissions yet</p></div>'; return; }
+    if (!keys.length) { gallery.innerHTML = '<div class="no-uploads"><p>No submissions yet</p></div>'; return; }
     gallery.innerHTML = "";
-    Object.entries(uploadsData).forEach(([pName, imageData]) => {
+    Object.entries(data).forEach(([pName, imgData]) => {
         const item = document.createElement("div");
-        item.className = "gallery-item"; item.style.cursor = "pointer";
-        item.innerHTML = `<img src="${imageData}"><div class="gallery-item-label">${pName}</div>`;
-        item.onclick = () => window.launchTeacherZoomModal(imageData);
+        item.className = "gallery-item";
+        item.innerHTML = `<img src="${imgData}"><div class="gallery-item-label">${pName}</div>`;
+        item.onclick = () => window.launchTeacherZoomModal(imgData);
         gallery.appendChild(item);
     });
 };
-
-window.launchTeacherZoomModal = (imgSrc) => {
+window.launchTeacherZoomModal = (src) => {
     const img = document.getElementById("zoom-target-image");
-    img.src = imgSrc; img.style.transform = "scale(1)"; targetImageScale = 1;
+    img.src = src; img.style.transform = "scale(1)"; targetImageScale = 1;
     document.getElementById("teacher-zoom-modal").style.display = "flex";
 };
-window.closeZoomModal   = () => { document.getElementById("teacher-zoom-modal").style.display = "none"; };
-window.applyZoomAdjustment = (amount) => {
-    targetImageScale = Math.max(0.5, Math.min(4.0, targetImageScale + amount));
-    document.getElementById("zoom-target-image").style.transform = `scale(${targetImageScale})`;
-};
-window.resetZoomScale = () => { targetImageScale = 1; document.getElementById("zoom-target-image").style.transform = "scale(1)"; };
+window.closeZoomModal      = () => { document.getElementById("teacher-zoom-modal").style.display = "none"; };
+window.applyZoomAdjustment = (d) => { targetImageScale = Math.max(0.5,Math.min(4,targetImageScale+d)); document.getElementById("zoom-target-image").style.transform=`scale(${targetImageScale})`; };
+window.resetZoomScale      = () => { targetImageScale=1; document.getElementById("zoom-target-image").style.transform="scale(1)"; };
 
 /* ── Room Lifecycle ── */
 window.startAsHost = async () => {
     playerName = document.getElementById("player-name").value.trim();
     if (!playerName) { alert("Enter host name!"); return; }
     playerId = generatePlayerId(); isHost = true; roomCode = generateRoomCode();
-
     try {
         await set(ref(db, `rooms/${roomCode}/info`), {
             roomCode, hostName: playerName, status: "waiting",
@@ -527,7 +560,7 @@ window.startAsHost = async () => {
         });
         await update(ref(db, `rooms/${roomCode}`), {
             uploads: {},
-            statistics: { averageScore: 0, connectedPlayers: 0, finishedPlayers: 0 },
+            statistics: { averageScore:0, connectedPlayers:0, finishedPlayers:0 },
             activity: {}
         });
         await logActivity(`${playerName} created the room.`);
@@ -536,22 +569,17 @@ window.startAsHost = async () => {
         document.getElementById("start-game-btn").style.display = "block";
         document.getElementById("waiting-msg").style.display = "none";
 
-        const qrContainer = document.getElementById("qr-code");
-        qrContainer.innerHTML = "";
-        const joinURL = window.location.origin + window.location.pathname + "?room=" + roomCode;
-        try { new QRCode(qrContainer, { text: joinURL, width: 128, height: 128 }); } catch(e) {}
+        const qrEl = document.getElementById("qr-code");
+        qrEl.innerHTML = "";
+        try { new QRCode(qrEl, { text: location.origin + location.pathname + "?room=" + roomCode, width:128, height:128 }); } catch(e) {}
 
         setupRoomListeners(roomCode);
         navigate("page-scoreboard");
-
         onValue(ref(db, `rooms/${roomCode}/players`), (snap) => {
             currentLobbyDataSnapshot = snap.val();
-            renderScoreboardData(snap, ["scoreboard-container", "host-scoreboard-container"]);
+            renderScoreboardData(snap, ["scoreboard-container","host-scoreboard-container"]);
         });
-        onValue(ref(db, `rooms/${roomCode}/uploads`), (snap) => {
-            uploads = snap.val() || {};
-            updateHostGalleryView(uploads);
-        });
+        onValue(ref(db, `rooms/${roomCode}/uploads`), (snap) => { uploads = snap.val()||{}; updateHostGalleryView(uploads); });
     } catch(e) { console.error(e); alert("Unable to create room."); }
 };
 
@@ -559,13 +587,12 @@ window.confirmAndJoinLobby = async () => {
     playerName = document.getElementById("player-name").value.trim();
     if (!playerName) { alert("Enter your name!"); return; }
     playerId = generatePlayerId();
-    roomCode = roomCode.toUpperCase().trim();
-
+    roomCode  = roomCode.toUpperCase().trim();
     try {
-        const roomInfoSnap = await get(ref(db, `rooms/${roomCode}/info`));
-        if (!roomInfoSnap.exists()) { alert("Room not found."); return; }
-        const roomInfo = roomInfoSnap.val();
-        if (roomInfo.roomLocked) { alert("The game has already started."); return; }
+        const infoSnap = await get(ref(db, `rooms/${roomCode}/info`));
+        if (!infoSnap.exists()) { alert("Room not found."); return; }
+        const info = infoSnap.val();
+        if (info.roomLocked) { alert("The game has already started."); return; }
 
         const playersSnap = await get(ref(db, `rooms/${roomCode}/players`));
         const players = playersSnap.val() || {};
@@ -573,28 +600,20 @@ window.confirmAndJoinLobby = async () => {
         if (players[playerName]) { alert("This name is already being used.\nPlease enter another name."); return; }
 
         await set(ref(db, `rooms/${roomCode}/players/${playerName}`), {
-            score: 0, avatar: selectedAvatar, connected: true, finished: false, uploaded: false, joinedAt: getTimestamp()
+            score:0, avatar: selectedAvatar, connected:true, finished:false, uploaded:false, joinedAt: getTimestamp()
         });
-        await update(ref(db, `rooms/${roomCode}/statistics`), { connectedPlayers: Object.keys(players).length + 1 });
+        await update(ref(db, `rooms/${roomCode}/statistics`), { connectedPlayers: Object.keys(players).length+1 });
         await logActivity(`${playerName} joined the lobby.`);
         await updateConnectedPlayers();
 
+        saveSession();
         setupRoomListeners(roomCode);
-        setupHostDashboardListeners();
         navigate("page-scoreboard");
-
         onValue(ref(db, `rooms/${roomCode}/players`), (snap) => {
             currentLobbyDataSnapshot = snap.val();
             renderScoreboardData(snap, ["scoreboard-container"]);
         });
     } catch(e) { console.error(e); alert("Unable to join room."); }
-};
-
-const setupHostDashboardListeners = () => {
-    onValue(ref(db, `rooms/${roomCode}/statistics`), (snap) => {
-        const stats = snap.val();
-        if (stats) console.log("Statistics:", stats);
-    });
 };
 
 const setupRoomListeners = (room) => {
@@ -603,14 +622,21 @@ const setupRoomListeners = (room) => {
         const info = snap.val();
         if (!info) return;
 
-        if (info.gameStarted && !isHost && !localGameStarted) { localGameStarted = true; startGame(); }
+        // Non-host: start game when host fires the signal
+        if (info.gameStarted && !isHost && !localGameStarted) {
+            localGameStarted = true;
+            gameStartAt = info.gameStartAt || Date.now();
+            saveSession();
+            startGame();
+        }
 
+        // Level sync for all
         if (info.currentLevel) {
-            const levelText = "LEVEL " + info.currentLevel;
-            const indicator = document.getElementById("lvl-indicator");
-            const hostLevel = document.getElementById("host-game-level");
-            if (indicator) indicator.innerText = levelText;
-            if (hostLevel)  hostLevel.innerText = levelText;
+            const txt = "LEVEL " + info.currentLevel;
+            const ind = document.getElementById("lvl-indicator");
+            const hLv = document.getElementById("host-game-level");
+            if (ind) ind.innerText = txt;
+            if (hLv) hLv.innerText = txt;
             if (!isHost) { currentLevelIndex = info.currentLevel - 1; loadLevel(); }
         }
     });
@@ -618,41 +644,102 @@ const setupRoomListeners = (room) => {
 
 window.hostStartGame = async () => {
     try {
-        await update(ref(db, `rooms/${roomCode}/info`), { gameStarted: true, roomLocked: true, status: "running", currentLevel: 1 });
-        await update(ref(db, `rooms/${roomCode}`), { gameStarted: true, level: 1 });
+        gameStartAt = Date.now();
+        await update(ref(db, `rooms/${roomCode}/info`), {
+            gameStarted:true, roomLocked:true, status:"running", currentLevel:1, gameStartAt
+        });
         await logActivity(`${playerName} started the game.`);
         localGameStarted = true; currentLevelIndex = 0;
         startGame();
-    } catch(e) { console.error("Failed to start game:", e); alert("Unable to start the game."); }
+    } catch(e) { console.error(e); alert("Unable to start the game."); }
+};
+
+/* ── Reconnection ── */
+const showReconnectBanner = (msg = "🔄 Reconnecting to your game...") => {
+    const b = document.getElementById("reconnect-banner");
+    b.textContent = msg; b.style.display = "block";
+    setTimeout(() => { b.style.display = "none"; }, 3500);
+};
+
+const tryReconnect = async () => {
+    const saved = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+    if (!saved?.roomCode || !saved?.playerName) return;
+
+    try {
+        const [infoSnap, playerSnap] = await Promise.all([
+            get(ref(db, `rooms/${saved.roomCode}/info`)),
+            get(ref(db, `rooms/${saved.roomCode}/players/${saved.playerName}`))
+        ]);
+        if (!infoSnap.exists() || !playerSnap.exists()) { clearSession(); return; }
+        const info = infoSnap.val(), playerData = playerSnap.val();
+
+        // Only reconnect to actively running games
+        if (!info.gameStarted) { clearSession(); return; }
+
+        // If game time already ran out, don't reconnect
+        const elapsed = Math.floor((Date.now() - (info.gameStartAt || Date.now())) / 1000);
+        if (elapsed >= GAME_DURATION) { clearSession(); return; }
+
+        // Restore all state from Firebase
+        roomCode         = saved.roomCode;
+        playerName       = saved.playerName;
+        selectedAvatar   = saved.avatarIdx ?? 0;
+        score            = playerData.score || 0;
+        currentLevelIndex = (info.currentLevel || 1) - 1;
+        localGameStarted = true;
+        isHost           = false;
+        gameStartAt      = info.gameStartAt || Date.now();
+
+        // Mark player as reconnected
+        await update(ref(db, `rooms/${roomCode}/players/${playerName}`), { connected: true });
+
+        // Wire up all listeners
+        setupRoomListeners(roomCode);
+        onValue(ref(db, `rooms/${roomCode}/players`), (snap) => {
+            currentLobbyDataSnapshot = snap.val();
+        });
+        onValue(ref(db, `rooms/${roomCode}/uploads`), (snap) => { uploads = snap.val()||{}; });
+
+        showReconnectBanner(`✅ Rejoined! Level ${info.currentLevel} · Score ${score}`);
+        startGame();
+
+    } catch(e) {
+        console.error("Reconnect failed:", e);
+        clearSession();
+    }
 };
 
 /* ── Game Engine ── */
+// Timer is derived from server-side gameStartAt so every client stays in sync,
+// and reconnecting players jump to the correct remaining time automatically.
 const startGame = () => {
-    score = 0; startTime = new Date();
-    let timeLeft = GAME_DURATION;
+    if (timerInterval) clearInterval(timerInterval);
     playBackgroundMusic();
-    const timerEl = document.getElementById("timer"), hostTimerEl = document.getElementById("host-timer");
-    const updateTimer = () => {
-        const mins = Math.floor(timeLeft / 60), secs = timeLeft % 60;
-        const str = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
-        if (timerEl) timerEl.innerText = str;
+    const timerEl     = document.getElementById("timer");
+    const hostTimerEl = document.getElementById("host-timer");
+
+    const tick = () => {
+        const elapsed   = Math.floor((Date.now() - gameStartAt) / 1000);
+        const timeLeft  = Math.max(0, GAME_DURATION - elapsed);
+        const str       = fmtTime(timeLeft);
+        if (timerEl)     timerEl.innerText = str;
         if (hostTimerEl) hostTimerEl.innerText = str;
         if (timeLeft <= 30 && timerEl) timerEl.classList.add("warning");
         if (timeLeft <= 0) { clearInterval(timerInterval); timeUp(); }
-        timeLeft--;
     };
-    timerInterval = setInterval(updateTimer, 1000);
-    updateTimer();
-    if (isHost) { navigate("page-host-game"); } else { navigate("page-game"); loadLevel(); }
+    timerInterval = setInterval(tick, 1000);
+    tick();
+
+    if (isHost) { navigate("page-host-game"); }
+    else        { navigate("page-game"); loadLevel(); }
 };
 
 const updateCipherDisplay = () => {
     const level = gameData[currentLevelIndex];
     if (!level) return;
-    const display = level.phrase.split("").map((ch, i) =>
-        `<span class="${solvedIndices.includes(i) ? 'revealed-letter' : 'hidden-letter'}">${solvedIndices.includes(i) ? ch : '_'}</span>`
+    document.getElementById("cipher-output").innerHTML = level.phrase.split("").map((ch,i) =>
+        `<span class="${solvedIndices.includes(i)?'revealed-letter':'hidden-letter'}">${solvedIndices.includes(i)?ch:'_'}</span>`
     ).join(" ");
-    document.getElementById("cipher-output").innerHTML = display;
 };
 
 const loadLevel = () => {
@@ -675,12 +762,13 @@ window.liveCheckAnswer = (idx) => {
     const level = gameData[currentLevelIndex];
     if (!level) return;
     const input = document.getElementById(`ans-${idx}`);
-    const userAns = parseInt(input.value);
-    if (userAns === level.eqs[idx].a) {
-        if (!solvedIndices.includes(idx)) { playCorrectBeep(); input.style.border = "2px solid green"; solvedIndices.push(idx); updateCipherDisplay(); }
-    } else {
-        input.style.border = "2px solid #00BCD4";
-    }
+    const val   = parseInt(input.value);
+    if (val === level.eqs[idx].a) {
+        if (!solvedIndices.includes(idx)) {
+            playCorrectBeep(); input.style.border = "2px solid green";
+            solvedIndices.push(idx); updateCipherDisplay();
+        }
+    } else { input.style.border = "2px solid #00BCD4"; }
 };
 
 window.checkAnswers = () => {
@@ -688,8 +776,8 @@ window.checkAnswers = () => {
     let allCorrect = true;
     level.eqs.forEach((eq, idx) => {
         const input = document.getElementById(`ans-${idx}`);
-        const userAns = parseInt(input.value);
-        if (userAns !== eq.a) { allCorrect = false; playErrorBeep(); input.style.border = "2px solid red"; }
+        const val   = parseInt(input.value);
+        if (val !== eq.a) { allCorrect = false; playErrorBeep(); input.style.border = "2px solid red"; }
         else { input.style.border = "2px solid green"; if (!solvedIndices.includes(idx)) solvedIndices.push(idx); }
     });
     updateCipherDisplay();
@@ -699,8 +787,8 @@ window.checkAnswers = () => {
         update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score });
         setTimeout(() => {
             document.getElementById("trivia-content").innerText = level.trivia;
-            document.getElementById("trivia-author").innerText = `— ${level.author}`;
-            document.getElementById("step-by-step").innerText = level.steps;
+            document.getElementById("trivia-author").innerText  = `— ${level.author}`;
+            document.getElementById("step-by-step").innerText   = level.steps;
             navigate("page-trivia");
         }, 500);
     }
@@ -709,6 +797,7 @@ window.checkAnswers = () => {
 window.nextLevel = () => {
     currentLevelIndex++;
     if (currentLevelIndex >= gameData.length) { endGame(); return; }
+    // Host broadcasts new level through Firebase; non-hosts pick it up via listener
     if (isHost) update(ref(db, `rooms/${roomCode}/info`), { currentLevel: currentLevelIndex + 1 });
     loadLevel(); navigate("page-game");
 };
@@ -716,16 +805,16 @@ window.nextLevel = () => {
 const timeUp = () => endGame();
 
 const endGame = () => {
-    clearInterval(timerInterval); stopBackgroundMusic();
-    const elapsed = Math.floor((new Date() - startTime) / 1000);
-    const mins = Math.floor(elapsed / 60), secs = elapsed % 60;
+    clearInterval(timerInterval); stopBackgroundMusic(); clearSession();
+    const elapsed = gameStartAt ? Math.floor((Date.now() - gameStartAt) / 1000) : 0;
+    const mins = Math.floor(elapsed/60), secs = elapsed%60;
     if (isHost) {
         navigate("page-host-uploads");
         constructWinnersPodium("host-winners-podium");
         updateHostGalleryView(uploads);
     } else {
         document.getElementById("final-score").innerText = score;
-        document.getElementById("final-time").innerText = `${mins}m ${secs}s`;
+        document.getElementById("final-time").innerText  = `${mins}m ${secs}s`;
         navigate("page-end-game");
         constructWinnersPodium("game-winners-podium");
     }
@@ -742,9 +831,9 @@ window.handleSolutionUpload = () => {
         const img = new Image();
         img.onload = () => {
             const canvas = document.createElement("canvas");
-            const MAX_WIDTH = 500, scale = MAX_WIDTH / img.width;
-            canvas.width = MAX_WIDTH; canvas.height = img.height * scale;
-            canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+            const W = 500, scale = W / img.width;
+            canvas.width = W; canvas.height = img.height * scale;
+            canvas.getContext("2d").drawImage(img, 0, 0, W, canvas.height);
             set(ref(db, `rooms/${roomCode}/uploads/${playerName}`), canvas.toDataURL("image/jpeg", 0.6))
                 .then(() => { statusDiv.className = "upload-status upload-success"; statusDiv.innerText = "✓ Photo uploaded successfully!"; })
                 .catch(() => { statusDiv.className = "upload-status upload-error"; statusDiv.innerText = "Upload failed. Database payload error."; });
@@ -756,16 +845,22 @@ window.handleSolutionUpload = () => {
 
 /* ── Reset ── */
 window.backToLobby = () => {
+    clearSession();
     roomCode = ""; playerName = ""; isHost = false; score = 0;
     currentLevelIndex = 0; localGameStarted = false; solvedIndices = [];
+    gameStartAt = null; if (timerInterval) clearInterval(timerInterval);
     navigate("page-lobby");
 };
 
-/* ── URL Params ── */
+/* ── URL params: pre-fill room code ── */
 try {
-    const room = new URLSearchParams(window.location.search).get('room') || new URLSearchParams(window.location.search).get('code');
-    if (room) document.getElementById('join-code').value = room.toUpperCase();
+    const p = new URLSearchParams(location.search);
+    const r = p.get('room') || p.get('code');
+    if (r) document.getElementById('join-code').value = r.toUpperCase();
 } catch(e) {}
+
+/* ── Auto-reconnect on load ── */
+tryReconnect();
 </script>
 </body>
 </html>
