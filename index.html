@@ -105,7 +105,7 @@
         .eq-card { background: rgba(0,188,212,0.08); padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid rgba(0,188,212,0.3); display: flex; align-items: center; justify-content: space-between; }
         .eq-card div { font-size: 1.1rem; color: #0097A7; flex-grow: 1; }
         .eq-card input { width: 80px; padding: 10px; text-align: center; font-weight: bold; margin-left: 15px; }
-    
+        </style>
 
         .frac { display: inline-block; position: relative; vertical-align: middle; margin: 0 2px; }
         .frac .numb, .frac span:last-child { display: block; padding: 4px 6px; text-align: center; font-size: 0.9em; }
@@ -294,11 +294,11 @@ const gameData = [
     {
         lvl: 1, phrase: "GAUSS", clue: "💡 Use cross multiplication.",
         eqs: [
-            { h: `<div class="frac"><span class="numb"> x </span><span> 4 </span></div> =  2`, a: 8 },
-            { h: `<div class="frac"><span class="numb"> 48 </span><span> 3x </span></div> =  4`, a: 4 },
-            { h: `<div class="frac"><span class="numb"> 8x </span><span>64</span></div> =  1`, a: 8 },
-            { h: `<div class="frac"><span class="numb"> 2x </span><span>3</span></div> =  6`, a: 9 },
-            { h: `<div class="frac"><span class="numb"> 5x </span><span>4</span></div> =  5`, a: 4 }
+            { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> = 2`, a: 8 },
+            { h: `<div class="frac"><span class="numb">48</span><span>3x</span></div> = 4`, a: 4 },
+            { h: `<div class="frac"><span class="numb">8x</span><span>64</span></div> = 1`, a: 8 },
+            { h: `<div class="frac"><span class="numb">2x</span><span>3</span></div> = 6`, a: 9 },
+            { h: `<div class="frac"><span class="numb">5x</span><span>4</span></div> = 5`, a: 4 }
         ],
         trivia: "Carl Friedrich Gauss, the 'Prince of Mathematicians,' made groundbreaking contributions to statistics, algebra, and number theory.",
         author: "Carl Friedrich Gauss (1777–1855)",
@@ -307,11 +307,11 @@ const gameData = [
     {
         lvl: 2, phrase: "INDIA", clue: "🎯 Clear the denominator first.",
         eqs: [
-            { h: `<div class="frac"><span class="numb"> (x+4) </span><span> 2 </span></div> = 10`, a: 16 },
-            { h: `<div class="frac"><span class="numb"> (x+17) </span><span> 3 </span></div> = 9`, a: 10 },
-            { h: `<div class="frac"><span class="numb"> (x+1) </span><span> 3 </span></div> = 5`, a: 14 },
-            { h: `<div class="frac"><span class="numb"> 8 </span><span> (x-2) </span></div> = 4`, a: 4 },
-            { h: `<div class="frac"><span class="numb"> 4 </span><span> (x-1) </span></div> = 2`, a: 3 }
+            { h: `<div class="frac"><span class="numb">(x+4)</span><span>2</span></div> = 10`, a: 16 },
+            { h: `<div class="frac"><span class="numb">(x+17)</span><span>3</span></div> = 9`, a: 10 },
+            { h: `<div class="frac"><span class="numb">(x+1)</span><span>3</span></div> = 5`, a: 14 },
+            { h: `<div class="frac"><span class="numb">8</span><span>(x-2)</span></div> = 4`, a: 4 },
+            { h: `<div class="frac"><span class="numb">4</span><span>(x-1)</span></div> = 2`, a: 3 }
         ],
         trivia: "Ancient India developed the concept of zero as a number, not just a placeholder. This was revolutionary for mathematics!",
         author: "Brahmagupta (598–668 CE)",
@@ -320,11 +320,11 @@ const gameData = [
     {
         lvl: 3, phrase: "EULER", clue: "🚀 Apply all your algebra skills.",
         eqs: [
-            { h: `<div class="frac"><span class="numb"> x </span><span> 5 </span></div> +  2 = 7`, a: 25 },
-            { h: `<div class="frac"><span class="numb"> 30 </span><span> x </span></div> -  1 = 2`, a: 10 },
-            { h: `<div class="frac"><span class="numb"> x </span><span> 3 </span></div> +  4 = 14`, a: 30 },
-            { h: `<div class="frac"><span class="numb"> 45 </span><span> x </span></div> - 3 = 2`, a: 9 },
-            { h: `<div class="frac"><span class="numb"> x </span><span> 4 </span></div> + 1 = 6`, a: 20 }
+            { h: `<div class="frac"><span class="numb">x</span><span>5</span></div> + 2 = 7`, a: 25 },
+            { h: `<div class="frac"><span class="numb">30</span><span>x</span></div> - 1 = 2`, a: 10 },
+            { h: `<div class="frac"><span class="numb">x</span><span>3</span></div> + 4 = 14`, a: 30 },
+            { h: `<div class="frac"><span class="numb">45</span><span>x</span></div> - 3 = 2`, a: 9 },
+            { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> + 1 = 6`, a: 20 }
         ],
         trivia: "Leonhard Euler invented many mathematical notations we use today, including f(x) and the number e.",
         author: "Leonhard Euler (1707–1783)",
