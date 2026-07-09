@@ -507,6 +507,8 @@ function renderAvatarSelector() {
 window.confirmAndJoinLobby = function() {
     set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0, avatar: selectedAvatar });
     setupRoomListeners(roomCode);
+    if(data.startTime){
+    
     navigate("page-scoreboard");
     onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
         currentLobbyDataSnapshot = snapshot.val();
@@ -556,10 +558,20 @@ const gameData = [
     }
 ];
 
-let roomCode = "", playerName = "", isHost = false, score = 0, currentLevelIndex = 0, timerInterval, startTime;
-let uploads = {};
-let localGameStarted = false;
-let solvedIndices = [];
+let roomCode = "";
+let playerName = "";
+let isHost = false;
+
+let score = 0;
+let currentLevelIndex = 0;
+
+let timerInterval = null;
+
+let roomStartTime = 0;
+let roomDuration = 180;
+
+let gameRunning = false;
+let startTime = null;
 
 function renderScoreboardData(snapshot, containers) {
     const data = snapshot.val();
@@ -728,18 +740,26 @@ window.startAsHost = function() {
     });
 };
 
-window.hostStartGame = function() {
-    update(ref(db, "rooms/" + roomCode), { gameStarted: true, level: 1 });
+window.hostStartGame = function () {
+
+    const now = Date.now();
+    update(ref(db, "rooms/" + roomCode), {
+        gameStarted: true,
+        level: 1,
+        startTime: now,
+        duration: 180
+    });
     localGameStarted = true;
-    startGame();
 };
 
 function setupRoomListeners(room) {
+    
     if (!room) return;
     onValue(ref(db, `rooms/${room}`), (snapshot) => {
         const data = snapshot.val();
         if (!data) return;
-
+            roomStartTime = data.startTime || 0;
+            roomDuration = data.duration || 180;
         if (data.gameStarted === true && !isHost && !localGameStarted) {
             localGameStarted = true;
             startGame();
@@ -758,18 +778,79 @@ function setupRoomListeners(room) {
         }
     });
 }
-
 function startGame() {
-    score = 0;
-    startTime = new Date();
-    let timeLeft = 180;
-    playBackgroundMusic();
-    const timerDisplay = document.getElementById("timer");
-    const hostTimerDisplay = document.getElementById("host-timer");
 
-    function updateTimer() {
-        const mins = Math.floor(timeLeft / 60);
-        const secs = timeLeft % 60;
+    if (gameRunning) return;
+
+    gameRunning = true;
+
+    score = score || 0;
+
+    startTime = new Date();
+
+    playBackgroundMusic();
+
+    if (timerInterval)
+        clearInterval(timerInterval);
+
+    if (isHost)
+        navigate("page-host-game");
+    else
+        navigate("page-game");
+
+    if (!isHost)
+        loadLevel();
+
+    const timerDisplay =
+        document.getElementById("timer");
+
+    const hostTimerDisplay =
+        document.getElementById("host-timer");
+
+    function updateClock() {
+        if (!roomStartTime)
+            return;
+        const elapsed =
+            Math.floor(
+                (Date.now() - roomStartTime) / 1000
+            );
+        let remaining =
+            roomDuration - elapsed;
+        if (remaining < 0)
+            remaining = 0;
+        const mins =
+            Math.floor(remaining / 60);
+        const secs =
+            remaining % 60;
+        const text =
+            `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+        if (timerDisplay)
+            timerDisplay.innerText = text;
+        if (hostTimerDisplay)
+            hostTimerDisplay.innerText = text;
+        if (remaining <= 30) {
+            timerDisplay?.classList.add("warning");
+        }
+        if (remaining <= 0) {
+            clearInterval(timerInterval);
+            gameRunning = false;
+            endGame();
+        }
+    }
+    updateClock();
+    timerInterval = setInterval(updateClock,1000);
+}
+    function updateTimer(timeLeft) {
+    if(timeLeft < 0) timeLeft = 0;
+    const mins = Math.floor(timeLeft/60);
+    const secs = timeLeft%60;
+    const timeStr = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+    if(timerDisplay) timerDisplay.innerText = timeStr;
+    if(hostTimerDisplay) hostTimerDisplay.innerText = timeStr;
+    if(timeLeft<=30) timerDisplay.classList.add("warning");
+    if(timeLeft<=0) 
+        endGame();
+}
         const timeStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
         if (timerDisplay) timerDisplay.innerText = timeStr;
         if (hostTimerDisplay) hostTimerDisplay.innerText = timeStr;
@@ -779,7 +860,11 @@ function startGame() {
         timeLeft--;
     }
 
-    timerInterval = setInterval(updateTimer, 1000);
+    timerInterval =
+setInterval(()=>{
+    const elapsed = Math.floor((Date.now()-roomStartTime)/1000);
+    const remaining = roomDuration-elapsed;
+    updateTimer(remaining);},1000);
     updateTimer();
     if (isHost) { navigate("page-host-game"); } else { navigate("page-game"); loadLevel(); }
 }
@@ -973,7 +1058,13 @@ window.joinRoom = async function() {
 
 window.backToLobby = function() {
     roomCode = ""; playerName = "";
-    isHost = false; score = 0; currentLevelIndex = 0; localGameStarted = false; solvedIndices = [];
+    isHost = false; score = 0; currentLevelIndex = 0; localGameStarted=false;
+gameRunning=false;
+if(timerInterval){
+    clearInterval(timerInterval);
+    timerInterval=null;
+} 
+solvedIndices = [];
     navigate("page-lobby");
 };
 window.navigate = function(pageId) {
