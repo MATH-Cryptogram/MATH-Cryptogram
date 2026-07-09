@@ -99,16 +99,17 @@
         }
         .revealed-letter { color: #4CAF50; font-weight: 900; }
         .hidden-letter { color: #9ECAE1; }
-        .clue-box { background: rgba(76,175,80,0.1); padding: 15px; border-left: 4px solid #4CAF50; border-radius: 8px; margin: 15px 0; font-style: italic; color: #004D73;
-        }
+        .clue-box { background: rgba(76,175,80,0.1); padding: 15px; border-left: 4px solid #4CAF50; border-radius: 8px; margin: 15px 0; font-style: italic; color: #004D73; }
+        
         .eq-card { background: rgba(0,188,212,0.08); padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid rgba(0,188,212,0.3); display: flex; align-items: center; justify-content: space-between; }
         .eq-card div { font-size: 1.1rem; color: #0097A7; flex-grow: 1; }
-        .eq-card input { width: 80px; padding: 10px; text-align: center; font-weight: bold; margin-left: 15px; 
-        }
+        .eq-card input { width: 80px; padding: 10px; text-align: center; font-weight: bold; margin-left: 15px; }
+    
+
         .frac { display: inline-block; position: relative; vertical-align: middle; margin: 0 2px; }
         .frac .numb, .frac span:last-child { display: block; padding: 4px 6px; text-align: center; font-size: 0.9em; }
-        .frac .numb { border-bottom: 1px solid currentColor; 
-        }
+        .frac .numb { border-bottom: 1px solid currentColor; }
+
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(0,188,212,0.3); gap: 10px; }
         .top-bar span { font-weight: bold; color: #0097A7; font-size: 1.1rem; }
         #timer { font-size: 1.3rem; color: #00838F; transition: color 0.3s; }
@@ -284,8 +285,6 @@ const MAX_PLAYERS    = 50;
 const ROOM_CODE_LEN  = 6;
 const GAME_DURATION  = 180;   // seconds
 const SESSION_KEY    = 'rc_game_session';
-const AVATAR_IMG     = 'attached_assets/avatar_1783599904295.png';
-const AVATAR_COUNT   = 50;    // 10 cols × 5 rows
 
 /* ── Game Data ── */
 const gameData = [
