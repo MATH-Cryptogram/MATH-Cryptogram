@@ -281,10 +281,12 @@ const db = getDatabase(app);
 /* ── Constants ── */
 const MAX_PLAYERS    = 50;
 const ROOM_CODE_LEN  = 6;
-const GAME_DURATION  = 180;   // seconds
+const GAME_DURATION  = 180;
 const SESSION_KEY    = 'rc_game_session';
-const AVATAR_IMG     = 'avatar.jpg'; 
-const AVATAR_COUNT   = 36;    // 9 columns × 4 rows
+const AVATAR_IMG     = 'avatar.jpg'; // Ensure this matches your file
+const AVATAR_COUNT   = 36;           // Set to match your grid
+const COLS           = 9;            // Update to your actual image columns
+const ROWS           = 4;            // Update to your actual image rows
 
 /* ── Game Data ── */
 const gameData = [
@@ -764,8 +766,7 @@ window.liveCheckAnswer = (idx) => {
     const input = document.getElementById(`ans-${idx}`);
     const val   = parseInt(input.value);
     
-    if (val === level.eqs[idx].a && !solvedIndices.includes(idx)) {
-        playCorrectBeep();
+    if (val === level.eqs[idx].a && !solvedIndices.includes(idx)) { playCorrectBeep();
         input.style.border = "2px solid green";
         input.disabled = true; // Lock after correct
         solvedIndices.push(idx);
