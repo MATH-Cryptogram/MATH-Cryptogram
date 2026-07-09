@@ -101,9 +101,11 @@
         .hidden-letter { color: #9ECAE1; }
         .clue-box { background: rgba(76,175,80,0.1); padding: 15px; border-left: 4px solid #4CAF50; border-radius: 8px; margin: 15px 0; font-style: italic; color: #004D73; }
 
-        .eq-card { background: rgba(0,188,212,0.08); padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid rgba(0,188,212,0.3); }
-        .eq-card div { font-size: 1.1rem; margin-bottom: 10px; color: #0097A7; }
-        .eq-card input { width: 100px; padding: 10px; text-align: center; font-weight: bold; margin: 10px auto; display: block; }
+        <style>
+        .eq-card { background: rgba(0,188,212,0.08); padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid rgba(0,188,212,0.3); display: flex; align-items: center; justify-content: space-between; }
+        .eq-card div { font-size: 1.1rem; color: #0097A7; flex-grow: 1; }
+        .eq-card input { width: 80px; padding: 10px; text-align: center; font-weight: bold; margin-left: 15px; }
+        </style>
 
         .frac { display: inline-block; position: relative; vertical-align: middle; margin: 0 2px; }
         .frac .numb, .frac span:last-child { display: block; padding: 4px 6px; text-align: center; font-size: 0.9em; }
@@ -292,11 +294,11 @@ const gameData = [
     {
         lvl: 1, phrase: "GAUSS", clue: "💡 Use cross multiplication.",
         eqs: [
-            { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> = 2`, a: 8 },
-            { h: `<div class="frac"><span class="numb">48</span><span>3x</span></div> = 4`, a: 4 },
-            { h: `<div class="frac"><span class="numb">8x</span><span>64</span></div> = 1`, a: 8 },
-            { h: `<div class="frac"><span class="numb">2x</span><span>3</span></div> = 6`, a: 9 },
-            { h: `<div class="frac"><span class="numb">5x</span><span>4</span></div> = 5`, a: 4 }
+            { h: `<div class="frac"><span class="numb"> x </span><span> 4 </span></div> =  2`, a: 8 },
+            { h: `<div class="frac"><span class="numb"> 48 </span><span> 3x </span></div> =  4`, a: 4 },
+            { h: `<div class="frac"><span class="numb"> 8x </span><span>64</span></div> =  1`, a: 8 },
+            { h: `<div class="frac"><span class="numb"> 2x </span><span>3</span></div> =  6`, a: 9 },
+            { h: `<div class="frac"><span class="numb"> 5x </span><span>4</span></div> =  5`, a: 4 }
         ],
         trivia: "Carl Friedrich Gauss, the 'Prince of Mathematicians,' made groundbreaking contributions to statistics, algebra, and number theory.",
         author: "Carl Friedrich Gauss (1777–1855)",
@@ -305,11 +307,11 @@ const gameData = [
     {
         lvl: 2, phrase: "INDIA", clue: "🎯 Clear the denominator first.",
         eqs: [
-            { h: `<div class="frac"><span class="numb">(x+4)</span><span>2</span></div> = 10`, a: 16 },
-            { h: `<div class="frac"><span class="numb">(x+17)</span><span>3</span></div> = 9`, a: 10 },
-            { h: `<div class="frac"><span class="numb">(x+1)</span><span>3</span></div> = 5`, a: 14 },
-            { h: `<div class="frac"><span class="numb">8</span><span>(x-2)</span></div> = 4`, a: 4 },
-            { h: `<div class="frac"><span class="numb">4</span><span>(x-1)</span></div> = 2`, a: 3 }
+            { h: `<div class="frac"><span class="numb"> (x+4) </span><span> 2 </span></div> = 10`, a: 16 },
+            { h: `<div class="frac"><span class="numb"> (x+17) </span><span> 3 </span></div> = 9`, a: 10 },
+            { h: `<div class="frac"><span class="numb"> (x+1) </span><span> 3 </span></div> = 5`, a: 14 },
+            { h: `<div class="frac"><span class="numb"> 8 </span><span> (x-2) </span></div> = 4`, a: 4 },
+            { h: `<div class="frac"><span class="numb"> 4 </span><span> (x-1) </span></div> = 2`, a: 3 }
         ],
         trivia: "Ancient India developed the concept of zero as a number, not just a placeholder. This was revolutionary for mathematics!",
         author: "Brahmagupta (598–668 CE)",
@@ -318,11 +320,11 @@ const gameData = [
     {
         lvl: 3, phrase: "EULER", clue: "🚀 Apply all your algebra skills.",
         eqs: [
-            { h: `<div class="frac"><span class="numb">x</span><span>5</span></div> + 2 = 7`, a: 25 },
-            { h: `<div class="frac"><span class="numb">30</span><span>x</span></div> - 1 = 2`, a: 10 },
-            { h: `<div class="frac"><span class="numb">x</span><span>3</span></div> + 4 = 14`, a: 30 },
-            { h: `<div class="frac"><span class="numb">45</span><span>x</span></div> - 3 = 2`, a: 9 },
-            { h: `<div class="frac"><span class="numb">x</span><span>4</span></div> + 1 = 6`, a: 20 }
+            { h: `<div class="frac"><span class="numb"> x </span><span> 5 </span></div> +  2 = 7`, a: 25 },
+            { h: `<div class="frac"><span class="numb"> 30 </span><span> x </span></div> -  1 = 2`, a: 10 },
+            { h: `<div class="frac"><span class="numb"> x </span><span> 3 </span></div> +  4 = 14`, a: 30 },
+            { h: `<div class="frac"><span class="numb"> 45 </span><span> x </span></div> -  3 = 2`, a: 9 },
+            { h: `<div class="frac"><span class="numb"> x </span><span> 4 </span></div> + 1 = 6`, a: 20 }
         ],
         trivia: "Leonhard Euler invented many mathematical notations we use today, including f(x) and the number e.",
         author: "Leonhard Euler (1707–1783)",
@@ -337,20 +339,34 @@ let uploads = {}, localGameStarted = false, solvedIndices = [], currentLobbyData
 let selectedAvatar = 0;   // avatar index 0–49
 let audioContext, bgMusicPlaying = false, bgMusicOscillators = [], targetImageScale = 1;
 
-/* ── Avatar sprite helpers ── */
-// The sheet is 10 cols × 5 rows. background-size 1000% 500% makes each cell
-// exactly fit the container. background-position uses the percentage formula:
-//   x = col / (cols-1) * 100%,  y = row / (rows-1) * 100%
-const avatarBg = (idx, size) => {
-    const i   = (Number.isInteger(idx) && idx >= 0 && idx < AVATAR_COUNT) ? idx : 0;
-    const col = i % 10, row = Math.floor(i / 10);
-    const x   = (col / 9 * 100).toFixed(2) + '%';
-    const y   = (row / 4 * 100).toFixed(2) + '%';
-    return `width:${size}px;height:${size}px;border-radius:50%;` +
-           `background-image:url('${AVATAR_IMG}');background-size:1000% 500%;` +
-           `background-position:${x} ${y};background-repeat:no-repeat;flex-shrink:0;display:inline-block;`;
-};
-const avatarDiv = (idx, size = 46) => `<div style="${avatarBg(idx, size)}"></div>`;
+    /* ── Constants ── */
+    const MAX_PLAYERS    = 50;
+    const ROOM_CODE_LEN  = 6;
+    const GAME_DURATION  = 180;
+    const SESSION_KEY    = 'rc_game_session';
+    const AVATAR_IMG     = 'avatar.png'; // Matches your image file name
+    const AVATAR_COUNT   = 36;           // 9 columns × 4 rows = 36 total
+    const COLS           = 9;            // Number of columns in your image
+    const ROWS           = 4;            // Number of rows in your image
+
+    /* ── Avatar sprite logic ── */
+    const avatarBg = (idx, size) => {
+        const i   = (Number.isInteger(idx) && idx >= 0 && idx < AVATAR_COUNT) ? idx : 0;
+        const col = i % COLS;
+        const row = Math.floor(i / COLS);
+
+        // Calculate percentage positions for the background[cite: 1]
+        const x = COLS > 1 ? (col / (COLS - 1) * 100).toFixed(2) + '%' : '0%';
+        const y = ROWS > 1 ? (row / (ROWS - 1) * 100).toFixed(2) + '%' : '0%';
+
+        return `width:${size}px;height:${size}px;border-radius:50%;` +
+               `background-image:url('${AVATAR_IMG}');` +
+               `background-size:${COLS * 100}% ${ROWS * 100}%;` +
+               `background-position:${x} ${y};` +
+               `background-repeat:no-repeat;flex-shrink:0;display:inline-block;background-color:white;`;
+    };
+
+    const avatarDiv = (idx, size = 46) => `<div style="${avatarBg(idx, size)}"></div>`;
 
 /* ── Session persistence ── */
 const saveSession = () => {
@@ -758,18 +774,23 @@ const loadLevel = () => {
     });
 };
 
-window.liveCheckAnswer = (idx) => {
-    const level = gameData[currentLevelIndex];
-    if (!level) return;
-    const input = document.getElementById(`ans-${idx}`);
-    const val   = parseInt(input.value);
-    if (val === level.eqs[idx].a) {
-        if (!solvedIndices.includes(idx)) {
-            playCorrectBeep(); input.style.border = "2px solid green";
-            solvedIndices.push(idx); updateCipherDisplay();
+    window.liveCheckAnswer = (idx) => {
+        const level = gameData[currentLevelIndex];
+        const input = document.getElementById(`ans-${idx}`);
+        const val   = parseInt(input.value);
+
+        if (val === level.eqs[idx].a && !solvedIndices.includes(idx)) {
+            playCorrectBeep();
+            input.style.border = "2px solid green";
+            input.disabled = true; // Lock after correct
+            solvedIndices.push(idx);
+            updateCipherDisplay();
+
+            // Immediate 5 points
+            score += 5;
+            update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score });
         }
-    } else { input.style.border = "2px solid #00BCD4"; }
-};
+    };
 
 window.checkAnswers = () => {
     const level = gameData[currentLevelIndex];
