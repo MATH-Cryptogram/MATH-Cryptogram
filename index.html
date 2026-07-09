@@ -28,14 +28,69 @@
         #page-lobby, #page-avatar-select, #page-scoreboard, #page-end-game { background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 25%, #80DEEA 50%, #4DD0E1 75%, #26C6DA 100%) !important; border: 3px solid #00838F !important; box-shadow: 0 0 40px rgba(0, 188, 212, 0.5), 0 0 80px rgba(76, 175, 80, 0.3) !important;}
 
         h1 {font-size: 1.5rem; margin-bottom: 20px; text-align: center !important; letter-spacing: 2px; text-transform: uppercase; color: #004D73 !important; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6);}
-        h2 { font-size: 1.3rem; margin: 20px 0; color: #00838F; text-align: center !important; } p { color: #004D73; }
 
-        .page { width: 92%; max-width: 500px; max-height: 85vh; overflow-y: auto;  -webkit-overflow-scrolling: touch; padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)) 20px; background: rgba(224, 247, 250, 0.98); border-radius: 20px; border: 3px solid #0097A7; box-shadow: 0 0 30px rgba(0, 188, 212, 0.4); display: none;}
-        .page.active { display: block; } input[type="text"], input[type="number"], input[type="file"] { width: 100%; padding: 12px 15px; margin: 10px 0; font-size: 16px !important; border: 2px solid #00BCD4; border-radius: 10px; background: rgba(255, 255, 255, 0.95); color: #004D73; outline: none;}
-        button { width: 100%; padding: 14px; margin: 12px 0; font-size: 1rem; font-weight: bold; border: none; border-radius: 10px; background: linear-gradient(135deg, #00BCD4, #009688); color: White; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(0, 150, 175, 0.3);}
+        h2 {
+            font-size: 1.3rem;
+            margin: 20px 0;
+            color: #00838F;
+            text-align: center !important;
+        }
+
+        p { color: #004D73; }
+
+        .page {
+            width: 92%;
+            max-width: 500px;
+            max-height: 85vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)) 20px;
+            background: rgba(224, 247, 250, 0.98);
+            border-radius: 20px;
+            border: 3px solid #0097A7;
+            box-shadow: 0 0 30px rgba(0, 188, 212, 0.4);
+            display: none;
+        }
+
+        .page.active { display: block; }
+
+        input[type="text"], input[type="number"], input[type="file"] {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 10px 0;
+            font-size: 16px !important;
+            border: 2px solid #00BCD4;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #004D73;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin: 12px 0;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #00BCD4, #009688);
+            color: White;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(0, 150, 175, 0.3);
+        }
+
         button.primary { background: linear-gradient(135deg, #4CAF50, #66BB6A); color: White; }
 
-        .join-section { display: flex; flex-direction: column; gap: 10px; margin: 15px 0; align-items: center;}
+        .join-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+            align-items: center;
+        }
 
         /* Modernized Illustrated/Badged Avatar Matrix Grid Style [cite: 27, 28] */
         .avatar-grid {
@@ -504,16 +559,145 @@ function renderAvatarSelector() {
     });
 }
 
-window.confirmAndJoinLobby = function() {
-    set(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: 0, avatar: selectedAvatar });
-    setupRoomListeners(roomCode);
-    if(data.startTime){
-    
-    navigate("page-scoreboard");
-    onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
-        currentLobbyDataSnapshot = snapshot.val();
-        renderScoreboardData(snapshot, ["scoreboard-container"]);
-    });
+window.confirmAndJoinLobby = async function () {
+
+    playerName = document.getElementById("player-name").value.trim();
+
+    if (!playerName) {
+        alert("Enter your name!");
+        return;
+    }
+
+    playerId = generatePlayerId();
+
+    roomCode = roomCode.toUpperCase().trim();
+
+    try {
+
+        // ==========================================
+        // Check if room exists
+        // ==========================================
+
+        const roomInfoSnapshot = await get(
+            ref(db, `rooms/${roomCode}/info`)
+        );
+
+        if (!roomInfoSnapshot.exists()) {
+            alert("Room not found.");
+            return;
+        }
+
+        const roomInfo = roomInfoSnapshot.val();
+
+        // ==========================================
+        // Check if room is locked
+        // ==========================================
+
+        if (roomInfo.roomLocked) {
+            alert("The game has already started.");
+            return;
+        }
+
+        // ==========================================
+        // Get current players
+        // ==========================================
+
+        const playersSnapshot = await get(
+            ref(db, `rooms/${roomCode}/players`)
+        );
+
+        const players = playersSnapshot.val() || {};
+
+        const totalPlayers = Object.keys(players).length;
+
+        // ==========================================
+        // Maximum Players
+        // ==========================================
+
+        if (totalPlayers >= MAX_PLAYERS) {
+            alert("Room is already full.");
+            return;
+        }
+
+        // ==========================================
+        // Prevent duplicate names
+        // ==========================================
+
+        if (players[playerName]) {
+
+            alert("This name is already being used.\nPlease enter another name.");
+
+            return;
+
+        }
+
+        // ==========================================
+        // Join Room
+        // ==========================================
+
+        await set(
+            ref(db, `rooms/${roomCode}/players/${playerName}`),
+            {
+                score: 0,
+                avatar: selectedAvatar,
+                connected: true,
+                finished: false,
+                uploaded: false,
+                joinedAt: getTimestamp()
+            }
+        );
+
+        // ==========================================
+        // Update Statistics
+        // ==========================================
+
+        await update(
+            ref(db, `rooms/${roomCode}/statistics`),
+            {
+                connectedPlayers: totalPlayers + 1
+            }
+        );
+
+        // ==========================================
+        // Activity Log
+        // ==========================================
+
+        await logActivity(`${playerName} joined the lobby.`);
+
+        // ==========================================
+        // Start Listeners
+        // ==========================================
+
+        await updateConnectedPlayers();
+
+        setupRoomListeners(roomCode);
+
+        setupHostDashboardListeners();
+
+        navigate("page-scoreboard");
+
+        onValue(
+            ref(db, `rooms/${roomCode}/players`),
+            (snapshot) => {
+
+                currentLobbyDataSnapshot = snapshot.val();
+
+                renderScoreboardData(
+                    snapshot,
+                    ["scoreboard-container"]
+                );
+
+            }
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Unable to join room.");
+
+    }
+
 };
 
 const gameData = [
@@ -558,21 +742,158 @@ const gameData = [
     }
 ];
 
+/* ============================================================
+   GAME STATE
+============================================================ */
+
+const MAX_PLAYERS = 50;
+const ROOM_CODE_LENGTH = 6;
+const GAME_DURATION = 180;
+
 let roomCode = "";
 let playerName = "";
+let playerId = "";
 let isHost = false;
 
 let score = 0;
 let currentLevelIndex = 0;
 
 let timerInterval = null;
-
-let roomStartTime = 0;
-let roomDuration = 180;
-
-let gameRunning = false;
 let startTime = null;
 
+let uploads = {};
+
+let localGameStarted = false;
+
+let solvedIndices = [];
+
+let currentLobbyDataSnapshot = null;
+
+/* ============================================================
+   ROOM STATE
+============================================================ */
+
+const roomState = {
+
+    status: "waiting",
+
+    gameStarted: false,
+
+    roomLocked: false,
+
+    currentLevel: 1,
+
+    maxPlayers: MAX_PLAYERS,
+
+    createdAt: null
+
+};
+
+/* ============================================================
+   PLAYER STATE
+============================================================ */
+
+const playerState = {
+
+    connected: true,
+
+    finished: false,
+
+    uploaded: false,
+
+    progress: 0
+
+};
+
+/* ============================================================
+   UTILITIES
+============================================================ */
+
+function generateRoomCode() {
+
+    return Math.random()
+
+        .toString(36)
+
+        .substring(2, 2 + ROOM_CODE_LENGTH)
+
+        .toUpperCase();
+
+}
+
+function generatePlayerId() {
+
+    return "P-" +
+
+        Date.now().toString(36) +
+
+        "-" +
+
+        Math.random()
+
+            .toString(36)
+
+            .substring(2,8);
+
+}
+
+function getTimestamp(){
+
+    return Date.now();
+
+}
+
+async function logActivity(message){
+
+    if(!roomCode) return;
+
+    const id = Date.now();
+
+    await set(
+        ref(db,`rooms/${roomCode}/activity/${id}`),
+        {
+            message,
+            timestamp:getTimestamp()
+        }
+    );
+
+}
+
+async function updateConnectedPlayers() {
+
+    const snapshot = await get(
+        ref(db, `rooms/${roomCode}/players`)
+    );
+
+    const players = snapshot.val() || {};
+
+    const total = Object.keys(players).length;
+
+    await update(
+        ref(db, `rooms/${roomCode}/statistics`),
+        {
+            connectedPlayers: total
+        }
+    );
+
+}
+
+function setupHostDashboardListeners() {
+
+    onValue(
+        ref(db, `rooms/${roomCode}/statistics`),
+        (snapshot)=>{
+
+            const stats = snapshot.val();
+
+            if(!stats) return;
+
+            console.log("Statistics:", stats);
+
+        }
+    );
+
+}
 function renderScoreboardData(snapshot, containers) {
     const data = snapshot.val();
     
@@ -712,145 +1033,299 @@ window.resetZoomScale = function() {
     document.getElementById("zoom-target-image").style.transform = "scale(1)";
 };
 
-window.startAsHost = function() {
+window.startAsHost = async function () {
+
     playerName = document.getElementById("player-name").value.trim();
-    if (!playerName) { alert("Enter host name!"); return; }
+
+    if (!playerName) {
+        alert("Enter host name!");
+        return;
+    }
+
+    playerId = generatePlayerId();
 
     isHost = true;
-    roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-    set(ref(db, "rooms/" + roomCode), { gameStarted: false, level: 1 });
-    document.getElementById("host-room-code").innerText = "🎮 Room Code: " + roomCode;
-    document.getElementById("start-game-btn").style.display = "block";
-    document.getElementById("waiting-msg").style.display = "none";
 
-    const qrContainer = document.getElementById("qr-code");
-    qrContainer.innerHTML = "";
-    const joinURL = window.location.origin + window.location.pathname + "?room=" + roomCode;
-    try { new QRCode(qrContainer, { text: joinURL, width: 128, height: 128 }); } catch(e) {}
+    roomCode = generateRoomCode();
 
-    setupRoomListeners(roomCode);
-    navigate("page-scoreboard");
-    onValue(ref(db, `rooms/${roomCode}/players`), (snapshot) => {
-        currentLobbyDataSnapshot = snapshot.val();
-        renderScoreboardData(snapshot, ["scoreboard-container", "host-scoreboard-container"]);
-    });
-    onValue(ref(db, `rooms/${roomCode}/uploads`), (snapshot) => {
-        uploads = snapshot.val() || {};
-        updateHostGalleryView(uploads);
-    });
+    roomState.createdAt = getTimestamp();
+
+    try {
+
+        // ==========================================
+        // Create Room Information
+        // ==========================================
+
+        await set(ref(db, `rooms/${roomCode}/info`), {
+
+            roomCode: roomCode,
+
+            hostName: playerName,
+
+            status: "waiting",
+
+            roomLocked: false,
+
+            gameStarted: false,
+
+            currentLevel: 1,
+
+            maxPlayers: MAX_PLAYERS,
+
+            createdAt: getTimestamp()
+
+        });
+
+        // ==========================================
+        // Initialize Room
+        // ==========================================
+
+        await update(ref(db, `rooms/${roomCode}`), {
+
+            uploads: {},
+
+            statistics: {
+
+                averageScore: 0,
+
+                connectedPlayers: 0,
+
+                finishedPlayers: 0
+
+            },
+
+            activity: {}
+
+        });
+
+        // ==========================================
+        // Activity Log
+        // ==========================================
+
+        await logActivity(`${playerName} created the room.`);
+
+        // ==========================================
+        // Host Dashboard
+        // ==========================================
+
+        document.getElementById("host-room-code").innerText =
+            "🎮 Room Code: " + roomCode;
+
+        document.getElementById("start-game-btn").style.display = "block";
+
+        document.getElementById("waiting-msg").style.display = "none";
+
+        const qrContainer = document.getElementById("qr-code");
+
+        qrContainer.innerHTML = "";
+
+        const joinURL =
+            window.location.origin +
+            window.location.pathname +
+            "?room=" +
+            roomCode;
+
+        try {
+
+            new QRCode(qrContainer, {
+
+                text: joinURL,
+
+                width: 128,
+
+                height: 128
+
+            });
+
+        } catch (e) {
+
+            console.error(e);
+
+        }
+
+        // ==========================================
+        // Firebase Listeners
+        // ==========================================
+
+        setupRoomListeners(roomCode);
+
+        navigate("page-scoreboard");
+
+        onValue(
+            ref(db, `rooms/${roomCode}/players`),
+            (snapshot) => {
+
+                currentLobbyDataSnapshot = snapshot.val();
+
+                renderScoreboardData(
+                    snapshot,
+                    [
+                        "scoreboard-container",
+                        "host-scoreboard-container"
+                    ]
+                );
+
+            }
+        );
+
+        onValue(
+            ref(db, `rooms/${roomCode}/uploads`),
+            (snapshot) => {
+
+                uploads = snapshot.val() || {};
+
+                updateHostGalleryView(uploads);
+
+            }
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Unable to create room.");
+
+    }
+
 };
 
-window.hostStartGame = function () {
+window.hostStartGame = async function () {
 
-    const now = Date.now();
-    update(ref(db, "rooms/" + roomCode), {
-        gameStarted: true,
-        level: 1,
-        startTime: now,
-        duration: 180
-    });
-    localGameStarted = true;
+    try {
+
+        // Lock the room and start the game
+        await update(
+            ref(db, `rooms/${roomCode}/info`),
+            {
+                gameStarted: true,
+                roomLocked: true,
+                status: "running",
+                currentLevel: 1
+            }
+        );
+
+        // Keep compatibility with your current code
+        // (we'll remove these duplicate fields later after all listeners are migrated)
+        await update(
+            ref(db, `rooms/${roomCode}`),
+            {
+                gameStarted: true,
+                level: 1
+            }
+        );
+
+        // Record activity
+        await logActivity(`${playerName} started the game.`);
+
+        // Update local state
+        localGameStarted = true;
+        currentLevelIndex = 0;
+
+        // Start the host's game
+        startGame();
+
+    } catch (error) {
+
+        console.error("Failed to start game:", error);
+        alert("Unable to start the game.");
+
+    }
+
 };
 
 function setupRoomListeners(room) {
-    
+
     if (!room) return;
-    onValue(ref(db, `rooms/${room}`), (snapshot) => {
-        const data = snapshot.val();
-        if (!data) return;
-            roomStartTime = data.startTime || 0;
-            roomDuration = data.duration || 180;
-        if (data.gameStarted === true && !isHost && !localGameStarted) {
-            localGameStarted = true;
-            startGame();
-        }
-        if (data.level) {
-            const lvlText = 'LEVEL ' + data.level;
-            const lvlIndicator = document.getElementById('lvl-indicator');
-            if (lvlIndicator) lvlIndicator.innerText = lvlText;
-            const hostGameLevel = document.getElementById('host-game-level');
-            if (hostGameLevel) hostGameLevel.innerText = lvlText;
-            
-            if(!isHost) {
-                currentLevelIndex = data.level - 1;
-                loadLevel();
+
+    // ==========================================
+    // Listen to Room Information
+    // ==========================================
+
+    onValue(
+        ref(db, `rooms/${room}/info`),
+        (snapshot) => {
+
+            const info = snapshot.val();
+
+            if (!info) return;
+
+            // --------------------------
+            // Game Started
+            // --------------------------
+
+            if (
+                info.gameStarted &&
+                !isHost &&
+                !localGameStarted
+            ) {
+
+                localGameStarted = true;
+
+                startGame();
+
             }
+
+            // --------------------------
+            // Current Level
+            // --------------------------
+
+            if (info.currentLevel) {
+
+                const levelText =
+                    "LEVEL " + info.currentLevel;
+
+                const indicator =
+                    document.getElementById("lvl-indicator");
+
+                if (indicator)
+                    indicator.innerText = levelText;
+
+                const hostLevel =
+                    document.getElementById("host-game-level");
+
+                if (hostLevel)
+                    hostLevel.innerText = levelText;
+
+                if (!isHost) {
+
+                    currentLevelIndex =
+                        info.currentLevel - 1;
+
+                    loadLevel();
+
+                }
+
+            }
+
+            // --------------------------
+            // Room Locked
+            // --------------------------
+
+            if (
+                info.roomLocked &&
+                !info.gameStarted
+            ) {
+
+                console.log("Room locked.");
+
+            }
+
         }
-    });
+    );
+
 }
+
 function startGame() {
-
-    if (gameRunning) return;
-
-    gameRunning = true;
-
-    score = score || 0;
-
+    score = 0;
     startTime = new Date();
-
+    let timeLeft = 180;
     playBackgroundMusic();
+    const timerDisplay = document.getElementById("timer");
+    const hostTimerDisplay = document.getElementById("host-timer");
 
-    if (timerInterval)
-        clearInterval(timerInterval);
-
-    if (isHost)
-        navigate("page-host-game");
-    else
-        navigate("page-game");
-
-    if (!isHost)
-        loadLevel();
-
-    const timerDisplay =
-        document.getElementById("timer");
-
-    const hostTimerDisplay =
-        document.getElementById("host-timer");
-
-    function updateClock() {
-        if (!roomStartTime)
-            return;
-        const elapsed =
-            Math.floor(
-                (Date.now() - roomStartTime) / 1000
-            );
-        let remaining =
-            roomDuration - elapsed;
-        if (remaining < 0)
-            remaining = 0;
-        const mins =
-            Math.floor(remaining / 60);
-        const secs =
-            remaining % 60;
-        const text =
-            `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
-        if (timerDisplay)
-            timerDisplay.innerText = text;
-        if (hostTimerDisplay)
-            hostTimerDisplay.innerText = text;
-        if (remaining <= 30) {
-            timerDisplay?.classList.add("warning");
-        }
-        if (remaining <= 0) {
-            clearInterval(timerInterval);
-            gameRunning = false;
-            endGame();
-        }
-    }
-    updateClock();
-    timerInterval = setInterval(updateClock,1000);
-}
-    function updateTimer(timeLeft) {
-    if(timeLeft < 0) timeLeft = 0;
-    const mins = Math.floor(timeLeft/60);
-    const secs = timeLeft%60;
-    const timeStr = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
-    if(timerDisplay) timerDisplay.innerText = timeStr;
-    if(hostTimerDisplay) hostTimerDisplay.innerText = timeStr;
-    if(timeLeft<=30) timerDisplay.classList.add("warning");
-    if(timeLeft<=0) 
-        endGame();
-}
+    function updateTimer() {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
         const timeStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
         if (timerDisplay) timerDisplay.innerText = timeStr;
         if (hostTimerDisplay) hostTimerDisplay.innerText = timeStr;
@@ -860,11 +1335,7 @@ function startGame() {
         timeLeft--;
     }
 
-    timerInterval =
-setInterval(()=>{
-    const elapsed = Math.floor((Date.now()-roomStartTime)/1000);
-    const remaining = roomDuration-elapsed;
-    updateTimer(remaining);},1000);
+    timerInterval = setInterval(updateTimer, 1000);
     updateTimer();
     if (isHost) { navigate("page-host-game"); } else { navigate("page-game"); loadLevel(); }
 }
@@ -1025,46 +1496,9 @@ window.handleSolutionUpload = function() {
     reader.readAsDataURL(file);
 };
 
-// ✅ Feature 1: Max 40 players
-window.joinRoom = async function() {
-  const name = document.getElementById('nameInput').value.trim();
-  const code = document.getElementById('codeInput').value.trim().toUpperCase();
-  if (!name || !code) return alert('Fill all fields');
-  
-  const roomRef = ref(db, `rooms/${code}`);
-  const snap = await new Promise(res => onValue(roomRef, res, { onlyOnce: true }));
-  if (!snap.exists()) return alert('Room not found');
-  
-  const players = snap.child('players').val() || {};
-  if (Object.keys(players).length >= MAX_PLAYERS && !players[name]) {
-    return alert(`Room full! Maximum ${MAX_PLAYERS} players allowed.`);
-  }
-
-  playerName = name;
-  roomCode = code;
-  isHost = false;
-  score = 0;
-  currentLevel = 0;
-  
-  const playerRef = ref(db, `rooms/${code}/players/${name}`);
-  await set(playerRef, { score: 0, lastSeen: serverTimestamp() });
-  onDisconnect(playerRef).update({ lastSeen: serverTimestamp() });
-  
-  saveSession();
-  setupListeners(code);
-  showPage('room');
-  updatePlayerList(code);
-};
-
 window.backToLobby = function() {
     roomCode = ""; playerName = "";
-    isHost = false; score = 0; currentLevelIndex = 0; localGameStarted=false;
-gameRunning=false;
-if(timerInterval){
-    clearInterval(timerInterval);
-    timerInterval=null;
-} 
-solvedIndices = [];
+    isHost = false; score = 0; currentLevelIndex = 0; localGameStarted = false; solvedIndices = [];
     navigate("page-lobby");
 };
 window.navigate = function(pageId) {
