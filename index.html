@@ -442,7 +442,55 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+// ======================================================
+// FIREBASE CONFIGURATION
+// ======================================================
+const firebaseConfig = {
+    apiKey: "AIzaSyCkoqlW8Fb1yhmvrAv7bBM50CyeCUjZKyA",
+    authDomain: "rational-cryptogram-game.firebaseapp.com",
+    projectId: "rational-cryptogram-game",
+    storageBucket: "rational-cryptogram-game.firebasestorage.app",
+    messagingSenderId: "654271677921",
+    appId: "1:654271677921:web:ac7245dfd3b376a55e3ea0"
+};
+// ======================================================
+// INITIALIZE FIREBASE
+// ======================================================
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+// ======================================================
+// GLOBAL FIREBASE REFERENCES
+// ======================================================
+const roomsRef = ref(db, "rooms");
+// ======================================================
+// GAME CONSTANTS
+// ======================================================
+const MAX_PLAYERS = 50;
+const GAME_DURATION = 180;      // seconds
+const TOTAL_AVATARS = 50;
+const DEFAULT_SCORE = 0;
+const ROOM_CODE_LENGTH = 6;
+const ROOM_STATUS = {
+    WAITING: "waiting",
+    RUNNING: "running",
+    FINISHED: "finished"
+};
+const PLAYER_STATUS = {
+    CONNECTED: true,
+    DISCONNECTED: false
+};
 
+let roomCode = "";
+let playerName = "";
+let playerId = "";
+let isHost = false;
+let score = 0;
+let currentLevelIndex = 0;
+let timerInterval = null;
+let startTime = null;
+let uploads = {};
+let localGameStarted = false;
+let solvedIndices = [];  
 let audioContext;
 let bgMusicPlaying = false;
 let bgMusicOscillators = [];
@@ -512,23 +560,7 @@ function stopBackgroundMusic() {
 }
 
 window.toggleMusic = function() { bgMusicPlaying ? stopBackgroundMusic() : playBackgroundMusic(); };
-const firebaseConfig = {
-    apiKey: "AIzaSyCkoqlW8Fb1yhmvrAv7bBM50CyeCUjZKyA",
-    authDomain: "rational-cryptogram-game.firebaseapp.com",
-    projectId: "rational-cryptogram-game",
-    storageBucket: "rational-cryptogram-game.firebasestorage.app",
-    messagingSenderId: "654271677921",
-    appId: "1:654271677921:web:ac7245dfd3b376a55e3ea0"
-};
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
 
-const avatarPool = [
-    "🦊", "🦁", "🐼", "🐯", "🐨", "🐸", "🦩", "🦉", "🐺", "🦥", "🐹", "🐰", "🦆", "🦌", "🐱", "🐶",
-    "🤖", "👽", "👻", "🦄", "🐉", "🦖", "🦅", "🐵", "🐧", "🐙", "🐬", "🧙‍♂️", "🥷", "🧑‍🚀", "🤠",
-    "💎", "👑", "🚀", "🌟", "🔥", "🔮", "🍕", "🎮", "🎯", "🍀", "🎨", "🎭"
-];
-let selectedAvatar = "🦊";
 
 window.goToAvatarSelection = function() {
     const nameInput = document.getElementById("player-name").value.trim();
@@ -742,32 +774,7 @@ const gameData = [
     }
 ];
 
-/* ============================================================
-   GAME STATE
-============================================================ */
 
-const MAX_PLAYERS = 50;
-const ROOM_CODE_LENGTH = 6;
-const GAME_DURATION = 180;
-
-let roomCode = "";
-let playerName = "";
-let playerId = "";
-let isHost = false;
-
-let score = 0;
-let currentLevelIndex = 0;
-
-let timerInterval = null;
-let startTime = null;
-
-let uploads = {};
-
-let localGameStarted = false;
-
-let solvedIndices = [];
-
-let currentLobbyDataSnapshot = null;
 
 /* ============================================================
    ROOM STATE
