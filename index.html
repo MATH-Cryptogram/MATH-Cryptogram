@@ -57,7 +57,6 @@
 
         .join-section { display: flex; flex-direction: column; gap: 10px; margin: 15px 0; align-items: center; }
 
-        
         /* ── Avatar grid (sprite-based) ── */
         .avatar-grid {
             display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 15px 0; padding: 12px;
@@ -93,16 +92,17 @@
         .podium-3rd { height: 55px; background: linear-gradient(to top, #CD7F32, #D2691E); border: 2px solid #8B4513; }
 
         /* ── Game screen ── */
-        .phrase-display { font-size: 2.2rem; font-weight: bold; letter-spacing: 15px; text-align: center; margin: 25px 0;
+        .phrase-display {
+            font-size: 2.2rem; font-weight: bold; letter-spacing: 15px; text-align: center; margin: 25px 0;
             padding: 20px; background: rgba(0,188,212,0.1); border: 2px solid #00BCD4; border-radius: 15px;
-            color: #0097A7; text-transform: uppercase; min-height: 80px; display: flex; align-items: center; justify-content: center; }
+            color: #0097A7; text-transform: uppercase; min-height: 80px; display: flex; align-items: center; justify-content: center;
+        }
         .revealed-letter { color: #4CAF50; font-weight: 900; }
         .hidden-letter { color: #9ECAE1; }
-        .clue-box { background: rgba(76,175,80,0.1); padding: 15px; border-left: 4px solid #4CAF50; border-radius: 8px; margin: 15px 0; font-style: italic; color: #004D73; }
-
-        .eq-card { background: rgba(0,188,212,0.08); padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid rgba(0,188,212,0.3); display: flex; align-items: center; justify-content: space-between; }
-        .eq-card div { font-size: 1.1rem; color: #0097A7; flex-grow: 1; }
-        .eq-card input { width: 80px; padding: 10px; text-align: center; font-weight: bold; margin-left: 15px; }
+        .clue-box { background: rgba(76,175,80,0.1); padding: 15px; border-left: 4px solid #4CAF50; border-radius: 8px; margin: 15px 0; font-style: italic; color: #004D73; }        .eq-card { background: rgba(0,188,212,0.08); padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid rgba(0,188,212,0.3); }
+        .eq-card div { font-size: 1.1rem; margin-bottom: 10px; color: #0097A7; }
+        .eq-card input { width: 100px; padding: 10px; text-align: center; font-weight: bold; margin: 10px auto; display: block; }
+        
 
         .frac { display: inline-block; position: relative; vertical-align: middle; margin: 0 2px; }
         .frac .numb, .frac span:last-child { display: block; padding: 4px 6px; text-align: center; font-size: 0.9em; }
@@ -281,12 +281,10 @@ const db = getDatabase(app);
 /* ── Constants ── */
 const MAX_PLAYERS    = 50;
 const ROOM_CODE_LEN  = 6;
-const GAME_DURATION  = 180;
+const GAME_DURATION  = 180;   // seconds
 const SESSION_KEY    = 'rc_game_session';
-const AVATAR_IMG     = 'avatar.jpg'; // Ensure this matches your file
-const AVATAR_COUNT   = 36;           // Set to match your grid
-const COLS           = 9;            // Update to your actual image columns
-const ROWS           = 4;            // Update to your actual image rows
+const AVATAR_IMG     = 'attached_assets/avatar_1783599904295.png';
+const AVATAR_COUNT   = 50;    // 10 cols × 5 rows
 
 /* ── Game Data ── */
 const gameData = [
@@ -338,19 +336,17 @@ let uploads = {}, localGameStarted = false, solvedIndices = [], currentLobbyData
 let selectedAvatar = 0;   // avatar index 0–49
 let audioContext, bgMusicPlaying = false, bgMusicOscillators = [], targetImageScale = 1;
 
-/* ── Updated Avatar sprite logic ── */
+/* ── Avatar sprite helpers ── */
+// The sheet is 10 cols × 5 rows. background-size 1000% 500% makes each cell
+// exactly fit the container. background-position uses the percentage formula:
+//   x = col / (cols-1) * 100%,  y = row / (rows-1) * 100%
 const avatarBg = (idx, size) => {
     const i   = (Number.isInteger(idx) && idx >= 0 && idx < AVATAR_COUNT) ? idx : 0;
-    const col = i % 9, row = Math.floor(i / 9);
-    
-    // Calculations for a 9x4 grid
-    // col / (cols - 1) * 100%
-    const x   = (col / 8 * 100).toFixed(2) + '%';
-    // row / (rows - 1) * 100%
-    const y   = (row / 3 * 100).toFixed(2) + '%';
-    
+    const col = i % 10, row = Math.floor(i / 10);
+    const x   = (col / 9 * 100).toFixed(2) + '%';
+    const y   = (row / 4 * 100).toFixed(2) + '%';
     return `width:${size}px;height:${size}px;border-radius:50%;` +
-           `background-image:url('${AVATAR_IMG}');background-size:900% 400%;` +
+           `background-image:url('${AVATAR_IMG}');background-size:1000% 500%;` +
            `background-position:${x} ${y};background-repeat:no-repeat;flex-shrink:0;display:inline-block;`;
 };
 const avatarDiv = (idx, size = 46) => `<div style="${avatarBg(idx, size)}"></div>`;
@@ -740,10 +736,6 @@ const startGame = () => {
 const updateCipherDisplay = () => {
     const level = gameData[currentLevelIndex];
     if (!level) return;
-
-    // DEBUG: See the current state of solved letters
-    console.log("Current solvedIndices array:", solvedIndices);
-    
     document.getElementById("cipher-output").innerHTML = level.phrase.split("").map((ch,i) =>
         `<span class="${solvedIndices.includes(i)?'revealed-letter':'hidden-letter'}">${solvedIndices.includes(i)?ch:'_'}</span>`
     ).join(" ");
@@ -760,32 +752,22 @@ const loadLevel = () => {
     level.eqs.forEach((eq, idx) => {
         const card = document.createElement("div");
         card.className = "eq-card";
-        card.innerHTML = `<div>${eq.h}</div><input type="number" id="ans-${idx}" placeholder="Answer" oninput="CheckAnswer(${idx})">`;
+        card.innerHTML = `<div>${eq.h}</div><input type="number" id="ans-${idx}" placeholder="Answer" oninput="liveCheckAnswer(${idx})">`;
         container.appendChild(card);
     });
 };
 
 window.liveCheckAnswer = (idx) => {
     const level = gameData[currentLevelIndex];
+    if (!level) return;
     const input = document.getElementById(`ans-${idx}`);
     const val   = parseInt(input.value);
-
-    // DEBUG: See what the user typed vs the correct answer
-    console.log(`Checking answer for index ${idx}: User input = ${val}, Target = ${level.eqs[idx].a}`);
-    
-    if (val === level.eqs[idx].a && !solvedIndices.includes(idx)) {
-        console.log("Correct answer! Updating score...");
-        playCorrectBeep();
-        input.style.border = "2px solid green";
-        input.disabled = true;
-        solvedIndices.push(idx);
-        // 1. Update local score variable
-        score += 5;
-        // 2. Update Firebase and force a local UI refresh if necessary
-        update(ref(db, `rooms/${roomCode}/players/${playerName}`), { score: score });
-        // 3. Reveal the letter immediately
-        updateCipherDisplay();
-    }
+    if (val === level.eqs[idx].a) {
+        if (!solvedIndices.includes(idx)) {
+            playCorrectBeep(); input.style.border = "2px solid green";
+            solvedIndices.push(idx); updateCipherDisplay();
+        }
+    } else { input.style.border = "2px solid #00BCD4"; }
 };
 
 window.checkAnswers = () => {
