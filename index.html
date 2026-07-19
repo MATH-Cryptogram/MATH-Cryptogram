@@ -194,7 +194,7 @@
         <div class="top-bar">
             <button class="small-btn" onclick="toggleFullScreen()">⛶ FULLSCREEN</button>
             <span id="lvl-indicator">LEVEL 1</span>
-            <span id="timer">03:00</span>
+            <span id="timer">05:00</span>
         </div>
         <div class="phrase-display" id="cipher-output">_ _ _ _</div>
         <div id="clue-text" class="clue-box"></div>
@@ -217,7 +217,7 @@
         <h1>🎮 Game In Progress</h1>
         <h2 id="host-game-level">LEVEL 1</h2>
         <p style="text-align:center;color:#004D73;margin:15px 0;">
-            Time Left: <span id="host-timer" style="color:#0097A7;font-weight:bold;">03:00</span>
+            Time Left: <span id="host-timer" style="color:#0097A7;font-weight:bold;">05:00</span>
         </p>
         <div id="host-scoreboard-container" style="margin:20px 0;"></div>
         <p style="text-align:center;color:#004D73;font-size:0.85rem;margin-top:20px;">Players are solving...</p>
@@ -267,6 +267,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
+
 /* ── Firebase ── */
 const app = initializeApp({
     apiKey: "AIzaSyCkoqlW8Fb1yhmvrAv7bBM50CyeCUjZKyA",
@@ -281,7 +282,7 @@ const db = getDatabase(app);
 /* ── Constants ── */
 const MAX_PLAYERS    = 50;
 const ROOM_CODE_LEN  = 6;
-const GAME_DURATION  = 180;   // seconds
+const GAME_DURATION  = 300;   // seconds
 const SESSION_KEY    = 'rc_game_session';
 const AVATAR_IMG     = 'attached_assets/avatar_1783599904295.png';
 const AVATAR_COUNT   = 50;    // 10 cols × 5 rows
