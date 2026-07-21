@@ -1,1 +1,0 @@
-Avatar images go here.
