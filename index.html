@@ -609,23 +609,28 @@ const ROOM_CODE_LEN = 6;
 
 // ─── Avatars ──────────────────────────────────────────────────────────────
 const AVATARS = [
-  '🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯',
-  '🦁','🐮','🐷','🐸','🐵','🐔','🐧','🦆','🦉','🦋',
-  '🐢','🐍','🦎','🐙','🦑','🦀','🐡','🐠','🐟','🐬',
-  '🐳','🦈','🦭','🦓','🦒','🐘'
+    "assets/avatars/avatar1.png",
+    "assets/avatars/avatar2.png",
+    "assets/avatars/avatar3.png",
+    "assets/avatars/avatar4.png",
+    "assets/avatars/avatar5.png"
 ];
-const AVATAR_COLORS = [
-  '#E3F2FD','#FCE4EC','#F3E5F5','#E8F5E9','#FFF3E0','#E0F7FA',
-  '#FFF9C4','#F1F8E9','#E8EAF6','#FAFAFA','#E0F2F1','#FBE9E7',
-  '#EDE7F6','#E1F5FE','#F9FBE7','#FFF8E1','#F3E5F5','#E8F5E9',
-  '#FCE4EC','#E3F2FD','#E0F7FA','#FFF3E0','#F1F8E9','#E8EAF6',
-  '#FFF9C4','#FBE9E7','#E1F5FE','#EDE7F6','#FFF8E1','#F9FBE7',
-  '#E0F2F1','#FAFAFA','#E8F5E9','#FCE4EC','#F3E5F5','#E3F2FD'
-];
-function avatarHTML(idx, size=46) {
-  const i = (typeof idx==='number' && idx>=0 && idx<AVATARS.length) ? idx : 0;
-  const fs = Math.round(size*0.55);
-  return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${AVATAR_COLORS[i]};font-size:${fs}px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">${AVATARS[i]}</div>`;
+
+function avatarHTML(idx, size = 46) {
+  const i = (idx >= 0 && idx < AVATARS.length) ? idx : 0;
+
+  return `
+    <img
+      src="${AVATARS[i]}"
+      style="
+        width:${size}px;
+        height:${size}px;
+        border-radius:50%;
+        object-fit:cover;
+        border:2px solid #00BCD4;
+      "
+    >
+  `;
 }
 
 // ─── Game data ────────────────────────────────────────────────────────────
@@ -985,11 +990,12 @@ function renderAvatarSelect() {
   AVATARS.forEach((em,i)=>{
     const div=document.createElement('div');
     div.className='avatar-item'+(S.selectedAvatar===i?' selected':'');
-    div.style.background=AVATAR_COLORS[i]; div.textContent=em;
-    div.onclick=()=>{ S.selectedAvatar=i; renderAvatarSelect(); };
-    grid.appendChild(div);
-  });
-}
+    div.style.background=AVATAR_COLORS[i]; div.innerHTML = `
+  <img src="${AVATARS[i]}"
+       style="width:100%;height:100%;
+              border-radius:50%;
+              object-fit:cover;">
+`;
 async function handleJoinLobby() {
   const c=S.roomCode.toUpperCase().trim();
   try {
