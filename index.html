@@ -333,14 +333,6 @@
     }
     .upload-label a { color:white; font-size:0.65rem; background:rgba(255,255,255,0.2); padding:2px 6px; border-radius:4px; text-decoration:none; }
 
-    /* ── Custom level builder ──────────────────────────────────────────── */
-    .custom-section {
-      background:rgba(0,188,212,0.1); border-radius:14px; padding:12px;
-      margin-bottom:14px; border:1px solid rgba(0,188,212,0.3);
-    }
-    .custom-section-label {
-      font-size:0.7rem; font-weight:900; color:#0097A7;
-      text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;
     }
     .eq-builder {
       border-radius:14px; border:2px solid rgba(0,188,212,0.3);
@@ -436,9 +428,9 @@
 <div id="page-lobby" class="page active">
   <h1>🎮 THE RATIONAL CRYPTOGRAM</h1>
   <p style="text-align:center;margin-bottom:20px">Solve equations to Decode</p>
-  <label>👤 ENTER YOUR NAME</label>
+  <label style="display:block;text-align:center;">👤 ENTER YOUR NAME</label>
   <input type="text" id="lobby-name" placeholder="Your name" maxlength="20">
-  <label>🎯 ENTER THE CODE</label>
+ <label style="display:block;text-align:center;">🎯 ENTER THE CODE</label>
   <input type="text" id="lobby-code" placeholder="XXXXXX" maxlength="6" style="text-transform:uppercase">
   <button onclick="handleJoinClick()">🚪 JOIN ROOM</button>
   <div class="divider">— OR —</div>
@@ -472,7 +464,6 @@
   <div id="host-controls" style="display:none">
     <p style="font-size:0.85rem;font-weight:bold;color:#0097A7;text-align:center;margin:8px 0">⏱ GAME DURATION</p>
     <div class="duration-grid" id="duration-grid"></div>
-    <div style="background:rgba(255,255,255,0.3);border-radius:14px;padding:12px;border:1px solid rgba(0,188,212,0.4);margin:10px 0">
     </div>
     <button class="btn-green" onclick="hostStartGame()">🚀 START THE GAME</button>
   </div>
