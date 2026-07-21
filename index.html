@@ -171,15 +171,40 @@
     }
 
     /* ── Player cards ──────────────────────────────────────────────────── */
-    .player-grid {
-      display: grid; grid-template-columns: repeat(3,1fr); gap:12px;
-      margin: 12px 0; padding: 8px;
-    }
-    .player-card {
-      display: flex; flex-direction: column; align-items: center;
-      background: rgba(255,255,255,0.95); padding: 10px;
-      border-radius: 14px; border: 2px solid #0097A7; text-align: center;
-    }
+    .players-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin: 15px 0 25px 0;
+  min-height: 60px; /* Prevents layout collapse when empty */
+}
+.player-avatar-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease-in-out;
+}
+.player-avatar-card img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--primary, #0EA5E9);
+  object-fit: cover;
+}
+.player-avatar-card span {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #004D73;
+  margin-top: 4px;
+}
     .avatar-small{
     width:42px;
     height:42px;
@@ -451,23 +476,22 @@
 <!-- WAITING ROOM / SCOREBOARD -->
 <div id="page-scoreboard" class="page">
   <h1>🏆 GAME LOBBY</h1>
-  <div id="host-room-info" style="display:none">
-    <h2 id="room-code-display"></h2>
-    <div id="qr-container"><div id="qr-code"></div></div>
-  </div>
-  <p style="font-size:0.85rem;font-weight:bold;color:#0097A7;text-align:center;margin:8px 0">👥 PLAYERS IN LOBBY:</p>
-  <div class="player-grid" id="lobby-player-grid"></div>
-  <div id="lobby-scoreboard" style="display:none">
-    <p style="font-size:0.85rem;font-weight:bold;color:#0097A7;text-align:center;margin:8px 0">SCOREBOARD</p>
-    <div id="lobby-score-rows"></div>
-  <!-- 🟢 ADD THIS CONTAINER FOR AVATARS -->
-  <div id="players-list" class="players-grid"></div>
-  <div id="host-controls" style="display:none">
-    <p style="font-size:0.85rem;font-weight:bold;color:#0097A7;text-align:center;margin:8px 0">⏱ GAME DURATION</p>
-    <div class="duration-grid" id="duration-grid"></div>
-    </div>
-    <button class="primary" id="start-game-btn" onclick="hostStartGame()">🚀 START THE GAME</button>
-  <p id="waiting-msg" style="text-align:center;color:#00838F;font-weight:bold;display:none">⏳ Waiting for host to start the game...</p>
+ <div id="host-room-info" style="display:none">
+  <h2 id="room-code-display"></h2>
+  <div id="qr-container"><div id="qr-code"></div></div>
+</div>
+
+<p style="font-size:0.85rem;font-weight:bold;color:#0097A7;text-align:center;margin:8px 0">🎥 PLAYERS IN LOBBY:</p>
+<div class="player-grid" id="lobby-player-grid"></div>
+
+<div id="lobby-scoreboard" style="display:none">
+  <p style="font-size:0.85rem;font-weight:bold;color:#0097A7;text-align:center;margin:8px 0">SCOREBOARD</p>
+  <div id="lobby-score-rows"></div>
+</div>
+
+<div id="host-controls" style="display:none">
+  <p style="font-size:0.85rem;font-weight:bold;color:#0097A7;text-align:center;margin:8px 0">⏱️ GAME DURATION</p>
+  <div class="duration-grid" id="duration-grid"></div>
 </div>
 
 <!-- GAME -->
