@@ -925,52 +925,49 @@ function navigate(page) {
   if (page==='end-game') renderEndGame();
   if (page==='host-uploads') renderHostUploads();
 }
+  function renderPlayersInLobby(playersObj) {
+  const container = document.getElementById('lobby-player-grid');
+  if (!container) return;
+
+  container.innerHTML = ''; // Clear previous avatars
+
+  if (!playersObj) return;
+
+  Object.keys(playersObj).forEach((key) => {
+    const player = playersObj[key];
+    
+    // Generate avatar URL using DiceBear as a fallback if player.avatar isn't set
+    const avatarUrl = player.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(player.name)}`;
+
+    const card = document.createElement('div');
+    card.className = 'player-card'; 
+    card.style.display = 'inline-flex';
+    card.style.flexDirection = 'column';
+    card.style.alignItems = 'center';
+    card.style.margin = '8px';
+
+    card.innerHTML = `
+      <img src="${avatarUrl}" alt="${player.name}" style="width:50px; height:50px; border-radius:50%; background:#fff; border:2px solid #0097A7; object-fit:cover;">
+      <span style="font-size:0.8rem; font-weight:bold; color:#004D73; margin-top:4px;">${player.name}</span>
+    `;
+
+    container.appendChild(card);
+  });
+}
 
 // ─── Firebase listeners ────────────────────────────────────────────────────
 function clearListeners() {
   S.unsubscribers.forEach(f=>f());
   S.unsubscribers=[];
 }
-function setupListeners(code, isHost, alreadyStarted) {
-  clearListeners();
-  let started = alreadyStarted;
-  const infoRef = db.ref(`rooms/${code}/info`);
-  const offInfo = infoRef.on('value', snap=>{
-    const info = snap.val(); if (!info) return;
-    if (info.gameDuration) S.gameDuration = info.gameDuration;
-    if (info.customLevel)  S.customLevel  = info.customLevel;
-    if (info.gameStarted && !isHost && !started) {
-      started=true;
-      S.gameStartAt = info.gameStartAt || Date.now();
-      navigate('game');
-    }
-    if (info.currentLevel && !isHost) {
-      const fi = info.currentLevel-1;
-      if (fi > S.playerLevelRef) {
-        S.playerLevelRef=fi; S.levelIdx=fi;
-        S.solvedIndices=[]; S.inputs={}; S.inputStates={}; S.scoredSet=new Set(); S.bonusAwarded=false;
-        if (S.page==='game') renderGame();
-      }
-    }
-    if (info.gameEnded && !isHost) {
-      leaveGame();
-    }
+function setupListeners(c, isHost, isPlayer) {
+  // ... your other listeners (info, status, etc.) ...
+
+  // Listen for players entering/leaving the lobby
+  db.ref(`rooms/${c}/players`).on('value', (snapshot) => {
+    const players = snapshot.val();
+    renderPlayersInLobby(players);
   });
-  const offPlayers = db.ref(`rooms/${code}/players`).on('value', snap=>{
-    S.players = snap.val() || {};
-    if (S.page==='scoreboard') renderWaitingRoom();
-    if (S.page==='host-game') renderHostGame();
-    if (S.page==='host-uploads') renderHostUploads();
-  });
-  const offUploads = db.ref(`rooms/${code}/uploads`).on('value', snap=>{
-    S.uploads = snap.val() || {};
-    if (S.page==='host-uploads') renderHostUploads();
-  });
-  S.unsubscribers.push(
-    ()=>db.ref(`rooms/${code}/info`).off('value',offInfo),
-    ()=>db.ref(`rooms/${code}/players`).off('value',offPlayers),
-    ()=>db.ref(`rooms/${code}/uploads`).off('value',offUploads)
-  );
 }
 
 // ─── Reconnect on load ─────────────────────────────────────────────────────
