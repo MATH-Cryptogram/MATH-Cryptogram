@@ -609,11 +609,10 @@ const ROOM_CODE_LEN = 6;
 
 // ─── Avatars ──────────────────────────────────────────────────────────────
 const AVATARS = [
-    "assets/avatars/avatar1.png",
-    "assets/avatars/avatar2.png",
-    "assets/avatars/avatar3.png",
-    "assets/avatars/avatar4.png",
-    "assets/avatars/avatar5.png"
+  "assets/avatars/1.JPG",
+  "assets/avatars/2.JPG",
+  ...
+  "assets/avatars/36.JPG"
 ];
 
 function avatarHTML(idx, size = 46) {
@@ -621,7 +620,7 @@ function avatarHTML(idx, size = 46) {
 
   return `
     <img
-      src="${avatarHTML[i]}"
+      src="${AVATARS[i]}"
       style="
         width:${size}px;
         height:${size}px;
@@ -1058,7 +1057,7 @@ function renderWaitingRoom() {
   const pg=document.getElementById('lobby-player-grid'); pg.innerHTML='';
   Object.entries(players).forEach(([name,info])=>{
     pg.innerHTML+=`<div class="player-card">
-      <div class="avatar-small" style="background:${AVATAR_COLORS[info.avatar||0]}">${avatarHTML[info.avatar||0]}</div>
+      <div class="avatar-small" style="background:${AVATAR_COLORS[info.avatar||0]}">${avatarHTML(info.avatar||0)}</div>
       <div style="font-size:0.85rem;font-weight:bold;color:#004D73;word-break:break-all">${name}</div>
     </div>`;
   });
@@ -1102,7 +1101,7 @@ function scoreRowHTML(rank,name,score,avatar) {
   const medal=rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':`#${rank}`;
   return `<div class="score-row">
     <div class="left"><span style="width:24px;text-align:center">${medal}</span>
-      <div class="avatar-tiny" style="background:${AVATAR_COLORS[avatar||0]}">${avatarHTML[avatar||0]}</div>
+      <div class="avatar-tiny" style="background:${AVATAR_COLORS[avatar||0]}">${avatarHTML(avatar||0)}</div>
       <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px">${name}</span>
     </div>
     <div class="right">${score} pts</div>
