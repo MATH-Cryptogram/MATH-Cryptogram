@@ -77,14 +77,23 @@
     .divider { text-align: center; margin: 10px 0; color: #004D73; }
 
     /* ── Fractions ─────────────────────────────────────────────────────── */
-    .frac {
-      display: inline-block; position: relative;
-      vertical-align: middle; margin: 0 2px;
-    }
-    .frac .numb, .frac span:last-child {
-      display: block; padding: 4px 6px; text-align: center; font-size: 0.9em;
-    }
-    .frac .numb { border-bottom: 1px solid currentColor; }
+   .frac {
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    margin: 0 2px;
+}
+
+.frac .num, .frac span:last-child {
+    display: block;
+    padding: 4px 6px;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+.frac .num {
+    border-bottom: 1px solid currentColor;
+}
 
     /* ── Timer warning ─────────────────────────────────────────────────── */
     @keyframes pulse-warning { 0%,100%{opacity:1} 50%{opacity:0.6} }
@@ -464,17 +473,6 @@
     <p style="font-size:0.85rem;font-weight:bold;color:#0097A7;text-align:center;margin:8px 0">⏱ GAME DURATION</p>
     <div class="duration-grid" id="duration-grid"></div>
     <div style="background:rgba(255,255,255,0.3);border-radius:14px;padding:12px;border:1px solid rgba(0,188,212,0.4);margin:10px 0">
-      <p style="font-size:0.7rem;font-weight:900;color:#0097A7;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📚 Custom Level (Optional)</p>
-      <div id="custom-level-loaded" style="display:none">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-          <span id="custom-level-info" style="font-size:0.85rem;font-weight:bold;color:#2E7D32"></span>
-          <button class="btn-small" style="color:#F44336;border-color:#F44336" onclick="removeCustomLevel()">✕ Remove</button>
-        </div>
-      </div>
-      <div id="custom-level-loader" class="custom-load-row">
-        <input type="text" id="custom-code-input" placeholder="Level code" maxlength="6" style="margin:0;text-transform:uppercase;text-align:center;font-weight:bold;letter-spacing:4px;font-size:0.9rem">
-        <button class="btn-small" onclick="loadCustomLevel()" id="load-custom-btn" disabled>Load</button>
-      </div>
     </div>
     <button class="btn-green" onclick="hostStartGame()">🚀 START THE GAME</button>
   </div>
