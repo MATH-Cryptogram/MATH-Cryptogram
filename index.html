@@ -216,16 +216,16 @@
 
     /* ── Equation rows ─────────────────────────────────────────────────── */
     .eq-row {
-      display: flex; flex-direction: column; gap: 8px;
-      padding: 12px 16px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 12px 16px; border-radius: 14px;
       border: 2px solid rgba(0,188,212,0.3); margin: 6px 0;
       background: rgba(0,188,212,0.05); transition: background 0.3s, border-color 0.3s;
     }
     .eq-row.correct { background:rgba(76,175,80,0.15); border-color:#4CAF50; }
     .eq-row.wrong   { background:rgba(244,67,54,0.1);  border-color:rgba(244,67,54,0.5); }
-    .eq-display { color:#0097A7; font-weight:bold; font-size:1rem; display:flex; align-items:center; flex-wrap:wrap; gap:4px; }
+    .eq-display { flex:1; min-width:0; color:#0097A7; font-weight:bold; font-size:1rem; }
     .eq-input {
-      width: 100%; padding: 8px; text-align: center;
+      width: 110px; flex-shrink: 0; padding: 8px; text-align: center;
       font-weight: bold; font-size: 1rem; border-radius: 10px;
       border: 2px solid #00BCD4; outline: none; color: #004D73;
       transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
@@ -414,9 +414,9 @@
 <div id="page-lobby" class="page active">
   <h1>🎮 THE RATIONAL CRYPTOGRAM</h1>
   <p style="text-align:center;margin-bottom:20px">Solve equations to Decode</p>
-  <label style="text-align:center;display:block">👤 ENTER YOUR NAME</label>
+  <label>👤 ENTER YOUR NAME</label>
   <input type="text" id="lobby-name" placeholder="Your name" maxlength="20">
-  <label style="text-align:center;display:block">🎯 ENTER THE CODE</label>
+  <label>🎯 ENTER THE CODE</label>
   <input type="text" id="lobby-code" placeholder="XXXXXX" maxlength="6" style="text-transform:uppercase">
   <button onclick="handleJoinClick()">🚪 JOIN ROOM</button>
   <div class="divider">— OR —</div>
@@ -450,7 +450,19 @@
   <div id="host-controls" style="display:none">
     <p style="font-size:0.85rem;font-weight:bold;color:#0097A7;text-align:center;margin:8px 0">⏱ GAME DURATION</p>
     <div class="duration-grid" id="duration-grid"></div>
-
+    <div style="background:rgba(255,255,255,0.3);border-radius:14px;padding:12px;border:1px solid rgba(0,188,212,0.4);margin:10px 0">
+      <p style="font-size:0.7rem;font-weight:900;color:#0097A7;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📚 Custom Level (Optional)</p>
+      <div id="custom-level-loaded" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span id="custom-level-info" style="font-size:0.85rem;font-weight:bold;color:#2E7D32"></span>
+          <button class="btn-small" style="color:#F44336;border-color:#F44336" onclick="removeCustomLevel()">✕ Remove</button>
+        </div>
+      </div>
+      <div id="custom-level-loader" class="custom-load-row">
+        <input type="text" id="custom-code-input" placeholder="Level code" maxlength="6" style="margin:0;text-transform:uppercase;text-align:center;font-weight:bold;letter-spacing:4px;font-size:0.9rem">
+        <button class="btn-small" onclick="loadCustomLevel()" id="load-custom-btn" disabled>Load</button>
+      </div>
+    </div>
     <button class="btn-green" onclick="hostStartGame()">🚀 START THE GAME</button>
   </div>
   <p id="waiting-msg" style="text-align:center;color:#00838F;font-weight:bold;display:none">⏳ Waiting for host to start the game...</p>
@@ -488,8 +500,9 @@
 <!-- HOST GAME -->
 <div id="page-host-game" class="page">
   <h1>🎮 Game In Progress</h1>
-  <p style="text-align:center;font-size:1.1rem;margin:8px 0">Time Left: <span id="host-timer" style="color:#0097A7;font-weight:900;font-size:1.3rem;letter-spacing:2px">10:00</span></p>
-  <div id="host-score-rows" style="max-height:45vh;overflow-y:auto;padding-right:4px;margin:8px 0"></div>
+  <h2 id="host-level-label"></h2>
+  <p style="text-align:center;font-size:1.1rem;margin:14px 0">Time Left: <span id="host-timer" style="color:#0097A7;font-weight:900;font-size:1.3rem;letter-spacing:2px">10:00</span></p>
+  <div id="host-score-rows" style="max-height:50vh;overflow-y:auto;padding-right:4px;margin:14px 0"></div>
   <p style="text-align:center;font-size:0.85rem;font-style:italic;color:#004D73">Players are solving...</p>
   <button class="btn-red" style="margin-top:14px" onclick="hostEndGameConfirm()">⏹ End Game</button>
 </div>
@@ -1274,7 +1287,7 @@ async function nextLevel() {
 
 // ─── Host game ────────────────────────────────────────────────────────────
 function renderHostGame() {
-  /* host-level-label removed */
+  document.getElementById('host-level-label').textContent='LEVEL '+(S.levelIdx+1);
   const sorted=Object.entries(S.players||{}).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
   const hr=document.getElementById('host-score-rows'); hr.innerHTML='';
   sorted.forEach(([n,i],idx)=>{hr.innerHTML+=scoreRowHTML(idx+1,n,i.score||0,i.avatar||0);});
